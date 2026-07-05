@@ -28,10 +28,12 @@ function matchTrack(state, key) {
   );
 }
 
+// Returns {ok, changed, detail} — detail is a human-readable summary of
+// what happened, so the 🔄 button can actually tell Amy what's going on.
 export async function pullFromAgent(state) {
   const config = getConfig();
   const url = config.HERMES_PULL_URL;
-  if (!url) return false;
+  if (!url) return { ok: false, changed: false, detail: "No pull URL set — open ⚙️ Agent setup." };
 
   // Optional token so the URL can be a PRIVATE GitHub repo file, e.g.
   //   https://api.github.com/repos/<owner>/<repo>/contents/dashboard.json
@@ -47,14 +49,41 @@ export async function pullFromAgent(state) {
   let data;
   try {
     const res = await fetch(url, { headers });
-    if (!res.ok) return false;
+    if (!res.ok) {
+      const why =
+        res.status === 401 || res.status === 403
+          ? `token rejected (${res.status}) — check it's a fine-grained PAT with READ access to the repo`
+          : res.status === 404
+            ? "file not found (404) — the agent hasn't committed dashboard.json yet, or the URL path is off"
+            : `server said ${res.status}`;
+      return { ok: false, changed: false, detail: why };
+    }
     data = await res.json();
   } catch {
-    return false;
+    return {
+      ok: false,
+      changed: false,
+      detail: "couldn't reach the URL — offline, typo, or the server doesn't allow browser (CORS) access",
+    };
   }
-  if (!data || typeof data !== "object") return false;
+
+  // GitHub sometimes ignores the raw accept and returns file metadata with
+  // base64 content — decode it instead of failing.
+  if (data && typeof data.content === "string" && data.encoding === "base64") {
+    try {
+      const bin = atob(data.content.replace(/\s/g, ""));
+      const bytes = Uint8Array.from(bin, (c) => c.charCodeAt(0));
+      data = JSON.parse(new TextDecoder().decode(bytes));
+    } catch {
+      return { ok: false, changed: false, detail: "dashboard.json isn't valid JSON" };
+    }
+  }
+  if (!data || typeof data !== "object" || Array.isArray(data)) {
+    return { ok: false, changed: false, detail: "the file isn't a JSON object — expected {agenda, tasks, message}" };
+  }
 
   let changed = false;
+  let tasksAdded = 0;
 
   if (Array.isArray(data.agenda)) {
     state.agenda = {
@@ -89,6 +118,7 @@ export async function pullFromAgent(state) {
       });
       state.inboxSeen.push(inboxId);
       changed = true;
+      tasksAdded++;
     }
     if (state.inboxSeen.length > 500) {
       state.inboxSeen = state.inboxSeen.slice(-400);
@@ -103,5 +133,13 @@ export async function pullFromAgent(state) {
     }
   }
 
-  return changed;
+  const parts = [];
+  if (tasksAdded) parts.push(`${tasksAdded} new task${tasksAdded > 1 ? "s" : ""}`);
+  if (Array.isArray(data.agenda)) parts.push(`agenda (${data.agenda.length} items)`);
+  if (data.message) parts.push("a message");
+  return {
+    ok: true,
+    changed,
+    detail: parts.length ? `got ${parts.join(", ")}` : "connected — feed is empty right now",
+  };
 }

@@ -23,6 +23,7 @@ const openLogs = new Set(); // track ids with the log panel expanded
 let editingTaskId = null;
 let quoteOffset = 0; // bumped by the ↻ button when today's quote doesn't land
 let connOpen = false; // ⚙️ agent-connection panel visibility
+let syncStatus = null; // {ok, detail, at} — last pull result, shown in Data widget
 
 const pomo = {
   total: 45 * 60, // 45-minute blocks
@@ -675,9 +676,11 @@ function renderWidgets() {
       <button class="btn" data-action="agent-sync" title="Pull agenda/tasks from your agent now">🔄 Sync agent</button>
       <button class="btn" data-action="conn-toggle" title="Connect Hermes / Telegram on this device">⚙️ Agent setup</button>
       <button class="btn btn-red" data-action="reset-seed" title="Restore the original seeded tasks (logs are wiped too)">🧹 Reset</button>
+      <div id="sync-status" class="sync-status"></div>
     </div>
     ${connOpen ? connPanelHTML() : ""}`;
   updateCountdownDisplay();
+  updateSyncStatusLine();
 }
 
 function connPanelHTML() {
@@ -718,10 +721,31 @@ function render() {
   renderHistory();
 }
 
-function syncWithAgent() {
-  pullFromAgent(state).then((changed) => {
-    if (changed) commit();
+function syncWithAgent(manual = false) {
+  return pullFromAgent(state).then((result) => {
+    syncStatus = { ...result, at: Date.now() };
+    if (result.changed) commit();
+    updateSyncStatusLine();
+    if (manual) {
+      alert(
+        result.ok
+          ? `✅ Sync worked — ${result.detail}`
+          : `❌ Sync failed: ${result.detail}`
+      );
+    }
   });
+}
+
+function updateSyncStatusLine() {
+  const el = $("#sync-status");
+  if (!el) return;
+  if (!syncStatus) {
+    el.textContent = "";
+    return;
+  }
+  el.textContent = `${syncStatus.ok ? "🟢" : "🔴"} Last sync ${fmtTime(
+    syncStatus.at
+  )} — ${syncStatus.detail}`;
 }
 
 // ── Live ticking (targeted updates — no full re-render) ────────────────────
@@ -1000,7 +1024,7 @@ document.addEventListener("click", (e) => {
         alert("Tell the dashboard where your agent publishes its data first — fill in the ⚙️ Agent setup panel below 🤖");
         break;
       }
-      syncWithAgent();
+      syncWithAgent(true);
       break;
     case "conn-toggle":
       connOpen = !connOpen;
@@ -1090,7 +1114,7 @@ document.addEventListener("submit", (e) => {
     saveConn(conn);
     connOpen = false;
     renderWidgets();
-    syncWithAgent();
+    syncWithAgent(true);
   }
 });
 
