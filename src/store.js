@@ -145,6 +145,8 @@ export function seedState() {
     ],
     // timer session + manual log entries
     logs: [], // {id, trackId, taskId, task, start, end, minutes, note, manual}
+    // calendar: future tasks & appointments
+    events: [], // {id, date "YYYY-MM-DD", time "HH:MM"|null, title, trackId|null, done, fromAgent?}
     // frog of the day
     frog: { taskId: frogTask.id, trackId: "money", date: todayKey() },
     frogCelebrated: null, // date the frog-done celebration fired
@@ -181,6 +183,10 @@ export function load() {
     state.alerts = { ...fresh.alerts, ...(state.alerts || {}) };
     if (!Array.isArray(state.logs)) state.logs = [];
     if (!Array.isArray(state.inboxSeen)) state.inboxSeen = [];
+    if (!Array.isArray(state.events)) state.events = [];
+    // sweep calendar items that are done and more than a week old
+    const weekAgo = todayKey(new Date(Date.now() - 7 * 86400000));
+    state.events = state.events.filter((e) => !(e.done && e.date < weekAgo));
     return state;
   } catch {
     return seedState();

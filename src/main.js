@@ -174,13 +174,14 @@ function stopTimer() {
   if (!a) return;
   const track = findTrack(a.trackId);
   const task = findTask(track, a.taskId);
+  const label = task?.text || a.label || "(session)";
   const end = Date.now();
   const minutes = Math.max(0.1, +((end - a.startedAt) / 60000).toFixed(1));
   state.logs.push({
     id: uid(),
     trackId: a.trackId,
-    taskId: a.taskId,
-    task: task?.text || "(deleted task)",
+    taskId: a.taskId || null,
+    task: label,
     start: a.startedAt,
     end,
     minutes,
@@ -192,9 +193,24 @@ function stopTimer() {
   state.active = null;
   sendEvent("task_stopped", {
     track: track?.name || "?",
-    task: task?.text || "(deleted task)",
+    task: label,
     minutes,
   });
+  commit();
+}
+
+// Punch-clock session: "▶ Log In" with a freeform label, not tied to a task.
+function startFreeSession(trackId, label) {
+  if (state.active) stopTimer();
+  const track = findTrack(trackId) || state.tracks[0];
+  state.active = {
+    trackId: track.id,
+    taskId: null,
+    label: label.trim() || "Work session",
+    startedAt: Date.now(),
+  };
+  state.lastActivityAt = Date.now();
+  sendEvent("task_started", { track: track.name, task: state.active.label });
   commit();
 }
 
@@ -305,6 +321,48 @@ function addManualLog(trackId, taskText, minutes, note) {
 
 function deleteLog(logId) {
   state.logs = state.logs.filter((l) => l.id !== logId);
+  commit();
+}
+
+// Manual entry by clock times ("In 10:30 → Out 12:30"), like the old
+// checklists. "HH:MM" strings for today; an Out earlier than In is taken
+// as crossing midnight.
+function addManualLogTimes(trackId, taskText, tin, tout, note) {
+  const track = findTrack(trackId);
+  if (!track || !taskText.trim() || !tin || !tout) return;
+  const [ih, im] = tin.split(":").map(Number);
+  const [oh, om] = tout.split(":").map(Number);
+  const start = new Date();
+  start.setHours(ih, im, 0, 0);
+  const end = new Date();
+  end.setHours(oh, om, 0, 0);
+  if (end <= start) end.setDate(end.getDate() + 1);
+  const minutes = +((end - start) / 60000).toFixed(1);
+  state.logs.push({
+    id: uid(),
+    trackId,
+    taskId: null,
+    task: taskText.trim(),
+    start: start.getTime(),
+    end: end.getTime(),
+    minutes,
+    note: note?.trim() || null,
+    manual: true,
+  });
+  commit();
+}
+
+// ── Calendar: future tasks & appointments ──────────────────────────────────
+function addCalendarEvent(date, time, title, trackId) {
+  if (!date || !title.trim()) return;
+  state.events.push({
+    id: uid(),
+    date,
+    time: time || null,
+    title: title.trim(),
+    trackId: trackId || null,
+    done: false,
+  });
   commit();
 }
 
@@ -451,22 +509,38 @@ function renderTimeLog() {
   const todayLogs = logsForDay().sort((a, b) => b.end - a.end);
   const { total } = todayTotals();
 
+  const trackOpts = (selected) =>
+    state.tracks
+      .map(
+        (t) =>
+          `<option value="${t.id}" ${t.id === selected ? "selected" : ""}>${
+            t.emoji
+          } ${esc(t.name)}</option>`
+      )
+      .join("");
+
   let nowRow = "";
   if (state.active) {
     const track = findTrack(state.active.trackId);
     const task = findTask(track, state.active.taskId);
     nowRow = `<div class="now-row">
       <span class="now-live">▶</span>
-      <span class="now-task">${esc(task?.text || "?")}
+      <span class="now-task">${esc(task?.text || state.active.label || "?")}
         <span class="pill pill-${esc(track?.colorName || "yellow")}">${esc(
           (track?.name || "").toUpperCase()
         )}</span></span>
       <span class="now-elapsed" data-task-elapsed>${fmtElapsed(
         Date.now() - state.active.startedAt
       )}</span>
-      <button class="btn btn-red" data-action="toggle-timer"
-        data-track="${state.active.trackId}" data-task="${state.active.taskId}">⏹ Stop</button>
+      <button class="btn btn-red" data-action="stop-timer">⏹ Log Out</button>
     </div>`;
+  } else {
+    // punch clock — like the old checklists' Session Log
+    nowRow = `<form class="login-row" id="free-session">
+      <input type="text" name="label" placeholder="▶ Clock in: what are you on? (e.g. Job hunt)" />
+      <select name="track" aria-label="Track">${trackOpts("money")}</select>
+      <button class="btn btn-green" type="submit">▶ Log In</button>
+    </form>`;
   }
 
   const rows = todayLogs.length
@@ -487,10 +561,6 @@ function renderTimeLog() {
         .join("")
     : `<li class="log-entry"><span class="log-task" style="color:var(--muted)">Nothing logged yet — tap any task to start the clock, or log time below ⏱</span></li>`;
 
-  const trackOptions = state.tracks
-    .map((t) => `<option value="${t.id}">${t.emoji} ${esc(t.name)}</option>`)
-    .join("");
-
   el.innerHTML = `<div class="timelog-card">
     <div class="timelog-head">
       <h2>⏱ Time log — today</h2>
@@ -499,9 +569,10 @@ function renderTimeLog() {
     ${nowRow}
     <ul class="log-entries">${rows}</ul>
     <form class="manual-entry" id="global-manual">
-      <select name="track" aria-label="Track">${trackOptions}</select>
-      <input type="text" name="task" placeholder="What did you do?" required />
-      <input type="number" name="minutes" placeholder="mins" min="1" step="1" required />
+      <select name="track" aria-label="Track">${trackOpts()}</select>
+      <input type="text" name="task" placeholder="Forgot to clock in? What did you do?" required />
+      <label class="tlabel">In <input type="time" name="tin" required /></label>
+      <label class="tlabel">Out <input type="time" name="tout" required /></label>
       <input type="text" name="note" placeholder="note (optional)" />
       <button class="btn btn-green" type="submit">＋ Log it</button>
     </form>
@@ -667,6 +738,96 @@ function renderTracks() {
   }
 }
 
+function fmtCalDate(dateStr) {
+  const [y, m, d] = dateStr.split("-").map(Number);
+  return new Date(y, m - 1, d).toLocaleDateString([], {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+  });
+}
+
+function fmtCalTime(t) {
+  if (!t) return "";
+  const [h, m] = t.split(":").map(Number);
+  const d = new Date();
+  d.setHours(h, m, 0, 0);
+  return fmtTime(d.getTime());
+}
+
+function calItemHTML(ev) {
+  const track = ev.trackId ? findTrack(ev.trackId) : null;
+  return `<li class="cal-item ${ev.done ? "done" : ""}">
+    <input type="checkbox" ${ev.done ? "checked" : ""} data-cal-check="${ev.id}"
+      aria-label="Mark done" />
+    <span class="cal-time">${fmtCalTime(ev.time) || "·"}</span>
+    <span class="cal-title">${ev.fromAgent ? "🤖 " : ""}${esc(ev.title)}
+      ${track ? `<span class="pill pill-${esc(track.colorName)}">${track.emoji}</span>` : ""}</span>
+    <button class="log-del" title="Delete" data-action="cal-del" data-event="${ev.id}">✕</button>
+  </li>`;
+}
+
+function renderCalendar() {
+  const el = $("#calendar");
+  const today = todayKey();
+  const sorted = [...state.events].sort(
+    (a, b) => a.date.localeCompare(b.date) || (a.time || "").localeCompare(b.time || "")
+  );
+  const overdue = sorted.filter((e) => !e.done && e.date < today);
+  const todays = sorted.filter((e) => e.date === today);
+  const upcoming = sorted.filter((e) => e.date > today);
+
+  let sections = "";
+  if (overdue.length) {
+    sections += `<div class="cal-day cal-overdue"><h3>😬 Overdue</h3><ul>${overdue
+      .map((e) => calItemHTML({ ...e, title: `${e.title} (${fmtCalDate(e.date)})` }))
+      .join("")}</ul></div>`;
+  }
+  if (todays.length) {
+    sections += `<div class="cal-day cal-today"><h3>⭐ Today — ${fmtCalDate(
+      today
+    )}</h3><ul>${todays.map(calItemHTML).join("")}</ul></div>`;
+  }
+  const byDate = new Map();
+  for (const e of upcoming) {
+    if (!byDate.has(e.date)) byDate.set(e.date, []);
+    byDate.get(e.date).push(e);
+  }
+  let shown = 0;
+  for (const [date, evs] of byDate) {
+    if (shown >= 10) {
+      const left = [...byDate.keys()].length - shown;
+      sections += `<div class="cal-more">…and ${left} more day${left > 1 ? "s" : ""} further out</div>`;
+      break;
+    }
+    sections += `<div class="cal-day"><h3>${fmtCalDate(date)}</h3><ul>${evs
+      .map(calItemHTML)
+      .join("")}</ul></div>`;
+    shown++;
+  }
+  if (!sections) {
+    sections = `<div class="cal-empty">Nothing scheduled — add appointments and someday-tasks below 📅</div>`;
+  }
+
+  const trackOptions =
+    `<option value="">— no track —</option>` +
+    state.tracks
+      .map((t) => `<option value="${t.id}">${t.emoji} ${esc(t.name)}</option>`)
+      .join("");
+
+  el.innerHTML = `<div class="cal-card">
+    <h2>📅 Coming up — appointments & not-today tasks</h2>
+    ${sections}
+    <form class="cal-form" id="cal-form">
+      <input type="date" name="date" required min="2020-01-01" />
+      <input type="time" name="time" />
+      <input type="text" name="title" placeholder="e.g. Dentist, McLeod deed filing…" required />
+      <select name="track" aria-label="Track">${trackOptions}</select>
+      <button class="btn btn-blue" type="submit">＋ Add</button>
+    </form>
+  </div>`;
+}
+
 function renderHistory() {
   const days = [];
   let max = 1;
@@ -783,6 +944,7 @@ function render() {
   renderAgenda();
   renderSummary();
   renderTimeLog();
+  renderCalendar();
   renderTracks();
   renderHistory();
 }
@@ -981,6 +1143,13 @@ document.addEventListener("click", (e) => {
       if (task && !task.done) toggleTimer(trackId, taskId);
       break;
     }
+    case "stop-timer":
+      stopTimer();
+      break;
+    case "cal-del":
+      state.events = state.events.filter((ev) => ev.id !== btn.dataset.event);
+      commit();
+      break;
     case "set-frog":
       setFrog(trackId, taskId);
       break;
@@ -1119,6 +1288,15 @@ document.addEventListener("change", (e) => {
     toggleDone(check.dataset.track, check.dataset.task, check.checked);
     return;
   }
+  const calCheck = e.target.closest("[data-cal-check]");
+  if (calCheck) {
+    const ev = state.events.find((x) => x.id === calCheck.dataset.calCheck);
+    if (ev) {
+      ev.done = calCheck.checked;
+      commit();
+    }
+    return;
+  }
   const rate = e.target.closest("[data-rate-track]");
   if (rate) {
     const track = findTrack(rate.dataset.rateTrack);
@@ -1169,11 +1347,27 @@ document.addEventListener("submit", (e) => {
   }
   if (e.target.id === "global-manual") {
     e.preventDefault();
-    addManualLog(
+    addManualLogTimes(
       e.target.elements.track.value,
       e.target.elements.task.value,
-      parseFloat(e.target.elements.minutes.value),
+      e.target.elements.tin.value,
+      e.target.elements.tout.value,
       e.target.elements.note.value
+    );
+    return;
+  }
+  if (e.target.id === "free-session") {
+    e.preventDefault();
+    startFreeSession(e.target.elements.track.value, e.target.elements.label.value);
+    return;
+  }
+  if (e.target.id === "cal-form") {
+    e.preventDefault();
+    addCalendarEvent(
+      e.target.elements.date.value,
+      e.target.elements.time.value,
+      e.target.elements.title.value,
+      e.target.elements.track.value
     );
     return;
   }

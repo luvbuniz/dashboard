@@ -125,6 +125,28 @@ export async function pullFromAgent(state) {
     }
   }
 
+  // calendar items: {id, date "YYYY-MM-DD", time "HH:MM"?, title, track?}
+  if (Array.isArray(data.events)) {
+    for (const ev of data.events) {
+      const inboxId = String(ev.id ?? "").trim();
+      const title = String(ev.title ?? "").trim();
+      const date = String(ev.date ?? "").trim();
+      if (!inboxId || !title || !/^\d{4}-\d{2}-\d{2}$/.test(date)) continue;
+      if (state.inboxSeen.includes(inboxId)) continue;
+      state.events.push({
+        id: uid(),
+        date,
+        time: /^\d{2}:\d{2}$/.test(String(ev.time ?? "")) ? ev.time : null,
+        title,
+        trackId: matchTrack(state, ev.track)?.id || null,
+        done: false,
+        fromAgent: inboxId,
+      });
+      state.inboxSeen.push(inboxId);
+      changed = true;
+    }
+  }
+
   if (typeof data.message === "string" && data.message.trim()) {
     const text = data.message.trim();
     if (state.agentMessage?.text !== text) {

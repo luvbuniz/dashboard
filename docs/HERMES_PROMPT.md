@@ -48,7 +48,11 @@ minutes. Rewrite it whenever something changes:
     {"id": "unique-stable-id", "track": "kids",
      "text": "Return library books", "badge": {"text": "THURS", "color": "blue"}}
   ],
-  "message": "One short note for the top of Amy's dashboard (optional)."
+  "message": "One short note for the top of Amy's dashboard (optional).",
+  "events": [
+    {"id": "unique-id", "date": "2026-07-11", "time": "16:00",
+     "title": "Dentist — kids", "track": "kids"}
+  ]
 }
 
 Rules:
@@ -68,6 +72,11 @@ Rules:
 - message: use sparingly for the single most useful heads-up of the
   moment ("Camp signup closes tomorrow"). Empty string when nothing
   matters.
+- events: FUTURE appointments and not-today tasks for the 📅 calendar
+  card (deduped by id like tasks). Use this for anything with a date
+  that isn't today — future calendar entries, deadlines Amy mentions
+  ("taxes due July 1"), appointments. Today's items belong in agenda;
+  dated future items belong in events. time is optional "HH:MM" 24h.
 
 ## Receiving events WITHOUT a webhook 📡
 

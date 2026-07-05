@@ -1004,6 +1004,156 @@ button:focus-visible {
   min-width: 0;
 }
 
+/* ── Punch clock (Log In / Log Out) ──────────────────────────────────── */
+.login-row {
+  display: flex;
+  gap: 6px;
+  margin: 6px 0 8px;
+  flex-wrap: wrap;
+}
+
+.login-row input[type="text"] {
+  flex: 2 1 160px;
+  min-width: 0;
+  background: var(--panel-dark);
+  border: 1.5px solid #48484a;
+  color: #fff;
+}
+
+.login-row select {
+  flex: 1 1 110px;
+  min-width: 0;
+  background: var(--panel-dark);
+  border: 1.5px solid #48484a;
+  border-radius: 9px;
+  color: #fff;
+  padding: 7px 8px;
+}
+
+.tlabel {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11.5px;
+  color: var(--muted);
+  flex: 0 1 auto;
+}
+
+.tlabel input[type="time"] {
+  background: var(--panel-dark);
+  border: 1.5px solid #48484a;
+  color: #fff;
+  width: 96px;
+}
+
+/* ── Calendar ────────────────────────────────────────────────────────── */
+.cal-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  border-top: 4px solid var(--blue);
+  box-shadow: 0 4px 16px var(--card-shadow);
+  padding: 14px 16px;
+  margin-bottom: 16px;
+}
+
+.cal-card h2 {
+  margin: 0 0 8px;
+  font-size: 15px;
+}
+
+.cal-day h3 {
+  margin: 10px 0 2px;
+  font-size: 12px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.cal-today h3 {
+  color: var(--green);
+}
+
+.cal-overdue h3 {
+  color: var(--red);
+}
+
+.cal-day ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.cal-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 9px;
+  background: var(--row);
+  margin: 3px 0;
+  font-size: 13.5px;
+}
+
+.cal-item.done .cal-title {
+  text-decoration: line-through;
+  opacity: 0.45;
+}
+
+.cal-time {
+  min-width: 62px;
+  color: var(--blue);
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.cal-title {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.cal-item .log-del {
+  color: var(--muted);
+}
+
+.cal-empty,
+.cal-more {
+  color: var(--muted);
+  font-size: 13px;
+  padding: 6px 2px;
+}
+
+.cal-form {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.cal-form input[type="date"] {
+  flex: 0 1 132px;
+}
+
+.cal-form input[type="time"] {
+  flex: 0 1 100px;
+}
+
+.cal-form input[type="text"] {
+  flex: 2 1 150px;
+  min-width: 0;
+}
+
+.cal-form select {
+  flex: 1 1 100px;
+  min-width: 0;
+  background: var(--input-bg);
+  border: 1.5px solid var(--input-border);
+  border-radius: 9px;
+  color: var(--ink);
+  padding: 7px 8px;
+}
+
 /* ── History ─────────────────────────────────────────────────────────── */
 .history-card {
   background: var(--card-dark);
