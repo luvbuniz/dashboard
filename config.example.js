@@ -16,9 +16,16 @@ window.HERMES_CONFIG = {
   // Optional: inbound sync — the dashboard GETs this URL (on load, every
   // 5 min, and via the 🔄 button) and merges what the agent published:
   // { agenda: [{time,title}], tasks: [{id,track,text,badge?}], message }
-  // The endpoint must send Access-Control-Allow-Origin: * (CORS).
-  // See README "Agent in the loop" for the full contract.
+  // The endpoint must send Access-Control-Allow-Origin: * (CORS)…
   HERMES_PULL_URL: "",
+
+  // …OR skip the web server entirely and use a PRIVATE GitHub repo as the
+  // channel (free): the agent commits dashboard.json to the repo, and you
+  // point the pull at the GitHub API with a read-only token:
+  //   HERMES_PULL_URL:   "https://api.github.com/repos/<you>/<repo>/contents/dashboard.json"
+  //   HERMES_PULL_TOKEN: fine-grained PAT, THAT REPO ONLY, Contents: read-only
+  // (github.com → Settings → Developer settings → Fine-grained tokens)
+  HERMES_PULL_TOKEN: "",
 
   // Optional: Telegram accountability pings (same events, human-readable).
   // 1. Make a bot with @BotFather → copy the token.

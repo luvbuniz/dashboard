@@ -1070,3 +1070,8 @@ setInterval(checkProcrastination, 30000);
 checkProcrastination();
 syncWithAgent();
 setInterval(syncWithAgent, 5 * 60000);
+
+// PWA: install prompt + offline shell (production only, dev stays HMR-clean)
+if (import.meta.env.PROD && "serviceWorker" in navigator) {
+  navigator.serviceWorker.register("./sw.js").catch(() => {});
+}

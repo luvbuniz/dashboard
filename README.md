@@ -178,6 +178,14 @@ Requirements on the agent side: serve JSON over HTTPS with
 `Access-Control-Allow-Origin: *` (it's read by a browser). A static file
 the agent rewrites on a schedule is enough — no server logic needed.
 
+**No web server at all?** Use a private GitHub repo as the channel
+(free): the agent commits `dashboard.json` to the repo, and the dashboard
+reads it through the GitHub API. Set `HERMES_PULL_URL` to
+`https://api.github.com/repos/<you>/<repo>/contents/dashboard.json` and
+`HERMES_PULL_TOKEN` to a fine-grained PAT scoped to that repo with
+Contents **read-only**. Full setup (plus a brain-dump workflow and
+Obsidian integration) is in `docs/HERMES_PROMPT.md`.
+
 ## Google Calendar & email
 
 The dashboard is a client-side app, so it can't log into Google by itself —

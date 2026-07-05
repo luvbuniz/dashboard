@@ -33,9 +33,20 @@ export async function pullFromAgent(state) {
     typeof window !== "undefined" && window.HERMES_CONFIG?.HERMES_PULL_URL;
   if (!url) return false;
 
+  // Optional token so the URL can be a PRIVATE GitHub repo file, e.g.
+  //   https://api.github.com/repos/<owner>/<repo>/contents/dashboard.json
+  // with a read-only fine-grained PAT in HERMES_PULL_TOKEN. Free private
+  // storage, no web server needed — the agent just commits the file.
+  const headers = { Accept: "application/json" };
+  const token = window.HERMES_CONFIG?.HERMES_PULL_TOKEN;
+  if (token) headers.Authorization = `Bearer ${token}`;
+  if (url.includes("api.github.com")) {
+    headers.Accept = "application/vnd.github.raw+json";
+  }
+
   let data;
   try {
-    const res = await fetch(url, { headers: { Accept: "application/json" } });
+    const res = await fetch(url, { headers });
     if (!res.ok) return false;
     data = await res.json();
   } catch {

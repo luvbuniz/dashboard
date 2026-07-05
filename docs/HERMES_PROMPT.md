@@ -69,6 +69,55 @@ Rules:
   moment ("Camp signup closes tomorrow"). Empty string when nothing
   matters.
 
+## Brain dumps 🧠
+
+When Amy dumps a stream of thoughts at you (voice note or rambling text:
+"okay so I need to call Brian about the water account, the girls need
+their camp forms turned in, I should really post about Stackadoo, oh and
+that transcript job is due"), that is a BRAIN DUMP. Process it:
+
+1. Split it into discrete, actionable tasks — verb-first, ONE action
+   each ("Call Brian re: La Sombra water account", not "deal with
+   utilities stuff").
+2. Route each to a track (see the track list above). If some are
+   ambiguous, ask about ALL of them in one single batched question, not
+   one message per task.
+3. Add them to tasks[] in the published JSON, each with a unique id.
+4. Reply with the list so she can veto: "Added 4 to your dashboard: …".
+5. If one of them is clearly the day's most important or most dreaded
+   item, say so and suggest she pin it as the 🐸 frog.
+6. Anything in the dump that is a FACT rather than a task ("Brian's
+   number is 555-…", "camp ends August 8") goes into memory storage —
+   see below — and gets resurfaced when relevant.
+
+Deadlines mentioned in dumps ("due Thursday") become a badge on the task
+({"text": "THURS", "color": "blue"}) and, near the deadline, a message.
+
+## Storage: Amy's private GitHub repo 🗄️ (luvbuniz/buni)
+
+Use Amy's private repo `luvbuniz/buni` as your persistent memory AND as
+the publishing channel — it's free and nothing else needs to run. This
+repo is also Amy's Obsidian vault, so WRITE PLAIN MARKDOWN: every memory
+file you commit becomes a note she can read in Obsidian.
+
+- `hermes/memory/` — markdown notes for facts, contacts, deadlines,
+  decisions from brain dumps (kids.md, realestate.md, jobhunt.md,
+  money.md, stackadoo.md, people.md). Read them before answering
+  questions. Use headings and bullet lists; Obsidian [[wikilinks]] are
+  welcome.
+- `hermes/dumps/` — raw brain dumps, dated (2026-07-05.md), verbatim,
+  before processing. Receipts for her own words.
+- `dashboard.json` — at the repo ROOT: the published feed
+  (agenda/tasks/message above). Commit a new version whenever it
+  changes; the dashboard reads this file through the GitHub API every
+  5 minutes.
+
+Keep your files under `hermes/` so you never collide with Amy's own
+notes. Never delete or rewrite HER files — append or create your own.
+Commit via the GitHub API with your token (a fine-grained PAT scoped to
+ONLY this repo, Contents: read & write). Small, frequent commits are
+fine — messages like "dump 2026-07-05" or "add 3 tasks".
+
 ## Personality rules
 
 - Brief. One or two sentences per message, emojis welcome.
@@ -79,22 +128,47 @@ Rules:
   days ago with a deadline, resurface it at the right time as a task.
 
 Your webhook endpoint (receive):  <FILL IN — e.g. https://your-vps/hermes/webhook>
-Your published JSON (send):       <FILL IN — e.g. https://your-vps/hermes/dashboard.json>
+Amy's private GitHub repo:        luvbuniz/buni (her Obsidian vault)
+Your GitHub token:                <stored in your own environment, never echoed>
 ```
 
 ---
 
-## Matching config.js on the dashboard side
+## Setting up the private-GitHub channel (one time, all free)
 
-```js
-window.HERMES_CONFIG = {
-  HERMES_WEBHOOK_URL: "https://your-vps/hermes/webhook",   // dashboard → Hermes
-  HERMES_PULL_URL:    "https://your-vps/hermes/dashboard.json", // Hermes → dashboard
-  TELEGRAM_BOT_TOKEN: "…",  // optional: dashboard pings Telegram directly too
-  TELEGRAM_CHAT_ID:   "…",
-};
-```
+Amy's private repo is `luvbuniz/buni` — private repos cost $0. The only
+GitHub thing that ever costs money is hosting a *website* from a private
+repo, which we don't do (the dashboard site is Pages from the public
+repo; the data lives on Amy's devices and in `buni`).
 
-The two URLs are the whole integration: events flow out to the webhook,
-and the dashboard pulls the JSON file back in. The JSON file can literally
-be a static file Hermes rewrites on disk — no API server needed.
+1. Two fine-grained tokens (github.com → Settings → Developer settings
+   → Fine-grained personal access tokens), both scoped to ONLY `buni`:
+   - **Hermes's token**: Contents read & write → goes in Hermes's
+     environment on the VPS.
+   - **Dashboard's token**: Contents read-only → goes in `config.js` on
+     your devices as `HERMES_PULL_TOKEN`.
+2. In `config.js` on each device:
+   ```js
+   HERMES_PULL_URL:   "https://api.github.com/repos/luvbuniz/buni/contents/dashboard.json",
+   HERMES_PULL_TOKEN: "github_pat_…(the read-only one)",
+   ```
+3. Hermes commits `dashboard.json`; your dashboard picks it up within
+   5 minutes (or instantly via 🔄 Sync agent).
+
+⚠️ Tokens are secrets: they live in Hermes's env and in your gitignored
+`config.js` only. Never paste them in chats, and don't put
+`HERMES_PULL_TOKEN` in the public site's DASHBOARD_CONFIG secret.
+
+## Bonus: the Obsidian link 🔮
+
+`buni` is supposed to sync with Amy's Obsidian vault in Documents. When
+that sync works, everything Hermes commits to `hermes/memory/` shows up
+as ordinary notes inside Obsidian — agent memory and personal notes in
+one place. If the vault isn't actually syncing, the usual causes:
+
+- The vault folder in Documents isn't a git clone of `buni` (no hidden
+  `.git` folder inside it) → clone the repo and open THAT folder as the
+  vault (or move existing notes into the clone).
+- The **Obsidian Git** community plugin isn't installed/configured →
+  install it, set auto-pull and auto-push (e.g. every 10 minutes), so
+  Hermes's commits flow down and Amy's edits flow up automatically.
