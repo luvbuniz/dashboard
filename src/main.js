@@ -446,6 +446,68 @@ function renderSummary() {
   </div>`;
 }
 
+function renderTimeLog() {
+  const el = $("#timelog");
+  const todayLogs = logsForDay().sort((a, b) => b.end - a.end);
+  const { total } = todayTotals();
+
+  let nowRow = "";
+  if (state.active) {
+    const track = findTrack(state.active.trackId);
+    const task = findTask(track, state.active.taskId);
+    nowRow = `<div class="now-row">
+      <span class="now-live">▶</span>
+      <span class="now-task">${esc(task?.text || "?")}
+        <span class="pill pill-${esc(track?.colorName || "yellow")}">${esc(
+          (track?.name || "").toUpperCase()
+        )}</span></span>
+      <span class="now-elapsed" data-task-elapsed>${fmtElapsed(
+        Date.now() - state.active.startedAt
+      )}</span>
+      <button class="btn btn-red" data-action="toggle-timer"
+        data-track="${state.active.trackId}" data-task="${state.active.taskId}">⏹ Stop</button>
+    </div>`;
+  }
+
+  const rows = todayLogs.length
+    ? todayLogs
+        .map((l) => {
+          const track = findTrack(l.trackId);
+          return `<li class="log-entry">
+            <span class="log-when">${fmtTime(l.start)}–${fmtTime(l.end)}</span>
+            <span class="log-task">${l.manual ? "✍️ " : ""}${esc(l.task)}
+              <span class="pill pill-${esc(track?.colorName || "yellow")}">${esc(
+                track?.emoji || ""
+              )}</span>${l.note ? ` <span class="log-note">— ${esc(l.note)}</span>` : ""}</span>
+            <span class="log-mins">${fmtMins(l.minutes)}</span>
+            <button class="log-del" title="Delete entry" data-action="del-log"
+              data-log="${l.id}">✕</button>
+          </li>`;
+        })
+        .join("")
+    : `<li class="log-entry"><span class="log-task" style="color:var(--muted)">Nothing logged yet — tap any task to start the clock, or log time below ⏱</span></li>`;
+
+  const trackOptions = state.tracks
+    .map((t) => `<option value="${t.id}">${t.emoji} ${esc(t.name)}</option>`)
+    .join("");
+
+  el.innerHTML = `<div class="timelog-card">
+    <div class="timelog-head">
+      <h2>⏱ Time log — today</h2>
+      <span class="timelog-total">${fmtMins(total)} on the books</span>
+    </div>
+    ${nowRow}
+    <ul class="log-entries">${rows}</ul>
+    <form class="manual-entry" id="global-manual">
+      <select name="track" aria-label="Track">${trackOptions}</select>
+      <input type="text" name="task" placeholder="What did you do?" required />
+      <input type="number" name="minutes" placeholder="mins" min="1" step="1" required />
+      <input type="text" name="note" placeholder="note (optional)" />
+      <button class="btn btn-green" type="submit">＋ Log it</button>
+    </form>
+  </div>`;
+}
+
 function staleClass(task) {
   if (task.done) return "";
   const days = (Date.now() - (task.lastTouched || task.createdAt)) / 86400000;
@@ -717,6 +779,7 @@ function render() {
   renderFrog();
   renderAgenda();
   renderSummary();
+  renderTimeLog();
   renderTracks();
   renderHistory();
 }
@@ -806,8 +869,10 @@ function tick() {
   const frogCount = $("#frog-count");
   if (frogCount) frogCount.textContent = frogCountdownText();
   if (state.active) {
-    const el = $("[data-task-elapsed]");
-    if (el) el.textContent = fmtElapsed(Date.now() - state.active.startedAt);
+    const elapsed = fmtElapsed(Date.now() - state.active.startedAt);
+    document
+      .querySelectorAll("[data-task-elapsed]")
+      .forEach((el) => (el.textContent = elapsed));
   }
   tickPomodoro();
   updateCountdownDisplay();
@@ -1096,6 +1161,16 @@ document.addEventListener("submit", (e) => {
       manualForm.elements.task.value,
       parseFloat(manualForm.elements.minutes.value),
       manualForm.elements.note.value
+    );
+    return;
+  }
+  if (e.target.id === "global-manual") {
+    e.preventDefault();
+    addManualLog(
+      e.target.elements.track.value,
+      e.target.elements.task.value,
+      parseFloat(e.target.elements.minutes.value),
+      e.target.elements.note.value
     );
     return;
   }

@@ -921,6 +921,89 @@ button:focus-visible {
   font-family: "Space Grotesk", sans-serif;
 }
 
+/* ── Global time log (top of page) ───────────────────────────────────── */
+.timelog-card {
+  background: var(--card-dark);
+  border-radius: var(--radius);
+  border-left: 4px solid var(--yellow);
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  color: #fff;
+}
+
+.timelog-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.timelog-head h2 {
+  margin: 0 0 6px;
+  font-size: 14px;
+  color: var(--yellow);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.timelog-total {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 700;
+  color: var(--green);
+  font-size: 13px;
+}
+
+.timelog-card .log-entries {
+  max-height: 240px;
+}
+
+.now-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--panel-dark);
+  border: 1.5px solid var(--yellow);
+  border-radius: 12px;
+  padding: 8px 12px;
+  margin: 6px 0 8px;
+  flex-wrap: wrap;
+}
+
+.now-live {
+  color: var(--green);
+  animation: pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+.now-task {
+  flex: 1;
+  min-width: 140px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.now-elapsed {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--yellow);
+}
+
+.timelog-card select {
+  background: var(--panel-dark);
+  border: 1.5px solid #48484a;
+  border-radius: 9px;
+  color: #fff;
+  padding: 7px 8px;
+  flex: 1 1 110px;
+  min-width: 0;
+}
+
 /* ── History ─────────────────────────────────────────────────────────── */
 .history-card {
   background: var(--card-dark);
