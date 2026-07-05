@@ -129,6 +129,7 @@ export function seedState() {
     alerts: {
       frogAlertDate: null, // last date the frog alert fired
       lastIdleAlertAt: null, // last idle alert timestamp
+      daySummaryDate: null, // last date the end-of-day receipt was sent
     },
   };
 }

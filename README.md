@@ -56,6 +56,12 @@ the second it opens.
   procrastination triggers below.
 - **Stale tasks** → untouched 2+ days get an amber glow; 4+ days turns red
   with 😬.
+- **Daily quote** → picked to fit the moment (morning start, "nothing logged
+  yet" nudge, mid-grind, frog-conquered victory lap, evening wind-down) and
+  rotates by date. ↻ deals another if today's doesn't land.
+- **🔥 Streak** → consecutive days with at least one timer session or
+  check-off. Today never breaks the streak mid-day — it just isn't banked
+  until something happens. Don't break the chain.
 
 ## Hermes webhook setup
 
@@ -74,8 +80,10 @@ Events sent (all include an ISO `timestamp`):
 | `task_started` | `{ track, task, timestamp }` |
 | `task_stopped` | `{ track, task, minutes, timestamp }` |
 | `task_completed` | `{ track, task, timestamp }` |
+| `task_completed` | also carries `frog: true/false` so agents can celebrate accordingly |
 | `procrastination_alert` | `{ reason: "frog_not_started", track, task, deadline_hour, timestamp }` — frog untouched by 1 PM (configurable in Settings state) |
 | `procrastination_alert` | `{ reason: "idle_during_work_hours", minutes_idle, timestamp }` — no timer activity for 90+ min between 9 AM–6 PM |
+| `day_summary` | `{ minutes_focused, tasks_done, earnings, streak, timestamp }` — fires once when the workday ends (6 PM), if anything was logged and the tab is open |
 
 Webhook failures are **silent** — the dashboard never breaks when the VPS is
 down. The ⚪/🟢/🔴 dot next to the title shows the last ping's status
@@ -83,6 +91,44 @@ down. The ⚪/🟢/🔴 dot next to the title shows the last ping's status
 
 If `config.js` is missing (or still has the example URL), webhook sends are
 skipped entirely.
+
+## Telegram accountability bots 🤖
+
+The same events can go straight to Telegram as human-readable messages
+("✅ Checked off: Smoke Ranch taxes (Real Estate)"), so the agent bots see
+every check-off and lock-in the moment it happens — no Hermes required for
+this channel.
+
+1. Create a bot with [@BotFather](https://t.me/BotFather) (or reuse one of
+   the agent bots' tokens) → copy the token into `TELEGRAM_BOT_TOKEN` in
+   `config.js`.
+2. Set `TELEGRAM_CHAT_ID`:
+   - your own id (message [@userinfobot](https://t.me/userinfobot)), or
+   - a **group chat id** — add the bot to the group where your agent bots
+     live and every ping lands where they can all react to it.
+3. That's it. Sends are fail-silent and share the status dot with Hermes.
+
+⚠️ The bot token controls the bot — it lives only in the gitignored
+`config.js`, never in the repo.
+
+## Google Calendar & email
+
+The dashboard is a client-side app, so it can't log into Google by itself —
+the clean pattern is to let **Hermes be the bridge**, since it already has
+server-side credentials and receives every dashboard event:
+
+- **Calendar in**: Hermes exposes e.g. `GET /agenda` returning today's
+  events as JSON; a dashboard widget renders them next to the tracks (and a
+  calendar block like "💼 Job Hunt — 2hr" can map to a track timer).
+- **Calendar out**: on `task_completed` / `day_summary`, Hermes writes a
+  "what actually happened" event into a Receipts calendar.
+- **Email**: Hermes turns `day_summary` into a nightly digest email, and can
+  scan the inbox for things that should become tasks (tax bills, camp
+  signup confirmations) and post them back.
+
+None of that is wired up yet — it needs endpoints on the Hermes side first.
+(Claude sessions connected to the Google account can also read the calendar
+and email directly when asked, without any of this plumbing.)
 
 > Deploying a production build? `config.js` is loaded at runtime from the site
 > root, so copy your `config.js` into `dist/` after `npm run build`.
@@ -109,7 +155,8 @@ config.example.js   template for the gitignored config.js
 src/
   main.js           app logic: timers, tasks, frog, alerts, rendering
   store.js          localStorage persistence, seed data, export/import
-  webhook.js        Hermes event sender (fail-silent) + status dot
+  webhook.js        Hermes + Telegram event senders (fail-silent) + status dot
+  quotes.js         context-aware daily quotes (morning/stuck/grind/victory/evening)
   confetti.js       zero-dependency confetti for frog completion 🎉
   styles.css        the checklist look: Space Grotesk/DM Sans, #f0ede8, dark cards
 ```

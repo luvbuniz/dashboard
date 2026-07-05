@@ -10,12 +10,14 @@ import {
 } from "./store.js";
 import { sendEvent, onPingStatus } from "./webhook.js";
 import { confettiBurst } from "./confetti.js";
+import { quoteForNow } from "./quotes.js";
 
 // ── Runtime state ──────────────────────────────────────────────────────────
 let state = load();
 const sessionStart = Date.now();
 const openLogs = new Set(); // track ids with the log panel expanded
 let editingTaskId = null;
+let quoteOffset = 0; // bumped by the ↻ button when today's quote doesn't land
 
 const pomo = {
   total: 45 * 60, // 45-minute blocks
@@ -115,6 +117,29 @@ function frogInfo() {
   return { track, task, startedToday };
 }
 
+function dayHadActivity(startMs) {
+  const end = startMs + 86400000;
+  if (state.logs.some((l) => l.end >= startMs && l.end < end)) return true;
+  return state.tracks.some((tr) =>
+    tr.tasks.some((t) => t.doneAt && t.doneAt >= startMs && t.doneAt < end)
+  );
+}
+
+// 🔥 consecutive days with at least one timer session or check-off.
+// Today doesn't break the streak until it's over — it just isn't counted
+// until something happens.
+function computeStreak() {
+  let d = dayStart();
+  const todayActive = dayHadActivity(d);
+  if (!todayActive) d -= 86400000;
+  let streak = 0;
+  while (dayHadActivity(d) && streak < 3650) {
+    streak++;
+    d -= 86400000;
+  }
+  return { streak, todayActive };
+}
+
 function frogCountdownText() {
   const end = new Date();
   end.setHours(state.settings.workEndHour, 0, 0, 0);
@@ -185,7 +210,11 @@ function toggleDone(trackId, taskId, done) {
   task.doneAt = done ? Date.now() : null;
   task.lastTouched = Date.now();
   if (done) {
-    sendEvent("task_completed", { track: track.name, task: task.text });
+    sendEvent("task_completed", {
+      track: track.name,
+      task: task.text,
+      frog: state.frog?.taskId === taskId,
+    });
     if (state.frog?.taskId === taskId && state.frogCelebrated !== todayKey()) {
       state.frogCelebrated = todayKey();
       confettiBurst();
@@ -314,8 +343,29 @@ function renderFrog() {
   </div>`;
 }
 
+function renderQuote() {
+  const info = frogInfo();
+  const q = quoteForNow({
+    frogDone: !!info?.task.done,
+    minutesToday: todayTotals().total,
+    offset: quoteOffset,
+  });
+  $("#quote").innerHTML = `<div class="quote-card">
+    <span class="quote-text">“${esc(q.text)}”</span>
+    ${q.by ? `<span class="quote-by">— ${esc(q.by)}</span>` : ""}
+    <button class="quote-shuffle" data-action="quote-shuffle" title="Another one">↻</button>
+  </div>`;
+}
+
 function renderSummary() {
   const { total, perTrack, earnings } = todayTotals();
+  const { streak, todayActive } = computeStreak();
+  const streakLine =
+    streak === 0
+      ? "🔥 Start a streak: one timer or one check-off makes today count."
+      : todayActive
+        ? `🔥 ${streak}-day streak — today's already in the books.`
+        : `🔥 ${streak}-day streak on the line — do one thing to keep it alive.`;
   const startOfToday = dayStart();
   let doneToday = 0;
   let open = 0;
@@ -358,6 +408,7 @@ function renderSummary() {
     </div>
     <div class="track-chips">${chips}</div>
     <div class="progress-outer"><div class="progress-inner" style="width:${pct}%"></div></div>
+    <div class="streak-line ${todayActive ? "streak-safe" : "streak-risk"}">${streakLine}</div>
   </div>`;
 }
 
@@ -594,6 +645,7 @@ function renderWidgets() {
 }
 
 function render() {
+  renderQuote();
   renderFrog();
   renderSummary();
   renderTracks();
@@ -729,6 +781,28 @@ function checkProcrastination() {
       save(state);
     }
   }
+
+  // 3) End-of-day receipt — once, when the workday closes (needs the tab open)
+  if (hour >= workEndHour && state.alerts.daySummaryDate !== today) {
+    const { total, earnings } = todayTotals();
+    const doneCount = state.tracks.reduce(
+      (n, tr) =>
+        n + tr.tasks.filter((t) => t.doneAt && t.doneAt >= dayStart()).length,
+      0
+    );
+    if (total > 0 || doneCount > 0) {
+      state.alerts.daySummaryDate = today;
+      sendEvent("day_summary", {
+        minutes_focused: Math.round(total),
+        tasks_done: doneCount,
+        earnings: Math.round(earnings),
+        streak: computeStreak().streak,
+      });
+      save(state);
+    }
+  }
+
+  renderQuote(); // quote category can shift as the day moves (morning → grind → evening)
 }
 
 // ── Events ─────────────────────────────────────────────────────────────────
@@ -837,6 +911,10 @@ document.addEventListener("click", (e) => {
       state.countdown = null;
       save(state);
       renderWidgets();
+      break;
+    case "quote-shuffle":
+      quoteOffset++;
+      renderQuote();
       break;
     case "reset-seed":
       if (confirm("Reset EVERYTHING to the original seeded tasks? Logs will be wiped. Export first if you want a backup!")) {
