@@ -75,7 +75,10 @@ Notes:
 - **Today's receipts** bar → total focused minutes, per-track chips, estimated
   earnings, and a done-today progress bar.
 - **📊 History** → last 14 days of focused minutes.
-- **🍅 Pomodoro** → 45-minute blocks with a chime.
+- **🍅 Pomodoro** → adjustable work/break lengths (default 25/5) set right
+  in the widget; the break countdown auto-starts when a block ends, with a
+  chime at each transition. The countdown also lives in the browser tab
+  title (🍅 focus / ☕ break).
 - **⏳ Countdown** → set a label + time ("pickup" at 4:00 PM).
 - **🔔 Enable nudges** → optional browser notifications for the
   procrastination triggers below.

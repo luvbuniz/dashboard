@@ -26,12 +26,14 @@ let connOpen = false; // ⚙️ agent-connection panel visibility
 let syncStatus = null; // {ok, detail, at} — last pull result, shown in Data widget
 
 const pomo = {
-  total: 45 * 60, // 45-minute blocks
-  remaining: 45 * 60,
+  mode: "work", // "work" | "break" — break auto-starts when a block ends
+  remaining: 0, // seconds; initialized from settings after load
   running: false,
   endAt: null,
-  chimed: false,
 };
+
+const pomoLen = (mode = pomo.mode) =>
+  (mode === "work" ? state.settings.pomoWork || 25 : state.settings.pomoBreak || 5) * 60;
 
 // ── Small helpers ──────────────────────────────────────────────────────────
 const $ = (sel, el = document) => el.querySelector(sel);
@@ -884,15 +886,24 @@ function renderWidgets() {
   const cd = state.countdown;
   $("#widgets").innerHTML = `
     <div class="widget">
-      <h3>🍅 Pomodoro · 45 min</h3>
-      <div class="pomo-time ${pomo.running ? "running" : ""}" id="pomo-display">${fmtElapsed(
-        pomo.remaining * 1000
-      )}</div>
+      <h3>${pomo.mode === "break" ? "☕ Break" : "🍅 Pomodoro"}${
+        pomo.running ? (pomo.mode === "break" ? " · breathe" : " · focus") : ""
+      }</h3>
+      <div class="pomo-time ${pomo.running ? "running" : ""} ${
+        pomo.mode === "break" ? "on-break" : ""
+      }" id="pomo-display">${fmtElapsed(pomo.remaining * 1000)}</div>
       <div class="widget-row">
         <button class="btn btn-green" data-action="pomo-toggle">${
           pomo.running ? "⏸ Pause" : "▶️ Start"
         }</button>
         <button class="btn" data-action="pomo-reset">↺ Reset</button>
+      </div>
+      <div class="widget-row pomo-config">
+        <label>work <input type="number" min="5" max="120" step="5"
+          value="${state.settings.pomoWork}" data-pomo-len="work" /></label>
+        <label>break <input type="number" min="1" max="60" step="1"
+          value="${state.settings.pomoBreak}" data-pomo-len="break" /></label>
+        <span>min</span>
       </div>
     </div>
     <div class="widget">
@@ -1039,11 +1050,24 @@ function tickPomodoro() {
   pomo.remaining = Math.max(0, Math.round((pomo.endAt - Date.now()) / 1000));
   const el = $("#pomo-display");
   if (el) el.textContent = fmtElapsed(pomo.remaining * 1000);
-  if (pomo.remaining === 0 && !pomo.chimed) {
-    pomo.chimed = true;
-    pomo.running = false;
+  if (pomo.remaining === 0) {
     chime();
-    notify("🍅 Pomodoro done!", "45 minutes in the books. Stretch, water, next block.");
+    if (pomo.mode === "work") {
+      // block done → break starts by itself (breaks you skip aren't breaks)
+      notify(
+        "🍅 Block done!",
+        `${state.settings.pomoWork} focused minutes in the books. ${state.settings.pomoBreak}-min break starts now — stand up.`
+      );
+      pomo.mode = "break";
+      pomo.remaining = pomoLen("break");
+      pomo.endAt = Date.now() + pomo.remaining * 1000;
+      pomo.running = true;
+    } else {
+      notify("☕ Break's over", "Fresh block ready when you are — hit Start.");
+      pomo.mode = "work";
+      pomo.remaining = pomoLen("work");
+      pomo.running = false;
+    }
     renderWidgets();
   }
 }
@@ -1053,9 +1077,7 @@ const DEFAULT_TITLE = "🚀 Amy's Command Center";
 function updateTabTitle() {
   let t = DEFAULT_TITLE;
   if (pomo.running) {
-    t = `${fmtElapsed(pomo.remaining * 1000)} 🍅`;
-  } else if (pomo.chimed && pomo.remaining === 0) {
-    t = "🍅 DONE — stretch!";
+    t = `${fmtElapsed(pomo.remaining * 1000)} ${pomo.mode === "break" ? "☕" : "🍅"}`;
   } else if (state.active) {
     t = `▶ ${fmtElapsed(Date.now() - state.active.startedAt)} ${DEFAULT_TITLE}`;
   }
@@ -1253,17 +1275,16 @@ document.addEventListener("click", (e) => {
         pomo.remaining = Math.max(0, Math.round((pomo.endAt - Date.now()) / 1000));
         pomo.running = false;
       } else {
-        if (pomo.remaining === 0) pomo.remaining = pomo.total;
+        if (pomo.remaining === 0) pomo.remaining = pomoLen();
         pomo.endAt = Date.now() + pomo.remaining * 1000;
         pomo.running = true;
-        pomo.chimed = false;
       }
       renderWidgets();
       break;
     case "pomo-reset":
       pomo.running = false;
-      pomo.remaining = pomo.total;
-      pomo.chimed = false;
+      pomo.mode = "work";
+      pomo.remaining = pomoLen("work");
       renderWidgets();
       break;
     case "cd-set": {
@@ -1336,6 +1357,19 @@ document.addEventListener("change", (e) => {
     if (ev) {
       ev.done = calCheck.checked;
       commit();
+    }
+    return;
+  }
+  const pomoLenInput = e.target.closest("[data-pomo-len]");
+  if (pomoLenInput) {
+    const kind = pomoLenInput.dataset.pomoLen;
+    const val = Math.max(1, Math.min(180, parseInt(pomoLenInput.value) || 0));
+    if (kind === "work") state.settings.pomoWork = val;
+    else state.settings.pomoBreak = val;
+    save(state);
+    if (!pomo.running && pomo.mode === kind) {
+      pomo.remaining = pomoLen(kind);
+      renderWidgets();
     }
     return;
   }
@@ -1476,6 +1510,7 @@ function applyTheme() {
 }
 
 // ── Boot ───────────────────────────────────────────────────────────────────
+pomo.remaining = pomoLen("work");
 applyTheme();
 try {
   $("#build-stamp").textContent = `build ${__BUILD_ID__}`;

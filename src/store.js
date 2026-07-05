@@ -162,6 +162,8 @@ export function seedState() {
       workEndHour: 18,
       nudges: false, // browser notifications opt-in
       theme: "light", // "light" | "dark" — 🌙 button in the top bar
+      pomoWork: 25, // minutes of focus per pomodoro block (adjustable in widget)
+      pomoBreak: 5, // minutes of break, auto-starts when a block ends
     },
     alerts: {
       frogAlertDate: null, // last date the frog alert fired
