@@ -222,6 +222,79 @@ button:focus-visible {
   font-size: 14px;
 }
 
+/* ── Agent message + agenda (from Hermes) ────────────────────────────── */
+.agent-msg {
+  border: 2px solid var(--purple);
+  background: linear-gradient(135deg, #1c1c1e, #2a2140);
+  color: #fff;
+  border-radius: 14px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 14px;
+}
+
+.agent-msg-text {
+  flex: 1;
+}
+
+.agent-msg .icon-btn {
+  color: var(--muted);
+  opacity: 0.8;
+}
+
+.agenda-card {
+  background: var(--card-dark);
+  border-left: 4px solid var(--blue);
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  color: #fff;
+}
+
+.agenda-card h3 {
+  margin: 0 0 8px;
+  font-size: 13px;
+  color: var(--blue);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.agenda-when {
+  color: var(--muted);
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 400;
+  font-size: 11.5px;
+}
+
+.agenda-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.agenda-list li {
+  padding: 4px 0;
+  font-size: 13.5px;
+  border-bottom: 1px solid #3a3a3c;
+}
+
+.agenda-list li:last-child {
+  border-bottom: none;
+}
+
+.agenda-time {
+  display: inline-block;
+  min-width: 72px;
+  color: var(--yellow);
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 600;
+  font-size: 12.5px;
+}
+
 /* ── Today summary (green wins banner) ───────────────────────────────── */
 .summary-card {
   background: var(--card-dark);

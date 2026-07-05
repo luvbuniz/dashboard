@@ -13,6 +13,13 @@ window.HERMES_CONFIG = {
   // day_summary.
   HERMES_WEBHOOK_URL: "https://your-vps.example.com/hermes/webhook",
 
+  // Optional: inbound sync — the dashboard GETs this URL (on load, every
+  // 5 min, and via the 🔄 button) and merges what the agent published:
+  // { agenda: [{time,title}], tasks: [{id,track,text,badge?}], message }
+  // The endpoint must send Access-Control-Allow-Origin: * (CORS).
+  // See README "Agent in the loop" for the full contract.
+  HERMES_PULL_URL: "",
+
   // Optional: Telegram accountability pings (same events, human-readable).
   // 1. Make a bot with @BotFather → copy the token.
   // 2. Get your chat id: message @userinfobot, or add the bot to the group

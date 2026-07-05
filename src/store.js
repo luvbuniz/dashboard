@@ -120,6 +120,9 @@ export function seedState() {
     active: null, // {trackId, taskId, startedAt}
     lastActivityAt: null, // last timer start/stop, for idle detection
     countdown: null, // {label, at} — user-set countdown widget
+    agenda: null, // {items:[{time,title}], fetchedAt} — pulled from the agent
+    agentMessage: null, // {text, dismissed} — note from the agent
+    inboxSeen: [], // agent task ids already merged (dedupe)
     settings: {
       frogDeadlineHour: 13, // procrastination alert if frog untouched by 1pm
       workStartHour: 9,
@@ -145,6 +148,7 @@ export function load() {
     state.settings = { ...fresh.settings, ...(state.settings || {}) };
     state.alerts = { ...fresh.alerts, ...(state.alerts || {}) };
     if (!Array.isArray(state.logs)) state.logs = [];
+    if (!Array.isArray(state.inboxSeen)) state.inboxSeen = [];
     return state;
   } catch {
     return seedState();

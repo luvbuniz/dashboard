@@ -136,6 +136,48 @@ this channel.
 ⚠️ The bot token controls the bot — it lives only in the gitignored
 `config.js`, never in the repo.
 
+## Agent in the loop 🤖 (two-way)
+
+Outbound is the webhook/Telegram events above. **Inbound** lets the agent
+put things ON the dashboard — calendar events, tasks you told it about and
+forgot, or a note. No Google keys in the dashboard: the agent already has
+calendar access, it just publishes a JSON snapshot the dashboard reads.
+
+Set `HERMES_PULL_URL` in `config.js`. The dashboard GETs it on load, every
+5 minutes, and when you hit **🔄 Sync agent**. Expected response (every
+field optional):
+
+```json
+{
+  "agenda": [
+    { "time": "9:00 AM",  "title": "☕ Roots — Root and Seed" },
+    { "time": "10:00 AM", "title": "💼 Job Hunt — 2hr session" }
+  ],
+  "tasks": [
+    {
+      "id": "reminder-2026-07-06-library",
+      "track": "kids",
+      "text": "Return library books before the swap",
+      "badge": { "text": "FROM HERMES", "color": "blue" }
+    }
+  ],
+  "message": "You told me Thursday is the Aldi run — list is in your email."
+}
+```
+
+- `agenda` renders as a "📅 Today" card under the frog banner — the agent
+  can rebuild it from Google Calendar every morning.
+- `tasks` are merged into tracks and **deduped by `id`** — the agent can
+  serve the same list all day and nothing duplicates. `track` matches a
+  track id (`money`, `jobhunt`, `stackadoo`, `kids`, `realestate`), name,
+  or emoji; unmatched tasks land in the first track. Injected tasks get a
+  purple FROM AGENT pill unless a badge is provided.
+- `message` shows as a dismissible 🤖 banner; a new message re-appears.
+
+Requirements on the agent side: serve JSON over HTTPS with
+`Access-Control-Allow-Origin: *` (it's read by a browser). A static file
+the agent rewrites on a schedule is enough — no server logic needed.
+
 ## Google Calendar & email
 
 The dashboard is a client-side app, so it can't log into Google by itself —

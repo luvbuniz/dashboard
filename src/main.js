@@ -11,6 +11,7 @@ import {
 import { sendEvent, onPingStatus } from "./webhook.js";
 import { confettiBurst } from "./confetti.js";
 import { quoteForNow } from "./quotes.js";
+import { pullFromAgent } from "./sync.js";
 
 // ── Runtime state ──────────────────────────────────────────────────────────
 let state = load();
@@ -357,6 +358,34 @@ function renderQuote() {
   </div>`;
 }
 
+function renderAgenda() {
+  const el = $("#agenda");
+  const msg =
+    state.agentMessage && !state.agentMessage.dismissed
+      ? `<div class="agent-msg">🤖
+          <span class="agent-msg-text">${esc(state.agentMessage.text)}</span>
+          <button class="icon-btn" data-action="dismiss-agent-msg" title="Dismiss">✕</button>
+        </div>`
+      : "";
+  const a = state.agenda;
+  const card =
+    a?.items?.length
+      ? `<div class="agenda-card">
+          <h3>📅 Today <span class="agenda-when">via Hermes · synced ${fmtTime(
+            a.fetchedAt
+          )}</span></h3>
+          <ul class="agenda-list">${a.items
+            .map(
+              (e) => `<li><span class="agenda-time">${esc(e.time)}</span>${esc(
+                e.title
+              )}</li>`
+            )
+            .join("")}</ul>
+        </div>`
+      : "";
+  el.innerHTML = msg + card;
+}
+
 function renderSummary() {
   const { total, perTrack, earnings } = todayTotals();
   const { streak, todayActive } = computeStreak();
@@ -639,6 +668,7 @@ function renderWidgets() {
       <button class="btn" data-action="notif-toggle">${
         state.settings.nudges ? "🔔 Nudges on" : "🔕 Enable nudges"
       }</button>
+      <button class="btn" data-action="agent-sync" title="Pull agenda/tasks from your agent now">🔄 Sync agent</button>
       <button class="btn btn-red" data-action="reset-seed" title="Restore the original seeded tasks (logs are wiped too)">🧹 Reset</button>
     </div>`;
   updateCountdownDisplay();
@@ -647,9 +677,16 @@ function renderWidgets() {
 function render() {
   renderQuote();
   renderFrog();
+  renderAgenda();
   renderSummary();
   renderTracks();
   renderHistory();
+}
+
+function syncWithAgent() {
+  pullFromAgent(state).then((changed) => {
+    if (changed) commit();
+  });
 }
 
 // ── Live ticking (targeted updates — no full re-render) ────────────────────
@@ -916,6 +953,18 @@ document.addEventListener("click", (e) => {
       quoteOffset++;
       renderQuote();
       break;
+    case "agent-sync":
+      if (!window.HERMES_CONFIG?.HERMES_PULL_URL) {
+        alert("Set HERMES_PULL_URL in config.js so the dashboard knows where your agent publishes its data 🤖 (see README → Agent in the loop)");
+        break;
+      }
+      syncWithAgent();
+      break;
+    case "dismiss-agent-msg":
+      if (state.agentMessage) state.agentMessage.dismissed = true;
+      save(state);
+      renderAgenda();
+      break;
     case "reset-seed":
       if (confirm("Reset EVERYTHING to the original seeded tasks? Logs will be wiped. Export first if you want a backup!")) {
         state = seedState();
@@ -1019,3 +1068,5 @@ updateClock();
 setInterval(tick, 1000);
 setInterval(checkProcrastination, 30000);
 checkProcrastination();
+syncWithAgent();
+setInterval(syncWithAgent, 5 * 60000);
