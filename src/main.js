@@ -100,15 +100,22 @@ function logsForDay(ts = Date.now()) {
 function todayTotals() {
   const logs = logsForDay();
   const perTrack = {};
+  const perTrackEarnings = {};
   let total = 0;
   let earnings = 0;
   for (const l of logs) {
     perTrack[l.trackId] = (perTrack[l.trackId] || 0) + l.minutes;
     total += l.minutes;
-    const rate = findTrack(l.trackId)?.rate || 0;
-    earnings += (l.minutes / 60) * rate;
+    // unpaid sessions (assessments, training, spec work) count as focused
+    // minutes but never as money
+    if (!l.unpaid) {
+      const rate = findTrack(l.trackId)?.rate || 0;
+      const amt = (l.minutes / 60) * rate;
+      earnings += amt;
+      perTrackEarnings[l.trackId] = (perTrackEarnings[l.trackId] || 0) + amt;
+    }
   }
-  return { total, perTrack, earnings };
+  return { total, perTrack, earnings, perTrackEarnings };
 }
 
 function frogInfo() {
@@ -547,12 +554,22 @@ function renderTimeLog() {
     ? todayLogs
         .map((l) => {
           const track = findTrack(l.trackId);
+          const payToggle = track?.rate
+            ? `<button class="pay-toggle ${l.unpaid ? "is-unpaid" : ""}"
+                title="${
+                  l.unpaid
+                    ? "Unpaid (assessment/training) — not counted in earnings. Tap to count it."
+                    : "Counted in earnings at $" + track.rate + "/hr. Tap to mark unpaid."
+                }"
+                data-action="toggle-paid" data-log="${l.id}">${l.unpaid ? "🚫" : "💵"}</button>`
+            : "";
           return `<li class="log-entry">
             <span class="log-when">${fmtTime(l.start)}–${fmtTime(l.end)}</span>
             <span class="log-task">${l.manual ? "✍️ " : ""}${esc(l.task)}
               <span class="pill pill-${esc(track?.colorName || "yellow")}">${esc(
                 track?.emoji || ""
               )}</span>${l.note ? ` <span class="log-note">— ${esc(l.note)}</span>` : ""}</span>
+            ${payToggle}
             <span class="log-mins">${fmtMins(l.minutes)}</span>
             <button class="log-del" title="Delete entry" data-action="del-log"
               data-log="${l.id}">✕</button>
@@ -643,7 +660,9 @@ function logPanelHTML(track) {
     .filter((l) => l.trackId === track.id)
     .sort((a, b) => b.end - a.end)
     .slice(0, 40);
-  const todayMins = todayTotals().perTrack[track.id] || 0;
+  const totals = todayTotals();
+  const todayMins = totals.perTrack[track.id] || 0;
+  const todayEarn = totals.perTrackEarnings[track.id] || 0;
 
   const entries = logs.length
     ? logs
@@ -666,7 +685,7 @@ function logPanelHTML(track) {
 
   return `<div class="log-panel">
     <div class="log-track-total">Today: ${fmtMins(todayMins)}${
-      track.rate ? ` · ~${fmtMoney((todayMins / 60) * track.rate)}` : ""
+      track.rate ? ` · ~${fmtMoney(todayEarn)}` : ""
     }</div>
     <ul class="log-entries">${entries}</ul>
     <form class="manual-entry" data-manual-track="${track.id}">
@@ -1169,6 +1188,14 @@ document.addEventListener("click", (e) => {
     case "del-log":
       deleteLog(logId);
       break;
+    case "toggle-paid": {
+      const log = state.logs.find((l) => l.id === logId);
+      if (log) {
+        log.unpaid = !log.unpaid;
+        commit();
+      }
+      break;
+    }
     case "toggle-log":
       openLogs.has(trackId) ? openLogs.delete(trackId) : openLogs.add(trackId);
       render();

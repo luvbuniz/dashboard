@@ -865,6 +865,18 @@ button:focus-visible {
   padding: 0 2px;
 }
 
+.pay-toggle {
+  background: none;
+  border: none;
+  font-size: 12px;
+  padding: 0 2px;
+  line-height: 1;
+}
+
+.pay-toggle.is-unpaid {
+  opacity: 0.6;
+}
+
 .log-del:hover {
   color: var(--red);
 }
