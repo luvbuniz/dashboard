@@ -25,6 +25,31 @@ npm run preview    # serve the built app locally
 The app ships pre-seeded with the 5 tracks and starter tasks, so it's useful
 the second it opens.
 
+## Seeing it online (GitHub Pages)
+
+Every push auto-deploys to GitHub Pages via
+`.github/workflows/deploy.yml` — the live dashboard is at:
+
+**https://luvbuniz.github.io/dashboard/**
+
+On the phone: open that URL in Chrome → menu ⋮ → **Add to Home screen** and
+it behaves like an app.
+
+Notes:
+
+- Data still lives in each device's localStorage — the URL is shared, the
+  data isn't. Use Export/Import JSON to sync devices.
+- To ship a `config.js` with the site, add a repo Actions secret named
+  `DASHBOARD_CONFIG` containing the file's contents (Settings → Secrets and
+  variables → Actions). ⚠️ On a public Pages site that file is
+  world-readable — fine for a webhook URL you consider low-stakes, **not**
+  for the Telegram bot token. Without it the dashboard works normally,
+  minus outbound pings.
+- GitHub Pages on a **private** repo requires a paid GitHub plan. If you
+  make this repo private on the free plan, host the `dist/` build on the
+  Hermes VPS instead (any static file server works; you can then also
+  password-protect it and safely include config.js).
+
 ## The 5 tracks
 
 | Track | Color | What it's for |
