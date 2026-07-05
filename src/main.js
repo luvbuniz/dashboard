@@ -1048,6 +1048,20 @@ function tickPomodoro() {
   }
 }
 
+// Tab title: see the pomodoro (or running session) from another tab.
+const DEFAULT_TITLE = "🚀 Amy's Command Center";
+function updateTabTitle() {
+  let t = DEFAULT_TITLE;
+  if (pomo.running) {
+    t = `${fmtElapsed(pomo.remaining * 1000)} 🍅`;
+  } else if (pomo.chimed && pomo.remaining === 0) {
+    t = "🍅 DONE — stretch!";
+  } else if (state.active) {
+    t = `▶ ${fmtElapsed(Date.now() - state.active.startedAt)} ${DEFAULT_TITLE}`;
+  }
+  if (document.title !== t) document.title = t;
+}
+
 function tick() {
   updateClock();
   const frogCount = $("#frog-count");
@@ -1060,6 +1074,7 @@ function tick() {
   }
   tickPomodoro();
   updateCountdownDisplay();
+  updateTabTitle();
 }
 
 // ── Chime (WebAudio, no assets) ────────────────────────────────────────────
@@ -1471,6 +1486,19 @@ render();
 renderWidgets();
 updateClock();
 setInterval(tick, 1000);
+// Background tabs get their timers throttled by Chrome after a few minutes,
+// which would freeze the tab-title countdown mid-assessment. Worker timers
+// aren't throttled, so a tiny worker heartbeat keeps ticks flowing; tick()
+// recomputes everything from timestamps, so extra ticks are harmless.
+try {
+  const workerSrc = "setInterval(() => postMessage(1), 1000);";
+  const heartbeat = new Worker(
+    URL.createObjectURL(new Blob([workerSrc], { type: "text/javascript" }))
+  );
+  heartbeat.onmessage = tick;
+} catch {
+  /* worker unavailable — main-thread interval still runs */
+}
 setInterval(checkProcrastination, 30000);
 checkProcrastination();
 syncWithAgent();
