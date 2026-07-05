@@ -1,0 +1,15 @@
+# dependencies
+node_modules/
+
+# build output
+dist/
+
+# local config (contains Hermes webhook URL — never commit)
+config.js
+public/config.js
+
+# misc
+.DS_Store
+*.local
+.vite/
+npm-debug.log*

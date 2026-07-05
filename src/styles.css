@@ -1,0 +1,826 @@
+/* ── Amy's Command Center — matches the daily-checklist style ───────────── */
+:root {
+  --bg: #f0ede8;
+  --card-dark: #1c1c1e;
+  --panel-dark: #2c2c2e;
+  --yellow: #ffd60a;
+  --green: #30d158;
+  --red: #ff453a;
+  --blue: #64d2ff;
+  --purple: #a78bfa;
+  --ink: #1c1c1e;
+  --muted: #8e8e93;
+  --radius: 16px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "DM Sans", system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+h1,
+h2,
+h3,
+.live-clock,
+.pill,
+.stat-num {
+  font-family: "Space Grotesk", "DM Sans", sans-serif;
+}
+
+#app {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 16px 14px 48px;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+input,
+select {
+  font-family: inherit;
+  font-size: 14px;
+}
+
+input[type="checkbox"] {
+  accent-color: var(--yellow);
+  width: 19px;
+  height: 19px;
+  flex: none;
+  cursor: pointer;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="time"] {
+  background: #fff;
+  border: 1.5px solid #d9d4cc;
+  border-radius: 9px;
+  padding: 7px 10px;
+  color: var(--ink);
+}
+
+input:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--yellow);
+  outline-offset: 1px;
+}
+
+/* ── Top bar ─────────────────────────────────────────────────────────── */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.topbar h1 {
+  font-size: 24px;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.topbar-sub {
+  color: var(--muted);
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hermes-dot {
+  font-size: 10px;
+  cursor: default;
+}
+
+.live-clock {
+  background: var(--card-dark);
+  color: var(--yellow);
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  padding: 8px 16px;
+  border-radius: 14px;
+  white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+}
+
+.live-clock .secs {
+  font-size: 16px;
+  opacity: 0.7;
+}
+
+.live-clock .ampm {
+  font-size: 14px;
+  opacity: 0.8;
+  margin-left: 4px;
+}
+
+/* ── Banners ─────────────────────────────────────────────────────────── */
+.banner {
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin-bottom: 14px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.banner-frog {
+  border: 2px solid var(--red);
+  background: linear-gradient(135deg, #1c1c1e, #3a1d1b);
+  box-shadow: 0 6px 18px rgba(255, 69, 58, 0.25);
+}
+
+.banner-frog-done {
+  border: 2px solid var(--green);
+  background: linear-gradient(135deg, #1c1c1e, #12341f);
+  box-shadow: 0 6px 18px rgba(48, 209, 88, 0.3);
+}
+
+.banner .frog-emoji {
+  font-size: 30px;
+}
+
+.banner .frog-text {
+  flex: 1;
+  min-width: 180px;
+}
+
+.banner .frog-task {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 700;
+  font-size: 17px;
+}
+
+.banner .frog-count {
+  color: var(--yellow);
+  font-size: 13px;
+  margin-top: 2px;
+}
+
+.banner-frog-done .frog-count {
+  color: var(--green);
+}
+
+.banner-empty-frog {
+  border: 2px dashed #c9c3b8;
+  background: #fff;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* ── Today summary (green wins banner) ───────────────────────────────── */
+.summary-card {
+  background: var(--card-dark);
+  border: 2px solid var(--green);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin-bottom: 14px;
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+}
+
+.summary-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.summary-head h2 {
+  margin: 0;
+  font-size: 16px;
+  color: var(--green);
+}
+
+.stat-row {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  margin: 10px 0 4px;
+}
+
+.stat .stat-num {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--yellow);
+}
+
+.stat .stat-label {
+  font-size: 12px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.track-chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.chip {
+  background: var(--panel-dark);
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 12px;
+  border: 1px solid transparent;
+}
+
+.progress-outer {
+  background: var(--panel-dark);
+  border-radius: 999px;
+  height: 12px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.progress-inner {
+  height: 100%;
+  background: var(--green);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.progress-label {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+/* ── Widgets row ─────────────────────────────────────────────────────── */
+.widgets {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.widget {
+  background: var(--card-dark);
+  border-radius: 14px;
+  padding: 12px 14px;
+  color: #fff;
+}
+
+.widget h3 {
+  margin: 0 0 6px;
+  font-size: 13px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.pomo-time {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--yellow);
+}
+
+.pomo-time.running {
+  color: var(--green);
+}
+
+.widget-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.countdown-display {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--blue);
+}
+
+.widget input[type="text"],
+.widget input[type="time"] {
+  background: var(--panel-dark);
+  border: 1.5px solid #48484a;
+  color: #fff;
+  min-width: 0;
+}
+
+.widget input[type="time"] {
+  width: 108px;
+}
+
+.widget input[type="text"] {
+  flex: 1;
+  width: 60px;
+}
+
+.data-widget {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────────── */
+.btn {
+  background: var(--panel-dark);
+  color: #fff;
+  border: 1.5px solid #48484a;
+  border-radius: 10px;
+  padding: 7px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.btn:hover {
+  border-color: var(--yellow);
+  box-shadow: 0 0 0 1px var(--yellow) inset;
+}
+
+.btn-green:hover {
+  border-color: var(--green);
+  box-shadow: 0 0 0 1px var(--green) inset;
+}
+
+.btn-red:hover {
+  border-color: var(--red);
+  box-shadow: 0 0 0 1px var(--red) inset;
+}
+
+.btn-blue:hover {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 1px var(--blue) inset;
+}
+
+/* ── Badges (pills) ──────────────────────────────────────────────────── */
+.pill {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 1px 8px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  vertical-align: 2px;
+  white-space: nowrap;
+}
+
+.pill-yellow { background: var(--yellow); color: #1c1c1e; }
+.pill-green  { background: var(--green);  color: #04270f; }
+.pill-red    { background: var(--red);    color: #fff; }
+.pill-blue   { background: var(--blue);   color: #062733; }
+.pill-purple { background: var(--purple); color: #1e1338; }
+
+/* ── Track cards ─────────────────────────────────────────────────────── */
+.track-card {
+  background: #fff;
+  border-radius: var(--radius);
+  border-top: 4px solid var(--muted);
+  box-shadow: 0 4px 16px rgba(28, 28, 30, 0.08);
+  padding: 14px 16px 12px;
+  margin-bottom: 16px;
+}
+
+.track-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.track-head h2 {
+  margin: 0;
+  font-size: 18px;
+  letter-spacing: -0.01em;
+  flex: 1;
+  min-width: 120px;
+}
+
+.track-today {
+  font-size: 12.5px;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.track-note {
+  background: #faf7f0;
+  border-left: 3px solid var(--yellow);
+  border-radius: 8px;
+  padding: 7px 10px;
+  font-size: 13px;
+  margin: 10px 0 4px;
+  font-style: italic;
+  color: #57534a;
+}
+
+/* savings bar */
+.savings {
+  background: #faf7f0;
+  border-radius: 10px;
+  padding: 9px 12px;
+  margin: 10px 0 4px;
+}
+
+.savings-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.savings-amounts {
+  color: var(--green);
+  font-family: "Space Grotesk", sans-serif;
+}
+
+.savings-outer {
+  background: #e6e0d5;
+  border-radius: 999px;
+  height: 14px;
+  margin-top: 6px;
+  overflow: hidden;
+}
+
+.savings-inner {
+  height: 100%;
+  background: linear-gradient(90deg, #30d158, #7ce88f);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.savings-edit {
+  background: none;
+  border: none;
+  font-size: 13px;
+  padding: 0 2px;
+}
+
+/* ── Tasks ───────────────────────────────────────────────────────────── */
+.task-list {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+}
+
+.task {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 8px;
+  border-radius: 10px;
+  margin-bottom: 4px;
+  background: #faf9f6;
+  border: 1.5px solid transparent;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.task-main {
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
+  user-select: none;
+}
+
+.task-text {
+  font-size: 14.5px;
+  overflow-wrap: anywhere;
+}
+
+.task-meta {
+  font-size: 11.5px;
+  color: var(--muted);
+  margin-top: 1px;
+}
+
+.task.active {
+  background: #1c1c1e;
+  border-color: var(--yellow);
+  box-shadow: 0 4px 14px rgba(255, 214, 10, 0.25);
+}
+
+.task.active .task-text {
+  color: #fff;
+  font-weight: 600;
+}
+
+.task.active .task-meta {
+  color: var(--yellow);
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 600;
+}
+
+.task.done .task-text {
+  text-decoration: line-through;
+  opacity: 0.45;
+}
+
+.task.done {
+  opacity: 0.75;
+}
+
+.task.stale-amber {
+  border-color: #f5c95c;
+  box-shadow: 0 0 10px rgba(245, 201, 92, 0.45);
+}
+
+.task.stale-red {
+  border-color: var(--red);
+  box-shadow: 0 0 10px rgba(255, 69, 58, 0.35);
+}
+
+.task.is-frog {
+  border-color: var(--green);
+}
+
+.task-actions {
+  display: flex;
+  gap: 2px;
+  flex: none;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  font-size: 13px;
+  padding: 3px 4px;
+  border-radius: 6px;
+  opacity: 0.55;
+  line-height: 1;
+}
+
+.icon-btn:hover {
+  opacity: 1;
+  background: #eee9df;
+}
+
+.task.active .icon-btn:hover {
+  background: var(--panel-dark);
+}
+
+.task-edit-input {
+  flex: 1;
+  min-width: 0;
+}
+
+/* add-task row */
+.add-task {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.add-task input {
+  flex: 1;
+  min-width: 0;
+}
+
+.add-task .btn {
+  flex: none;
+}
+
+/* ── Track log section ───────────────────────────────────────────────── */
+.log-toggle {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 12.5px;
+  padding: 6px 2px 0;
+  font-weight: 600;
+}
+
+.log-panel {
+  background: var(--card-dark);
+  border-radius: 12px;
+  padding: 10px 12px;
+  margin-top: 8px;
+  color: #fff;
+}
+
+.log-entries {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.log-entry {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 12.5px;
+  padding: 4px 0;
+  border-bottom: 1px solid #3a3a3c;
+}
+
+.log-entry:last-child {
+  border-bottom: none;
+}
+
+.log-task {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.log-mins {
+  color: var(--yellow);
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.log-when {
+  color: var(--muted);
+  white-space: nowrap;
+  font-size: 11px;
+}
+
+.log-note {
+  color: var(--muted);
+  font-style: italic;
+}
+
+.log-del {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 12px;
+  padding: 0 2px;
+}
+
+.log-del:hover {
+  color: var(--red);
+}
+
+.manual-entry {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.manual-entry input {
+  background: var(--panel-dark);
+  border: 1.5px solid #48484a;
+  color: #fff;
+}
+
+.manual-entry input[name="task"] {
+  flex: 2 1 130px;
+  min-width: 0;
+}
+
+.manual-entry input[name="minutes"] {
+  flex: 0 1 74px;
+  width: 74px;
+}
+
+.manual-entry input[name="note"] {
+  flex: 2 1 110px;
+  min-width: 0;
+}
+
+.rate-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+.rate-row input {
+  width: 76px;
+  background: var(--panel-dark);
+  border: 1.5px solid #48484a;
+  color: #fff;
+}
+
+.log-track-total {
+  color: var(--green);
+  font-size: 12.5px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  font-family: "Space Grotesk", sans-serif;
+}
+
+/* ── History ─────────────────────────────────────────────────────────── */
+.history-card {
+  background: var(--card-dark);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  color: #fff;
+}
+
+.history-card h2 {
+  margin: 0 0 10px;
+  font-size: 15px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.history-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 110px;
+}
+
+.hbar-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  height: 100%;
+  justify-content: flex-end;
+}
+
+.hbar {
+  width: 100%;
+  max-width: 34px;
+  background: linear-gradient(180deg, var(--yellow), #d9b208);
+  border-radius: 5px 5px 2px 2px;
+  min-height: 2px;
+}
+
+.hbar.today-bar {
+  background: linear-gradient(180deg, var(--green), #1f9e41);
+}
+
+.hbar-mins {
+  font-size: 9.5px;
+  color: var(--muted);
+  font-family: "Space Grotesk", sans-serif;
+}
+
+.hbar-day {
+  font-size: 9.5px;
+  color: var(--muted);
+}
+
+/* ── Footer & misc ───────────────────────────────────────────────────── */
+.footer {
+  text-align: center;
+  color: var(--muted);
+  font-size: 12.5px;
+  margin-top: 22px;
+}
+
+#confetti-canvas {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  display: none;
+  z-index: 999;
+}
+
+/* ── Mobile (S24 ≈ 384px CSS width) ──────────────────────────────────── */
+@media (max-width: 560px) {
+  #app {
+    padding: 12px 10px 40px;
+  }
+
+  .topbar {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .live-clock {
+    text-align: center;
+    font-size: 34px;
+  }
+
+  .topbar h1 {
+    font-size: 21px;
+  }
+
+  .widgets {
+    grid-template-columns: 1fr;
+  }
+
+  .stat .stat-num {
+    font-size: 22px;
+  }
+}
