@@ -54,7 +54,7 @@ export async function pullFromAgent(state) {
         res.status === 401 || res.status === 403
           ? `token rejected (${res.status}) — check it's a fine-grained PAT with READ access to the repo`
           : res.status === 404
-            ? "file not found (404) — the agent hasn't committed dashboard.json yet, or the URL path is off"
+            ? "404 — GitHub reports private repos as 'not found' when the token lacks access: check the token was granted the repo (and the URL path)"
             : `server said ${res.status}`;
       return { ok: false, changed: false, detail: why };
     }

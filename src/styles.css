@@ -579,6 +579,7 @@ button:focus-visible {
 }
 
 .pill-yellow { background: var(--yellow); color: #1c1c1e; }
+.pill-orange { background: #ff9f0a; color: #331f00; }
 .pill-green  { background: var(--green);  color: #04270f; }
 .pill-red    { background: var(--red);    color: #fff; }
 .pill-blue   { background: var(--blue);   color: #062733; }
