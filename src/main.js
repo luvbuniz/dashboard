@@ -953,6 +953,11 @@ document.addEventListener("click", (e) => {
       quoteOffset++;
       renderQuote();
       break;
+    case "theme-toggle":
+      state.settings.theme = state.settings.theme === "dark" ? "light" : "dark";
+      save(state);
+      applyTheme();
+      break;
     case "agent-sync":
       if (!window.HERMES_CONFIG?.HERMES_PULL_URL) {
         alert("Set HERMES_PULL_URL in config.js so the dashboard knows where your agent publishes its data 🤖 (see README → Agent in the loop)");
@@ -1061,7 +1066,19 @@ onPingStatus((ok) => {
     : "Hermes webhook: last ping failed";
 });
 
+// ── Theme ──────────────────────────────────────────────────────────────────
+function applyTheme() {
+  const dark = state.settings.theme === "dark";
+  document.documentElement.classList.toggle("dark", dark);
+  const btn = $("#theme-toggle");
+  if (btn) {
+    btn.textContent = dark ? "☀️" : "🌙";
+    btn.title = dark ? "Switch to light mode" : "Switch to dark mode";
+  }
+}
+
 // ── Boot ───────────────────────────────────────────────────────────────────
+applyTheme();
 render();
 renderWidgets();
 updateClock();

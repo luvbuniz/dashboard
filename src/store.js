@@ -128,6 +128,7 @@ export function seedState() {
       workStartHour: 9,
       workEndHour: 18,
       nudges: false, // browser notifications opt-in
+      theme: "light", // "light" | "dark" — 🌙 button in the top bar
     },
     alerts: {
       frogAlertDate: null, // last date the frog alert fired

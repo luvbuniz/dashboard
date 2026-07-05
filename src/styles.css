@@ -11,6 +11,33 @@
   --ink: #1c1c1e;
   --muted: #8e8e93;
   --radius: 16px;
+  /* light-surface tokens (flipped by html.dark) */
+  --card: #ffffff;
+  --row: #faf9f6;
+  --panel-warm: #faf7f0;
+  --input-bg: #ffffff;
+  --input-border: #d9d4cc;
+  --hover-soft: #eee9df;
+  --savings-track: #e6e0d5;
+  --quote-ink: #46423a;
+  --note-ink: #57534a;
+  --card-shadow: rgba(28, 28, 30, 0.08);
+}
+
+html.dark {
+  --bg: #0f0f10;
+  --ink: #f2f2f3;
+  --muted: #98989d;
+  --card: #1c1c1e;
+  --row: #2a2a2c;
+  --panel-warm: #26262a;
+  --input-bg: #2c2c2e;
+  --input-border: #48484a;
+  --hover-soft: #3a3a3c;
+  --savings-track: #3a3a3c;
+  --quote-ink: #d8d3c8;
+  --note-ink: #cfc9bd;
+  --card-shadow: rgba(0, 0, 0, 0.45);
 }
 
 * {
@@ -63,8 +90,8 @@ input[type="checkbox"] {
 input[type="text"],
 input[type="number"],
 input[type="time"] {
-  background: #fff;
-  border: 1.5px solid #d9d4cc;
+  background: var(--input-bg);
+  border: 1.5px solid var(--input-border);
   border-radius: 9px;
   padding: 7px 10px;
   color: var(--ink);
@@ -104,6 +131,19 @@ button:focus-visible {
   cursor: default;
 }
 
+.theme-btn {
+  background: none;
+  border: none;
+  font-size: 16px;
+  padding: 0 2px;
+  line-height: 1;
+  opacity: 0.8;
+}
+
+.theme-btn:hover {
+  opacity: 1;
+}
+
 .live-clock {
   background: var(--card-dark);
   color: var(--yellow);
@@ -129,10 +169,10 @@ button:focus-visible {
 
 /* ── Daily quote ─────────────────────────────────────────────────────── */
 .quote-card {
-  background: #fff;
+  background: var(--card);
   border-radius: 14px;
   border-left: 4px solid var(--yellow);
-  box-shadow: 0 3px 12px rgba(28, 28, 30, 0.06);
+  box-shadow: 0 3px 12px var(--card-shadow);
   padding: 10px 14px;
   margin-bottom: 14px;
   font-size: 13.5px;
@@ -144,7 +184,7 @@ button:focus-visible {
 
 .quote-text {
   font-style: italic;
-  color: #46423a;
+  color: var(--quote-ink);
 }
 
 .quote-by {
@@ -216,8 +256,8 @@ button:focus-visible {
 }
 
 .banner-empty-frog {
-  border: 2px dashed #c9c3b8;
-  background: #fff;
+  border: 2px dashed var(--input-border);
+  background: var(--card);
   color: var(--muted);
   font-size: 14px;
 }
@@ -517,10 +557,10 @@ button:focus-visible {
 
 /* ── Track cards ─────────────────────────────────────────────────────── */
 .track-card {
-  background: #fff;
+  background: var(--card);
   border-radius: var(--radius);
   border-top: 4px solid var(--muted);
-  box-shadow: 0 4px 16px rgba(28, 28, 30, 0.08);
+  box-shadow: 0 4px 16px var(--card-shadow);
   padding: 14px 16px 12px;
   margin-bottom: 16px;
 }
@@ -547,19 +587,19 @@ button:focus-visible {
 }
 
 .track-note {
-  background: #faf7f0;
+  background: var(--panel-warm);
   border-left: 3px solid var(--yellow);
   border-radius: 8px;
   padding: 7px 10px;
   font-size: 13px;
   margin: 10px 0 4px;
   font-style: italic;
-  color: #57534a;
+  color: var(--note-ink);
 }
 
 /* savings bar */
 .savings {
-  background: #faf7f0;
+  background: var(--panel-warm);
   border-radius: 10px;
   padding: 9px 12px;
   margin: 10px 0 4px;
@@ -580,7 +620,7 @@ button:focus-visible {
 }
 
 .savings-outer {
-  background: #e6e0d5;
+  background: var(--savings-track);
   border-radius: 999px;
   height: 14px;
   margin-top: 6px;
@@ -615,7 +655,7 @@ button:focus-visible {
   padding: 8px 8px;
   border-radius: 10px;
   margin-bottom: 4px;
-  background: #faf9f6;
+  background: var(--row);
   border: 1.5px solid transparent;
   transition: background 0.15s ease, border-color 0.15s ease;
 }
@@ -696,7 +736,7 @@ button:focus-visible {
 
 .icon-btn:hover {
   opacity: 1;
-  background: #eee9df;
+  background: var(--hover-soft);
 }
 
 .task.active .icon-btn:hover {
