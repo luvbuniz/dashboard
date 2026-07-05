@@ -1,7 +1,7 @@
 // Minimal service worker: network-first with cache fallback, so the
 // dashboard opens instantly from the home screen and still works offline
 // (data is in localStorage anyway — this just keeps the shell available).
-const CACHE = "amys-cc-v1";
+const CACHE = "amys-cc-v2";
 
 self.addEventListener("install", (e) => {
   self.skipWaiting();
@@ -23,8 +23,15 @@ self.addEventListener("fetch", (e) => {
   // only same-origin GETs — never touch webhook/Telegram/GitHub traffic
   if (e.request.method !== "GET" || url.origin !== self.location.origin) return;
 
+  // Revalidate page loads instead of trusting the HTTP cache (Pages sends
+  // max-age=600) — a refresh should always pick up a fresh deploy.
+  const req =
+    e.request.mode === "navigate"
+      ? new Request(e.request, { cache: "no-cache" })
+      : e.request;
+
   e.respondWith(
-    fetch(e.request)
+    fetch(req)
       .then((res) => {
         if (res.ok) {
           const copy = res.clone();

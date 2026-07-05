@@ -1241,6 +1241,11 @@ function applyTheme() {
 
 // ── Boot ───────────────────────────────────────────────────────────────────
 applyTheme();
+try {
+  $("#build-stamp").textContent = `build ${__BUILD_ID__}`;
+} catch {
+  /* dev without define */
+}
 render();
 renderWidgets();
 updateClock();
