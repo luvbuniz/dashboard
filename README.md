@@ -54,7 +54,7 @@ Notes:
 
 | Track | Color | What it's for |
 |---|---|---|
-| 💰 Money Now | green | Active gig work ($135/hr default rate) |
+| 💰 Money Now | green | Active gig work (set your current $/hr in the track's log panel) |
 | 🎯 Job Hunt | yellow | Target: 2 applications/day |
 | 🎮 Stackadoo | purple | App dev + marketing — momentum or it dies |
 | 👧 Kids | blue | Camps, library swaps, Thursday Aldi runs, tablets |

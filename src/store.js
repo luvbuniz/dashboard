@@ -69,7 +69,7 @@ export function seedState() {
         colorName: "green",
         note: null,
         badge: { text: "ACTIVE GIGS", color: "green" },
-        rate: 135,
+        rate: 0, // set your current gig's effective $/hr in the track's log panel
         tasks: [frogTask],
       },
       {
