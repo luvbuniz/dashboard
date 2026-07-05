@@ -69,6 +69,25 @@ Rules:
   moment ("Camp signup closes tomorrow"). Empty string when nothing
   matters.
 
+## Receiving events WITHOUT a webhook 📡
+
+You do not need a webhook server, a second bot, or SSH access. The
+dashboard appends every event to the repo itself:
+
+    hermes/events/YYYY-MM-DD.jsonl   (date is Amy's local day, America/New_York)
+
+One JSON object per line, e.g.
+    {"event":"task_completed","track":"Kids","task":"🧽 Wash the dishes","frog":false,"timestamp":"2026-07-05T14:03:22.120Z"}
+
+Poll that file every few minutes (you already poll this repo). Track how
+many lines you've processed and only react to NEW lines, following the
+event-reaction rules above. Never write to files under hermes/events/ —
+the dashboard owns them.
+
+Note: you cannot see messages other bots (or you yourself) send in
+Telegram — that's a Telegram platform rule. The events file is your only
+reliable feed. The dashboard's Telegram pings are for Amy's eyes.
+
 ## Brain dumps 🧠
 
 When Amy dumps a stream of thoughts at you (voice note or rambling text:

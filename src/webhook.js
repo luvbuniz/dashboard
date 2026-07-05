@@ -79,8 +79,86 @@ function sendTelegram(event, payload) {
     .catch(() => setStatus(false));
 }
 
+// ── GitHub events channel (serverless webhook replacement) ────────────────
+// If GITHUB_EVENTS_TOKEN is set (fine-grained PAT, Contents read-write on
+// the same repo as HERMES_PULL_URL), every event is appended to
+// hermes/events/YYYY-MM-DD.jsonl in that repo — one JSON object per line.
+// The agent polls that file instead of needing a webhook server.
+
+const b64encode = (str) => {
+  const bytes = new TextEncoder().encode(str);
+  let bin = "";
+  for (const b of bytes) bin += String.fromCharCode(b);
+  return btoa(bin);
+};
+
+const b64decode = (b64) => {
+  const bin = atob(b64.replace(/\s/g, ""));
+  return new TextDecoder().decode(Uint8Array.from(bin, (c) => c.charCodeAt(0)));
+};
+
+const localDay = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
+    d.getDate()
+  ).padStart(2, "0")}`;
+};
+
+// Serialize appends so bursts (stop → completed) don't race on the file sha.
+let ghQueue = Promise.resolve();
+
+function sendGitHubEvents(event, payload, timestamp) {
+  const c = cfg();
+  const token = c.GITHUB_EVENTS_TOKEN;
+  const m = (c.HERMES_PULL_URL || "").match(
+    /^(https:\/\/api\.github\.com\/repos\/[^/]+\/[^/]+\/contents)\//
+  );
+  if (!token || !m) return;
+  const url = `${m[1]}/hermes/events/${localDay()}.jsonl`;
+  const line = JSON.stringify({ event, ...payload, timestamp }) + "\n";
+  ghQueue = ghQueue.then(() => appendToGitHub(url, line, token)).catch(() => {});
+}
+
+async function appendToGitHub(url, line, token) {
+  const headers = {
+    Authorization: `Bearer ${token}`,
+    Accept: "application/vnd.github+json",
+  };
+  let sha;
+  let existing = "";
+  try {
+    const res = await fetch(url, { headers });
+    if (res.ok) {
+      const meta = await res.json();
+      sha = meta.sha;
+      existing = b64decode(meta.content || "");
+    } else if (res.status !== 404) {
+      setStatus(false);
+      return;
+    }
+  } catch {
+    setStatus(false);
+    return;
+  }
+  try {
+    const res = await fetch(url, {
+      method: "PUT",
+      headers: { ...headers, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: "dashboard events",
+        content: b64encode(existing + line),
+        ...(sha ? { sha } : {}),
+      }),
+    });
+    setStatus(res.ok);
+  } catch {
+    setStatus(false);
+  }
+}
+
 export function sendEvent(event, payload = {}) {
   const timestamp = payload.timestamp || new Date().toISOString();
   sendHermes(event, payload, timestamp);
   sendTelegram(event, payload);
+  sendGitHubEvents(event, payload, timestamp);
 }

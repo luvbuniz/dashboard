@@ -757,7 +757,10 @@ function connPanelHTML() {
       <label>🔑 Pull token (read-only GitHub fine-grained PAT, if using a private repo)
         <input type="password" name="HERMES_PULL_TOKEN" value="${val("HERMES_PULL_TOKEN")}"
           placeholder="github_pat_…" autocomplete="off" /></label>
-      <label>📤 Hermes webhook URL (optional — POSTs raw event JSON)
+      <label>🗄 GitHub events token (optional — read-write PAT so the agent can SEE your events; written to hermes/events/ in the same repo)
+        <input type="password" name="GITHUB_EVENTS_TOKEN" value="${val("GITHUB_EVENTS_TOKEN")}"
+          placeholder="github_pat_… (Contents: read & write)" autocomplete="off" /></label>
+      <label>📤 Hermes webhook URL (optional — POSTs raw event JSON to a server)
         <input type="text" name="HERMES_WEBHOOK_URL" value="${val("HERMES_WEBHOOK_URL")}"
           placeholder="https://your-vps/hermes/webhook" /></label>
       <label>🤖 Telegram bot token (optional — events as chat messages)
@@ -1180,6 +1183,7 @@ document.addEventListener("submit", (e) => {
     for (const name of [
       "HERMES_PULL_URL",
       "HERMES_PULL_TOKEN",
+      "GITHUB_EVENTS_TOKEN",
       "HERMES_WEBHOOK_URL",
       "TELEGRAM_BOT_TOKEN",
       "TELEGRAM_CHAT_ID",
