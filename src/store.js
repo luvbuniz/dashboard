@@ -1,5 +1,36 @@
 // ── Persistence & seed data ────────────────────────────────────────────────
 const KEY = "amys-command-center-v1";
+// Connection settings (webhook/pull URLs, tokens) live under their OWN key,
+// entered via the ⚙️ panel. Kept out of the main state so Export JSON never
+// includes secrets, and out of the repo so the public site never ships them.
+const CONN_KEY = "amys-cc-connection";
+
+export function loadConn() {
+  try {
+    return JSON.parse(localStorage.getItem(CONN_KEY)) || {};
+  } catch {
+    return {};
+  }
+}
+
+export function saveConn(conn) {
+  try {
+    localStorage.setItem(CONN_KEY, JSON.stringify(conn));
+  } catch {
+    /* storage blocked */
+  }
+}
+
+// Effective config: config.js file (local dev) merged with the per-device
+// ⚙️ panel values — panel wins wherever it has a non-empty value.
+export function getConfig() {
+  const file = (typeof window !== "undefined" && window.HERMES_CONFIG) || {};
+  const merged = { ...file };
+  for (const [k, v] of Object.entries(loadConn())) {
+    if (v) merged[k] = v;
+  }
+  return merged;
+}
 
 export const uid = () =>
   Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);

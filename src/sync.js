@@ -16,7 +16,7 @@
 // The endpoint must allow CORS (Access-Control-Allow-Origin: *).
 // Fails silently, like everything else network-side.
 
-import { uid } from "./store.js";
+import { uid, getConfig } from "./store.js";
 
 function matchTrack(state, key) {
   if (!key) return null;
@@ -29,8 +29,8 @@ function matchTrack(state, key) {
 }
 
 export async function pullFromAgent(state) {
-  const url =
-    typeof window !== "undefined" && window.HERMES_CONFIG?.HERMES_PULL_URL;
+  const config = getConfig();
+  const url = config.HERMES_PULL_URL;
   if (!url) return false;
 
   // Optional token so the URL can be a PRIVATE GitHub repo file, e.g.
@@ -38,7 +38,7 @@ export async function pullFromAgent(state) {
   // with a read-only fine-grained PAT in HERMES_PULL_TOKEN. Free private
   // storage, no web server needed — the agent just commits the file.
   const headers = { Accept: "application/json" };
-  const token = window.HERMES_CONFIG?.HERMES_PULL_TOKEN;
+  const token = config.HERMES_PULL_TOKEN;
   if (token) headers.Authorization = `Bearer ${token}`;
   if (url.includes("api.github.com")) {
     headers.Accept = "application/vnd.github.raw+json";

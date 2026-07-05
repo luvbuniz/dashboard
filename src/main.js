@@ -7,6 +7,9 @@ import {
   exportJSON,
   parseImport,
   seedState,
+  loadConn,
+  saveConn,
+  getConfig,
 } from "./store.js";
 import { sendEvent, onPingStatus } from "./webhook.js";
 import { confettiBurst } from "./confetti.js";
@@ -19,6 +22,7 @@ const sessionStart = Date.now();
 const openLogs = new Set(); // track ids with the log panel expanded
 let editingTaskId = null;
 let quoteOffset = 0; // bumped by the ↻ button when today's quote doesn't land
+let connOpen = false; // ⚙️ agent-connection panel visibility
 
 const pomo = {
   total: 45 * 60, // 45-minute blocks
@@ -669,9 +673,40 @@ function renderWidgets() {
         state.settings.nudges ? "🔔 Nudges on" : "🔕 Enable nudges"
       }</button>
       <button class="btn" data-action="agent-sync" title="Pull agenda/tasks from your agent now">🔄 Sync agent</button>
+      <button class="btn" data-action="conn-toggle" title="Connect Hermes / Telegram on this device">⚙️ Agent setup</button>
       <button class="btn btn-red" data-action="reset-seed" title="Restore the original seeded tasks (logs are wiped too)">🧹 Reset</button>
-    </div>`;
+    </div>
+    ${connOpen ? connPanelHTML() : ""}`;
   updateCountdownDisplay();
+}
+
+function connPanelHTML() {
+  const conn = loadConn();
+  const val = (k) => esc(conn[k] || "");
+  return `<div class="widget conn-widget">
+    <h3>⚙️ Agent connection — saved only on THIS device, never exported</h3>
+    <form id="conn-form">
+      <label>📥 Pull URL (where the agent publishes dashboard.json)
+        <input type="text" name="HERMES_PULL_URL" value="${val("HERMES_PULL_URL")}"
+          placeholder="https://api.github.com/repos/luvbuniz/buni/contents/dashboard.json" /></label>
+      <label>🔑 Pull token (read-only GitHub fine-grained PAT, if using a private repo)
+        <input type="password" name="HERMES_PULL_TOKEN" value="${val("HERMES_PULL_TOKEN")}"
+          placeholder="github_pat_…" autocomplete="off" /></label>
+      <label>📤 Hermes webhook URL (optional — POSTs raw event JSON)
+        <input type="text" name="HERMES_WEBHOOK_URL" value="${val("HERMES_WEBHOOK_URL")}"
+          placeholder="https://your-vps/hermes/webhook" /></label>
+      <label>🤖 Telegram bot token (optional — events as chat messages)
+        <input type="password" name="TELEGRAM_BOT_TOKEN" value="${val("TELEGRAM_BOT_TOKEN")}"
+          placeholder="123456:ABC…" autocomplete="off" /></label>
+      <label>💬 Telegram chat id
+        <input type="text" name="TELEGRAM_CHAT_ID" value="${val("TELEGRAM_CHAT_ID")}"
+          placeholder="e.g. 5510123456 or a group id" /></label>
+      <div class="widget-row">
+        <button class="btn btn-green" type="submit">💾 Save & sync</button>
+        <button class="btn" type="button" data-action="conn-toggle">Cancel</button>
+      </div>
+    </form>
+  </div>`;
 }
 
 function render() {
@@ -959,11 +994,17 @@ document.addEventListener("click", (e) => {
       applyTheme();
       break;
     case "agent-sync":
-      if (!window.HERMES_CONFIG?.HERMES_PULL_URL) {
-        alert("Set HERMES_PULL_URL in config.js so the dashboard knows where your agent publishes its data 🤖 (see README → Agent in the loop)");
+      if (!getConfig().HERMES_PULL_URL) {
+        connOpen = true;
+        renderWidgets();
+        alert("Tell the dashboard where your agent publishes its data first — fill in the ⚙️ Agent setup panel below 🤖");
         break;
       }
       syncWithAgent();
+      break;
+    case "conn-toggle":
+      connOpen = !connOpen;
+      renderWidgets();
       break;
     case "dismiss-agent-msg":
       if (state.agentMessage) state.agentMessage.dismissed = true;
@@ -1032,6 +1073,24 @@ document.addEventListener("submit", (e) => {
       parseFloat(manualForm.elements.minutes.value),
       manualForm.elements.note.value
     );
+    return;
+  }
+  if (e.target.id === "conn-form") {
+    e.preventDefault();
+    const conn = {};
+    for (const name of [
+      "HERMES_PULL_URL",
+      "HERMES_PULL_TOKEN",
+      "HERMES_WEBHOOK_URL",
+      "TELEGRAM_BOT_TOKEN",
+      "TELEGRAM_CHAT_ID",
+    ]) {
+      conn[name] = e.target.elements[name].value.trim();
+    }
+    saveConn(conn);
+    connOpen = false;
+    renderWidgets();
+    syncWithAgent();
   }
 });
 

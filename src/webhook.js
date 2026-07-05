@@ -29,8 +29,10 @@ function setStatus(ok) {
   }
 }
 
+import { getConfig } from "./store.js";
+
 function cfg() {
-  return (typeof window !== "undefined" && window.HERMES_CONFIG) || {};
+  return getConfig();
 }
 
 // Human-readable Telegram text per event

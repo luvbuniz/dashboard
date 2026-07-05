@@ -143,9 +143,16 @@ put things ON the dashboard — calendar events, tasks you told it about and
 forgot, or a note. No Google keys in the dashboard: the agent already has
 calendar access, it just publishes a JSON snapshot the dashboard reads.
 
-Set `HERMES_PULL_URL` in `config.js`. The dashboard GETs it on load, every
-5 minutes, and when you hit **🔄 Sync agent**. Expected response (every
-field optional):
+Configure it either way:
+
+- **Hosted app (phone/laptop, no code):** tap **⚙️ Agent setup** in the
+  Data widget and paste the values there. They're stored only in that
+  device's browser storage — never in the repo, never in Export JSON.
+- **Local dev:** set the same keys in `config.js`. The ⚙️ panel overrides
+  the file wherever it has a value.
+
+The dashboard GETs `HERMES_PULL_URL` on load, every 5 minutes, and when
+you hit **🔄 Sync agent**. Expected response (every field optional):
 
 ```json
 {

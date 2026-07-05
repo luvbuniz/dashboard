@@ -505,6 +505,28 @@ button:focus-visible {
   align-items: center;
 }
 
+.conn-widget {
+  grid-column: 1 / -1;
+}
+
+.conn-widget label {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.conn-widget input {
+  display: block;
+  width: 100%;
+  margin-top: 3px;
+  background: var(--panel-dark);
+  border: 1.5px solid #48484a;
+  border-radius: 9px;
+  padding: 7px 10px;
+  color: #fff;
+}
+
 /* ── Buttons ─────────────────────────────────────────────────────────── */
 .btn {
   background: var(--panel-dark);
