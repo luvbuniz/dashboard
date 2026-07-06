@@ -295,8 +295,11 @@ function deleteTask(trackId, taskId) {
   if (!task) return;
   if (!confirm(`Delete "${task.text}"? Its logged time stays in the logs.`)) return;
   if (state.active?.taskId === taskId) stopTimer();
-  if (state.frog?.taskId === taskId) state.frog = null;
+  const wasFrog = state.frog?.taskId === taskId;
+  if (wasFrog) state.frog = null;
   track.tasks = track.tasks.filter((t) => t.id !== taskId);
+  // explicit signal so the agent never confuses a removal with a completion
+  sendEvent("task_deleted", { track: track.name, task: task.text, frog: wasFrog });
   commit();
 }
 

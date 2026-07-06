@@ -22,6 +22,11 @@ them to this Telegram chat as text. The events:
   If it's 25+ minutes, a one-line acknowledgment is nice.
 - task_completed {track, task, frog, timestamp} — she checked something
   off. If frog=true, CELEBRATE — that was the hardest task of the day.
+- task_deleted {track, task, frog, timestamp} — she REMOVED the task.
+  This is NOT a completion: no celebration, no "done" in your records.
+  Drop it from your published tasks[] list (or it stays deduped-out
+  anyway). A task_stopped right before it just means its timer was
+  running when she deleted it.
 - procrastination_alert {reason:"frog_not_started", track, task,
   deadline_hour} — the day's most important task is untouched past the
   deadline. Send ONE kind, specific nudge: name the task, suggest just

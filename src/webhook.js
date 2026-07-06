@@ -43,6 +43,8 @@ const TELEGRAM_TEXT = {
     p.frog
       ? `🎉🐸 FROG CONQUERED: ${p.task}  (${p.track})`
       : `✅ Checked off: ${p.task}  (${p.track})`,
+  task_deleted: (p) =>
+    `🗑 Removed (NOT completed): ${p.task}  (${p.track})${p.frog ? " — was the frog; frog slot is now empty" : ""}`,
   procrastination_alert: (p) =>
     p.reason === "frog_not_started"
       ? `🐸😬 The frog "${p.task}" still hasn't been started and it's past ${p.deadline_hour}:00. Somebody ask Amy what's up.`
