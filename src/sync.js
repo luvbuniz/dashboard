@@ -16,7 +16,7 @@
 // The endpoint must allow CORS (Access-Control-Allow-Origin: *).
 // Fails silently, like everything else network-side.
 
-import { uid, getConfig } from "./store.js";
+import { uid, getConfig, todayKey } from "./store.js";
 
 function matchTrack(state, key) {
   if (!key) return null;
@@ -125,6 +125,39 @@ export async function pullFromAgent(state) {
     }
   }
 
+  // frog of the day: {id, track, text} — pins (or creates) a task as the 🐸.
+  // Deduped by id, so if Amy manually re-pins a different frog afterwards,
+  // the same agent frog won't fight her; a NEW id pins again.
+  let frogSet = false;
+  if (data.frog && typeof data.frog === "object" && !Array.isArray(data.frog)) {
+    const inboxId = String(data.frog.id ?? "").trim();
+    const text = String(data.frog.text ?? "").trim();
+    if (inboxId && text && !state.inboxSeen.includes(inboxId)) {
+      const track = matchTrack(state, data.frog.track) || state.tracks[0];
+      let task =
+        track.tasks.find(
+          (t) => !t.done && (t.fromAgent === inboxId || t.text.toLowerCase() === text.toLowerCase())
+        ) || null;
+      if (!task) {
+        task = {
+          id: uid(),
+          text,
+          done: false,
+          doneAt: null,
+          badges: [{ text: "FROM AGENT", color: "purple" }],
+          createdAt: Date.now(),
+          lastTouched: Date.now(),
+          fromAgent: inboxId,
+        };
+        track.tasks.unshift(task);
+      }
+      state.frog = { trackId: track.id, taskId: task.id, date: todayKey() };
+      state.inboxSeen.push(inboxId);
+      frogSet = true;
+      changed = true;
+    }
+  }
+
   // calendar items: {id, date "YYYY-MM-DD", time "HH:MM"?, title, track?}
   if (Array.isArray(data.events)) {
     for (const ev of data.events) {
@@ -157,6 +190,7 @@ export async function pullFromAgent(state) {
 
   const parts = [];
   if (tasksAdded) parts.push(`${tasksAdded} new task${tasksAdded > 1 ? "s" : ""}`);
+  if (frogSet) parts.push("a new frog 🐸");
   if (Array.isArray(data.agenda)) parts.push(`agenda (${data.agenda.length} items)`);
   if (data.message) parts.push("a message");
   return {

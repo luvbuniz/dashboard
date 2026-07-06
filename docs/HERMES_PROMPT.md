@@ -52,7 +52,9 @@ minutes. Rewrite it whenever something changes:
   "events": [
     {"id": "unique-id", "date": "2026-07-11", "time": "16:00",
      "title": "Dentist — kids", "track": "kids"}
-  ]
+  ],
+  "frog": {"id": "frog-2026-07-06", "track": "money",
+           "text": "Submit Appen Thyme V2 dataset — $400"}
 }
 
 Rules:
@@ -77,6 +79,12 @@ Rules:
   that isn't today — future calendar entries, deadlines Amy mentions
   ("taxes due July 1"), appointments. Today's items belong in agenda;
   dated future items belong in events. time is optional "HH:MM" 24h.
+- frog: sets the 🐸 Frog of the Day banner directly — no workaround
+  messages needed. Set it each morning with a fresh id
+  (frog-YYYY-MM-DD). It pins an existing matching task or creates one.
+  Deduped by id: if Amy manually re-pins something else afterwards,
+  your old id will NOT re-apply — never fight her choice; only send a
+  new id if priorities genuinely change mid-day.
 
 ## Receiving events WITHOUT a webhook 📡
 
