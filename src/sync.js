@@ -180,6 +180,20 @@ export async function pullFromAgent(state) {
     }
   }
 
+  // application title enrichment: [{id, title}] — the id comes from the
+  // job_applied event; the agent identifies role/company from the link and
+  // sends the real title back. Plain updates, no dedupe needed.
+  if (Array.isArray(data.applications)) {
+    for (const u of data.applications) {
+      const app = state.applications?.find((a) => a.id === String(u.id ?? "").trim());
+      const title = String(u.title ?? "").trim();
+      if (app && title && app.title !== title) {
+        app.title = title;
+        changed = true;
+      }
+    }
+  }
+
   if (typeof data.message === "string" && data.message.trim()) {
     const text = data.message.trim();
     if (state.agentMessage?.text !== text) {

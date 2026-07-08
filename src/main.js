@@ -371,18 +371,28 @@ function appsToday() {
   return state.applications.filter((a) => a.at >= start).length;
 }
 
+// Short display label for title-less applications ("linkedin.com/…")
+function urlLabel(u) {
+  try {
+    const x = new URL(u);
+    return x.hostname.replace(/^www\./, "") + (x.pathname.length > 1 ? "/…" : "");
+  } catch {
+    return String(u).slice(0, 40);
+  }
+}
+
+// The link alone is enough — the agent identifies role/company from the
+// event and syncs the real title back (see sync.js applications[]).
 function logApplication(title, url) {
-  if (!title.trim()) return;
   const cleanUrl = /^https?:\/\//i.test(url?.trim() || "") ? url.trim() : null;
-  state.applications.push({
-    id: uid(),
-    title: title.trim(),
-    url: cleanUrl,
-    at: Date.now(),
-  });
+  title = title.trim();
+  if (!title && !cleanUrl) return;
+  const app = { id: uid(), title: title || null, url: cleanUrl, at: Date.now() };
+  state.applications.push(app);
   const count = appsToday();
   sendEvent("job_applied", {
-    title: title.trim(),
+    id: app.id,
+    title: app.title,
     url: cleanUrl,
     count_today: count,
     target: state.settings.jobTarget,
@@ -784,9 +794,11 @@ function renderTracks() {
                           })}</span>
                           ${
                             a.url
-                              ? `<a href="${esc(a.url)}" target="_blank" rel="noopener noreferrer">${esc(a.title)} ↗</a>`
-                              : `<span>${esc(a.title)}</span>`
-                          }
+                              ? `<a href="${esc(a.url)}" target="_blank" rel="noopener noreferrer">${esc(
+                                  a.title || urlLabel(a.url)
+                                )} ↗</a>`
+                              : `<span>${esc(a.title || "?")}</span>`
+                          }${a.title ? "" : ` <span class="apps-pending">🤖 identifying…</span>`}
                           <button class="log-del" title="Delete" data-action="del-app" data-app="${a.id}">✕</button>
                         </li>`
                       )
@@ -794,8 +806,8 @@ function renderTracks() {
                   : ""
               }
               <form class="apps-form" data-apps-form>
-                <input type="text" name="title" placeholder="Role @ Company" required />
-                <input type="text" name="url" placeholder="paste job link (optional)" inputmode="url" />
+                <input type="text" name="url" placeholder="Paste the job link — that's enough ✓" inputmode="url" />
+                <input type="text" name="title" placeholder="title (optional — agent fills it in)" />
                 <button class="btn btn-green" type="submit">＋ Applied</button>
               </form>
             </div>`

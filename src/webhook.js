@@ -46,7 +46,9 @@ const TELEGRAM_TEXT = {
   task_deleted: (p) =>
     `🗑 Removed (NOT completed): ${p.task}  (${p.track})${p.frog ? " — was the frog; frog slot is now empty" : ""}`,
   job_applied: (p) =>
-    `🎯 Applied (${p.count_today}/${p.target} today): ${p.title}${p.url ? `\n${p.url}` : ""}`,
+    p.title
+      ? `🎯 Applied (${p.count_today}/${p.target} today): ${p.title}${p.url ? `\n${p.url}` : ""}`
+      : `🎯 Applied (${p.count_today}/${p.target} today): ${p.url}\n(identify the role/company from the link and sync the title back — id ${p.id})`,
   procrastination_alert: (p) =>
     p.reason === "frog_not_started"
       ? `🐸😬 The frog "${p.task}" still hasn't been started and it's past ${p.deadline_hour}:00. Somebody ask Amy what's up.`

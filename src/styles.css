@@ -715,6 +715,12 @@ button:focus-visible {
   white-space: nowrap;
 }
 
+.apps-pending {
+  color: var(--muted);
+  font-size: 11px;
+  font-style: italic;
+}
+
 .apps-list .log-del {
   margin-left: auto;
 }

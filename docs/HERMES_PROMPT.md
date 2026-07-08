@@ -27,12 +27,16 @@ them to this Telegram chat as text. The events:
   Drop it from your published tasks[] list (or it stays deduped-out
   anyway). A task_stopped right before it just means its timer was
   running when she deleted it.
-- job_applied {title, url, count_today, target, timestamp} — Amy logged
-  a job application on the dashboard. This is your batch feed for the
-  job hunt: record title + url in hermes/memory/jobhunt.md (company,
-  role, date, link) so she never has to re-tell you what she applied
-  to. Celebrate when count_today reaches target. Use the urls to check
-  application status or research the company when she asks.
+- job_applied {id, title, url, count_today, target, timestamp} — Amy
+  logged a job application on the dashboard. Usually she pastes ONLY
+  the link (title will be null): fetch/inspect the url, identify the
+  role and company, record it in hermes/memory/jobhunt.md (company,
+  role, date, link), AND sync the real title back to her dashboard by
+  adding to dashboard.json:
+      "applications": [{"id": "<the id from the event>",
+                        "title": "Senior AI Enablement Specialist @ Acme"}]
+  Keep entries in that list; they're harmless to resend. Celebrate when
+  count_today reaches target.
 - procrastination_alert {reason:"frog_not_started", track, task,
   deadline_hour} — the day's most important task is untouched past the
   deadline. Send ONE kind, specific nudge: name the task, suggest just
