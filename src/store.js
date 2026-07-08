@@ -147,6 +147,8 @@ export function seedState() {
     logs: [], // {id, trackId, taskId, task, start, end, minutes, note, manual}
     // calendar: future tasks & appointments
     events: [], // {id, date "YYYY-MM-DD", time "HH:MM"|null, title, trackId|null, done, fromAgent?}
+    // job hunt: applications submitted {id, title, url|null, at}
+    applications: [],
     // frog of the day
     frog: { taskId: frogTask.id, trackId: "money", date: todayKey() },
     frogCelebrated: null, // date the frog-done celebration fired
@@ -164,6 +166,7 @@ export function seedState() {
       theme: "light", // "light" | "dark" — 🌙 button in the top bar
       pomoWork: 25, // minutes of focus per pomodoro block (adjustable in widget)
       pomoBreak: 5, // minutes of break, auto-starts when a block ends
+      jobTarget: 2, // applications per day goal
     },
     alerts: {
       frogAlertDate: null, // last date the frog alert fired
@@ -186,6 +189,7 @@ export function load() {
     if (!Array.isArray(state.logs)) state.logs = [];
     if (!Array.isArray(state.inboxSeen)) state.inboxSeen = [];
     if (!Array.isArray(state.events)) state.events = [];
+    if (!Array.isArray(state.applications)) state.applications = [];
     // sweep calendar items that are done and more than a week old
     const weekAgo = todayKey(new Date(Date.now() - 7 * 86400000));
     state.events = state.events.filter((e) => !(e.done && e.date < weekAgo));

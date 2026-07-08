@@ -135,6 +135,7 @@ function frogInfo() {
 function dayHadActivity(startMs) {
   const end = startMs + 86400000;
   if (state.logs.some((l) => l.end >= startMs && l.end < end)) return true;
+  if (state.applications.some((a) => a.at >= startMs && a.at < end)) return true;
   return state.tracks.some((tr) =>
     tr.tasks.some((t) => t.doneAt && t.doneAt >= startMs && t.doneAt < end)
   );
@@ -364,6 +365,32 @@ function addManualLogTimes(trackId, taskText, tin, tout, note) {
   commit();
 }
 
+// ── Job applications ────────────────────────────────────────────────────────
+function appsToday() {
+  const start = dayStart();
+  return state.applications.filter((a) => a.at >= start).length;
+}
+
+function logApplication(title, url) {
+  if (!title.trim()) return;
+  const cleanUrl = /^https?:\/\//i.test(url?.trim() || "") ? url.trim() : null;
+  state.applications.push({
+    id: uid(),
+    title: title.trim(),
+    url: cleanUrl,
+    at: Date.now(),
+  });
+  const count = appsToday();
+  sendEvent("job_applied", {
+    title: title.trim(),
+    url: cleanUrl,
+    count_today: count,
+    target: state.settings.jobTarget,
+  });
+  if (count === state.settings.jobTarget) confettiBurst(1800);
+  commit();
+}
+
 // ── Calendar: future tasks & appointments ──────────────────────────────────
 function addCalendarEvent(date, time, title, trackId) {
   if (!date || !title.trim()) return;
@@ -506,8 +533,12 @@ function renderSummary() {
         <div class="stat-label">Est. earned</div>
       </div>
       <div class="stat">
-        <div class="stat-num">${doneToday} 🎯</div>
+        <div class="stat-num">${doneToday} ✅</div>
         <div class="stat-label">Tasks done</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">${appsToday()}/${state.settings.jobTarget} 🎯</div>
+        <div class="stat-label">Jobs applied</div>
       </div>
     </div>
     <div class="track-chips">${chips}</div>
@@ -731,6 +762,45 @@ function renderTracks() {
           </div>`
         : "";
 
+      const appsBox =
+        track.id === "jobhunt"
+          ? `<div class="apps-box">
+              <div class="apps-head">🎯 Applications
+                <span class="pill ${
+                  appsToday() >= state.settings.jobTarget ? "pill-green" : "pill-yellow"
+                }">${appsToday()}/${state.settings.jobTarget} TODAY</span>
+                <span class="apps-total">${state.applications.length} total</span>
+              </div>
+              ${
+                state.applications.length
+                  ? `<ul class="apps-list">${[...state.applications]
+                      .sort((a, b) => b.at - a.at)
+                      .slice(0, 8)
+                      .map(
+                        (a) => `<li>
+                          <span class="apps-when">${new Date(a.at).toLocaleDateString([], {
+                            month: "numeric",
+                            day: "numeric",
+                          })}</span>
+                          ${
+                            a.url
+                              ? `<a href="${esc(a.url)}" target="_blank" rel="noopener noreferrer">${esc(a.title)} ↗</a>`
+                              : `<span>${esc(a.title)}</span>`
+                          }
+                          <button class="log-del" title="Delete" data-action="del-app" data-app="${a.id}">✕</button>
+                        </li>`
+                      )
+                      .join("")}</ul>`
+                  : ""
+              }
+              <form class="apps-form" data-apps-form>
+                <input type="text" name="title" placeholder="Role @ Company" required />
+                <input type="text" name="url" placeholder="paste job link (optional)" inputmode="url" />
+                <button class="btn btn-green" type="submit">＋ Applied</button>
+              </form>
+            </div>`
+          : "";
+
       return `<section class="track-card" style="border-top-color:${track.color}">
         <div class="track-head">
           <h2>${track.emoji} ${esc(track.name)} ${
@@ -739,6 +809,7 @@ function renderTracks() {
           <span class="track-today">⏱ ${fmtMins(mins)} today · ${openTasks} open</span>
         </div>
         ${track.note ? `<div class="track-note">${esc(track.note)}</div>` : ""}
+        ${appsBox}
         ${savings}
         <ul class="task-list">${track.tasks
           .map((t) => taskHTML(track, t))
@@ -1180,6 +1251,7 @@ function checkProcrastination() {
       sendEvent("day_summary", {
         minutes_focused: Math.round(total),
         tasks_done: doneCount,
+        jobs_applied: appsToday(),
         earnings: Math.round(earnings),
         streak: computeStreak().streak,
       });
@@ -1207,6 +1279,10 @@ document.addEventListener("click", (e) => {
       break;
     case "cal-del":
       state.events = state.events.filter((ev) => ev.id !== btn.dataset.event);
+      commit();
+      break;
+    case "del-app":
+      state.applications = state.applications.filter((a) => a.id !== btn.dataset.app);
       commit();
       break;
     case "set-frog":
@@ -1438,6 +1514,12 @@ document.addEventListener("submit", (e) => {
   if (e.target.id === "free-session") {
     e.preventDefault();
     startFreeSession(e.target.elements.track.value, e.target.elements.label.value);
+    return;
+  }
+  const appsForm = e.target.closest("[data-apps-form]");
+  if (appsForm) {
+    e.preventDefault();
+    logApplication(appsForm.elements.title.value, appsForm.elements.url.value);
     return;
   }
   if (e.target.id === "cal-form") {

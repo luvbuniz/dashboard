@@ -45,12 +45,14 @@ const TELEGRAM_TEXT = {
       : `✅ Checked off: ${p.task}  (${p.track})`,
   task_deleted: (p) =>
     `🗑 Removed (NOT completed): ${p.task}  (${p.track})${p.frog ? " — was the frog; frog slot is now empty" : ""}`,
+  job_applied: (p) =>
+    `🎯 Applied (${p.count_today}/${p.target} today): ${p.title}${p.url ? `\n${p.url}` : ""}`,
   procrastination_alert: (p) =>
     p.reason === "frog_not_started"
       ? `🐸😬 The frog "${p.task}" still hasn't been started and it's past ${p.deadline_hour}:00. Somebody ask Amy what's up.`
       : `😴 ${p.minutes_idle} min without a timer during work hours. Gentle poke requested.`,
   day_summary: (p) =>
-    `📊 Amy's day receipt: ${p.minutes_focused} min focused · ${p.tasks_done} tasks done · ~$${p.earnings} earned · 🔥 ${p.streak}-day streak`,
+    `📊 Amy's day receipt: ${p.minutes_focused} min focused · ${p.tasks_done} tasks done · 🎯 ${p.jobs_applied ?? 0} jobs applied · ~$${p.earnings} earned · 🔥 ${p.streak}-day streak`,
 };
 
 function sendHermes(event, payload, timestamp) {
