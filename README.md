@@ -218,10 +218,20 @@ and email directly when asked, without any of this plumbing.)
 > Deploying a production build? `config.js` is loaded at runtime from the site
 > root, so copy your `config.js` into `dist/` after `npm run build`.
 
-## Moving data between phone and laptop
+## Keeping phone and laptop in sync
 
-Data is stored in the browser's localStorage, so each device has its own copy.
-To sync:
+**Automatic device sync (recommended):** if the read-write events token
+(`GITHUB_EVENTS_TOKEN`) is set in ⚙️ Agent setup on each device, the
+dashboard stores its **whole state** in `dashboard-state.json` in your
+private repo and every device reads/writes it. Add a task on your laptop,
+it appears on your phone within a few minutes (or instantly via
+**☁️ Sync devices**). Merge rule: tasks/settings follow the most recently
+edited device; time logs, applications, and calendar items are *unioned*
+so nothing is ever lost. Tokens themselves never sync — enter them once
+per device. (Only the agent's `dashboard.json` is separate; the dashboard
+owns `dashboard-state.json` and the agent must not touch it.)
+
+**Manual, no-token fallback:** Export/Import JSON.
 
 1. On device A, tap **⬇️ Export JSON** — downloads
    `amys-command-center-YYYY-MM-DD.json`.

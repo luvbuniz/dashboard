@@ -52,6 +52,43 @@ function task(text, badges = []) {
   };
 }
 
+// Union two arrays of {id,...} objects: no duplicates, and when both sides
+// have the same id the `primary` side's version wins (for in-place edits).
+function unionById(primary = [], secondary = [], pick) {
+  const map = new Map();
+  for (const item of secondary) if (item && item.id) map.set(item.id, item);
+  for (const item of primary) {
+    if (!item || !item.id) continue;
+    const other = map.get(item.id);
+    map.set(item.id, pick && other ? pick(item, other) : item);
+  }
+  return [...map.values()];
+}
+
+// Merge a local and remote state for cross-device sync. The append-only
+// "receipt" arrays (logs, applications, events) are UNIONED so nothing is
+// ever lost; everything else (tasks, frog, settings, savings…) follows
+// whichever document was edited most recently (updatedAt = last-write-wins).
+export function mergeState(local, remote) {
+  if (!remote) return local;
+  if (!local) return remote;
+  const newer = (remote.updatedAt || 0) >= (local.updatedAt || 0) ? remote : local;
+  const out = { ...newer };
+  out.logs = unionById(local.logs, remote.logs);
+  out.applications = unionById(
+    local.applications,
+    remote.applications,
+    // keep whichever copy has a real title (agent may have enriched it)
+    (a, b) => (a.title ? a : b.title ? b : a)
+  );
+  out.events = unionById(local.events, remote.events);
+  out.inboxSeen = Array.from(
+    new Set([...(local.inboxSeen || []), ...(remote.inboxSeen || [])])
+  ).slice(-500);
+  out.updatedAt = Math.max(local.updatedAt || 0, remote.updatedAt || 0);
+  return out;
+}
+
 export function seedState() {
   const now = Date.now();
   const frogTask = task("Audio transcript job — DO TODAY", [
@@ -60,6 +97,7 @@ export function seedState() {
 
   return {
     version: 1,
+    updatedAt: 0, // last local edit (ms) — drives cross-device merge; 0 = pristine seed
     tracks: [
       {
         id: "money",
@@ -190,6 +228,7 @@ export function load() {
     if (!Array.isArray(state.inboxSeen)) state.inboxSeen = [];
     if (!Array.isArray(state.events)) state.events = [];
     if (!Array.isArray(state.applications)) state.applications = [];
+    if (typeof state.updatedAt !== "number") state.updatedAt = Date.now();
     // sweep calendar items that are done and more than a week old
     const weekAgo = todayKey(new Date(Date.now() - 7 * 86400000));
     state.events = state.events.filter((e) => !(e.done && e.date < weekAgo));

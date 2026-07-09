@@ -165,6 +165,10 @@ file you commit becomes a note she can read in Obsidian.
 
 Keep your files under `hermes/` so you never collide with Amy's own
 notes. Never delete or rewrite HER files — append or create your own.
+Also NEVER touch `dashboard-state.json` — that's the dashboard's own
+cross-device sync file (its full state); it rewrites it constantly and
+your edits would be clobbered or would corrupt her data. You own
+`dashboard.json` (the feed to her); she owns `dashboard-state.json`.
 Commit via the GitHub API with your token (a fine-grained PAT scoped to
 ONLY this repo, Contents: read & write). Small, frequent commits are
 fine — messages like "dump 2026-07-05" or "add 3 tasks".

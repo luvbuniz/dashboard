@@ -13,8 +13,15 @@ import {
 } from "./store.js";
 import { sendEvent, onPingStatus } from "./webhook.js";
 import { confettiBurst } from "./confetti.js";
+import { mergeState } from "./store.js";
 import { quoteForNow } from "./quotes.js";
 import { pullFromAgent } from "./sync.js";
+import {
+  cloudEnabled,
+  cloudReason,
+  pullRemote,
+  pushRemote,
+} from "./cloudsync.js";
 
 // ── Runtime state ──────────────────────────────────────────────────────────
 let state = load();
@@ -77,8 +84,76 @@ const fmtElapsed = (ms) => {
 };
 
 function commit() {
+  state.updatedAt = Date.now();
   save(state);
   render();
+  pushSoon();
+}
+
+// ── Cloud sync (whole-state, cross-device, via the private repo) ────────────
+let cloudStatus = null; // {ok, detail, at}
+let pushTimer = null;
+let pushing = false;
+
+function setCloudStatus(ok, detail) {
+  cloudStatus = { ok, detail, at: Date.now() };
+  const el = $("#cloud-status");
+  if (el) {
+    el.textContent = `${ok ? "☁️" : "⚠️"} ${detail}`;
+  }
+}
+
+function pushSoon() {
+  if (!cloudEnabled()) return;
+  clearTimeout(pushTimer);
+  pushTimer = setTimeout(cloudPush, 2500); // debounce bursts of edits
+}
+
+async function cloudPush() {
+  if (!cloudEnabled() || pushing) return;
+  pushing = true;
+  try {
+    let res = await pushRemote(state);
+    if (res.conflict) {
+      // another device wrote first — pull, merge, push once more
+      const remote = await pullRemote();
+      state = mergeState(state, remote);
+      save(state);
+      render();
+      res = await pushRemote(state);
+    }
+    if (res.ok) setCloudStatus(true, `Synced ${fmtTime(Date.now())}`);
+    else setCloudStatus(false, "Sync failed — will retry on next change");
+  } catch {
+    setCloudStatus(false, "Sync error — check the events token");
+  } finally {
+    pushing = false;
+  }
+}
+
+async function cloudPullMerge(manual = false) {
+  if (!cloudEnabled()) {
+    if (manual) alert(cloudReason());
+    return;
+  }
+  try {
+    const remote = await pullRemote();
+    if (remote) {
+      const before = JSON.stringify(state);
+      state = mergeState(state, remote);
+      save(state);
+      if (JSON.stringify(state) !== before) {
+        render();
+        renderWidgets();
+      }
+    }
+    // push if we have anything the remote didn't (or to seed an empty repo)
+    await cloudPush();
+    if (manual) setCloudStatus(true, `Synced ${fmtTime(Date.now())}`);
+  } catch {
+    setCloudStatus(false, "Sync error — check the events token");
+    if (manual) alert("Sync failed — make sure the 🗄 read-write events token is set on this device.");
+  }
 }
 
 function notify(title, body) {
@@ -1014,6 +1089,14 @@ function renderWidgets() {
       }</button>
       <button class="btn" data-action="agent-sync" title="Pull agenda/tasks from your agent now">🔄 Sync agent</button>
       <button class="btn" data-action="conn-toggle" title="Connect Hermes / Telegram on this device">⚙️ Agent setup</button>
+      <button class="btn btn-blue" data-action="cloud-sync" title="Sync tasks/logs across all your devices via your private repo">☁️ Sync devices</button>
+      <div id="cloud-status" class="sync-status">${
+        cloudStatus
+          ? `${cloudStatus.ok ? "☁️" : "⚠️"} ${cloudStatus.detail}`
+          : cloudEnabled()
+            ? "☁️ Device sync on"
+            : ""
+      }</div>
       <button class="btn btn-red" data-action="reset-seed" title="Restore the original seeded tasks (logs are wiped too)">🧹 Reset</button>
       <div id="sync-status" class="sync-status"></div>
     </div>
@@ -1421,6 +1504,9 @@ document.addEventListener("click", (e) => {
       connOpen = !connOpen;
       renderWidgets();
       break;
+    case "cloud-sync":
+      cloudPullMerge(true);
+      break;
     case "dismiss-agent-msg":
       if (state.agentMessage) state.agentMessage.dismissed = true;
       save(state);
@@ -1561,6 +1647,7 @@ document.addEventListener("submit", (e) => {
     connOpen = false;
     renderWidgets();
     syncWithAgent(true);
+    cloudPullMerge(); // token may have just enabled device sync
   }
 });
 
@@ -1635,6 +1722,14 @@ setInterval(checkProcrastination, 30000);
 checkProcrastination();
 syncWithAgent();
 setInterval(syncWithAgent, 5 * 60000);
+
+// Cross-device sync: pull+merge on boot, when the tab regains focus, and
+// every few minutes; push is debounced after each edit (see commit()).
+cloudPullMerge();
+setInterval(() => cloudPullMerge(), 4 * 60000);
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) cloudPullMerge();
+});
 
 // PWA: offline shell + self-update so the installed home-screen app never
 // gets stuck on a stale build. When a new service worker takes control we
