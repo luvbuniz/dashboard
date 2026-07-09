@@ -1636,7 +1636,24 @@ checkProcrastination();
 syncWithAgent();
 setInterval(syncWithAgent, 5 * 60000);
 
-// PWA: install prompt + offline shell (production only, dev stays HMR-clean)
+// PWA: offline shell + self-update so the installed home-screen app never
+// gets stuck on a stale build. When a new service worker takes control we
+// reload exactly once to pick up the latest assets.
 if (import.meta.env.PROD && "serviceWorker" in navigator) {
-  navigator.serviceWorker.register("./sw.js").catch(() => {});
+  let refreshing = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (refreshing) return;
+    refreshing = true;
+    location.reload();
+  });
+  navigator.serviceWorker
+    .register("./sw.js")
+    .then((reg) => {
+      reg.update();
+      // check for a new deploy each time the app regains focus
+      document.addEventListener("visibilitychange", () => {
+        if (!document.hidden) reg.update();
+      });
+    })
+    .catch(() => {});
 }
