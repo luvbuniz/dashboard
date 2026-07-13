@@ -854,6 +854,10 @@ function renderTracks() {
                 <span class="pill ${
                   appsToday() >= state.settings.jobTarget ? "pill-green" : "pill-yellow"
                 }">${appsToday()}/${state.settings.jobTarget} TODAY</span>
+                <label class="apps-goal">goal/day
+                  <input type="number" min="1" max="50" step="1"
+                    value="${state.settings.jobTarget}" data-job-target
+                    aria-label="Applications per day goal" /></label>
                 <span class="apps-total">${state.applications.length} total</span>
               </div>
               ${
@@ -1535,6 +1539,12 @@ document.addEventListener("change", (e) => {
       ev.done = calCheck.checked;
       commit();
     }
+    return;
+  }
+  const jobTargetInput = e.target.closest("[data-job-target]");
+  if (jobTargetInput) {
+    state.settings.jobTarget = Math.max(1, Math.min(50, parseInt(jobTargetInput.value) || 1));
+    commit();
     return;
   }
   const pomoLenInput = e.target.closest("[data-pomo-len]");
