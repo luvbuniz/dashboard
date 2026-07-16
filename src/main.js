@@ -892,11 +892,16 @@ function renderTracks() {
             </div>`
           : "";
 
+      // Job Hunt's badge tracks the live daily goal, not the seeded "2/DAY"
+      const headBadge =
+        track.id === "jobhunt"
+          ? pillHTML({ text: `${state.settings.jobTarget}/DAY`, color: "yellow" })
+          : track.badge
+            ? pillHTML(track.badge)
+            : "";
       return `<section class="track-card" style="border-top-color:${track.color}">
         <div class="track-head">
-          <h2>${track.emoji} ${esc(track.name)} ${
-            track.badge ? pillHTML(track.badge) : ""
-          }</h2>
+          <h2>${track.emoji} ${esc(track.name)} ${headBadge}</h2>
           <span class="track-today">⏱ ${fmtMins(mins)} today · ${openTasks} open</span>
         </div>
         ${track.note ? `<div class="track-note">${esc(track.note)}</div>` : ""}
