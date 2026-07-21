@@ -52,15 +52,34 @@ function task(text, badges = []) {
   };
 }
 
-// Union two arrays of {id,...} objects: no duplicates, and when both sides
-// have the same id the `primary` side's version wins (for in-place edits).
-function unionById(primary = [], secondary = [], pick) {
+// Union two arrays of keyed objects: no duplicates, primary wins on collision.
+// keyOf defaults to the local id, but agent-fed items (subscriptions, events)
+// must key on their STABLE agent id (fromAgent) — otherwise the same item
+// gets a different local uid on each device and the union keeps both.
+function unionById(primary = [], secondary = [], pick, keyOf = (x) => x.id) {
   const map = new Map();
-  for (const item of secondary) if (item && item.id) map.set(item.id, item);
+  for (const item of secondary) {
+    if (!item) continue;
+    const k = keyOf(item);
+    if (k != null) map.set(k, item);
+  }
   for (const item of primary) {
-    if (!item || !item.id) continue;
-    const other = map.get(item.id);
-    map.set(item.id, pick && other ? pick(item, other) : item);
+    if (!item) continue;
+    const k = keyOf(item);
+    if (k == null) continue;
+    const other = map.get(k);
+    map.set(k, pick && other ? pick(item, other) : item);
+  }
+  return [...map.values()];
+}
+
+// Collapse any already-duplicated agent-fed items in a single array (from
+// earlier bad merges), keeping the last occurrence.
+function dedupeByAgent(arr = []) {
+  const map = new Map();
+  for (const item of arr) {
+    if (!item) continue;
+    map.set(item.fromAgent || item.id, item);
   }
   return [...map.values()];
 }
@@ -81,8 +100,9 @@ export function mergeState(local, remote) {
     // keep whichever copy has a real title (agent may have enriched it)
     (a, b) => (a.title ? a : b.title ? b : a)
   );
-  out.events = unionById(local.events, remote.events);
-  out.subscriptions = unionById(local.subscriptions, remote.subscriptions);
+  const byAgent = (x) => x.fromAgent || x.id;
+  out.events = unionById(local.events, remote.events, null, byAgent);
+  out.subscriptions = unionById(local.subscriptions, remote.subscriptions, null, byAgent);
   out.archive = unionById(local.archive, remote.archive);
   out.inboxSeen = Array.from(
     new Set([...(local.inboxSeen || []), ...(remote.inboxSeen || [])])
@@ -236,6 +256,9 @@ export function load() {
     if (!Array.isArray(state.applications)) state.applications = [];
     if (!Array.isArray(state.subscriptions)) state.subscriptions = [];
     if (!Array.isArray(state.archive)) state.archive = [];
+    // one-time cleanup of duplicates from the pre-fix merge bug
+    state.subscriptions = dedupeByAgent(state.subscriptions);
+    state.events = dedupeByAgent(state.events);
     if (typeof state.updatedAt !== "number") state.updatedAt = Date.now();
     // done tasks older than 30 days leave the boards for the archive
     const cutoff = Date.now() - 30 * 86400000;
