@@ -82,6 +82,8 @@ export function mergeState(local, remote) {
     (a, b) => (a.title ? a : b.title ? b : a)
   );
   out.events = unionById(local.events, remote.events);
+  out.subscriptions = unionById(local.subscriptions, remote.subscriptions);
+  out.archive = unionById(local.archive, remote.archive);
   out.inboxSeen = Array.from(
     new Set([...(local.inboxSeen || []), ...(remote.inboxSeen || [])])
   ).slice(-500);
@@ -187,6 +189,10 @@ export function seedState() {
     events: [], // {id, date "YYYY-MM-DD", time "HH:MM"|null, title, trackId|null, done, fromAgent?}
     // job hunt: applications submitted {id, title, url|null, at}
     applications: [],
+    // subscriptions: reminders, NOT tasks {id, name, amount, renewsOn "YYYY-MM-DD", note, fromAgent?}
+    subscriptions: [],
+    // completed tasks older than 30 days move here (kept for the record)
+    archive: [],
     // frog of the day
     frog: { taskId: frogTask.id, trackId: "money", date: todayKey() },
     frogCelebrated: null, // date the frog-done celebration fired
@@ -228,7 +234,18 @@ export function load() {
     if (!Array.isArray(state.inboxSeen)) state.inboxSeen = [];
     if (!Array.isArray(state.events)) state.events = [];
     if (!Array.isArray(state.applications)) state.applications = [];
+    if (!Array.isArray(state.subscriptions)) state.subscriptions = [];
+    if (!Array.isArray(state.archive)) state.archive = [];
     if (typeof state.updatedAt !== "number") state.updatedAt = Date.now();
+    // done tasks older than 30 days leave the boards for the archive
+    const cutoff = Date.now() - 30 * 86400000;
+    for (const track of state.tracks) {
+      const old = track.tasks.filter((t) => t.done && t.doneAt && t.doneAt < cutoff);
+      if (old.length) {
+        for (const t of old) state.archive.push({ ...t, trackId: track.id });
+        track.tasks = track.tasks.filter((t) => !(t.done && t.doneAt && t.doneAt < cutoff));
+      }
+    }
     // sweep calendar items that are done and more than a week old
     const weekAgo = todayKey(new Date(Date.now() - 7 * 86400000));
     state.events = state.events.filter((e) => !(e.done && e.date < weekAgo));

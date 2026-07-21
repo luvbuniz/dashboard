@@ -69,7 +69,11 @@ minutes. Rewrite it whenever something changes:
      "title": "Dentist — kids", "track": "kids"}
   ],
   "frog": {"id": "frog-2026-07-06", "track": "money",
-           "text": "Submit Appen Thyme V2 dataset — $400"}
+           "text": "Submit Appen Thyme V2 dataset — $400"},
+  "subscriptions": [
+    {"id": "sub-meshy", "name": "Meshy.ai", "amount": 40,
+     "renewsOn": "2026-07-27", "note": "cancel before renewal?"}
+  ]
 }
 
 Rules:
@@ -100,6 +104,12 @@ Rules:
   Deduped by id: if Amy manually re-pins something else afterwards,
   your old id will NOT re-apply — never fight her choice; only send a
   new id if priorities genuinely change mid-day.
+- subscriptions: recurring payments go HERE, never into tasks[] — the
+  dashboard has a dedicated 💳 Subs tab, and renewals within 7 days
+  surface on her Today tab automatically. Keep a stable id per
+  subscription and keep renewsOn current (these are UPSERTS: resending
+  the same id updates the entry). Do not create "cancel X before
+  renewal" tasks anymore.
 
 ## Receiving events WITHOUT a webhook 📡
 

@@ -180,6 +180,39 @@ export async function pullFromAgent(state) {
     }
   }
 
+  // subscriptions: [{id, name, amount, renewsOn "YYYY-MM-DD", note}] —
+  // UPSERTED by agent id (not deduped): the agent owns keeping renewal
+  // dates current. These are reminders, never tasks.
+  if (Array.isArray(data.subscriptions)) {
+    for (const s of data.subscriptions) {
+      const agentId = String(s.id ?? "").trim();
+      const name = String(s.name ?? "").trim();
+      const renewsOn = String(s.renewsOn ?? "").trim();
+      if (!agentId || !name || !/^\d{4}-\d{2}-\d{2}$/.test(renewsOn)) continue;
+      let sub = state.subscriptions.find((x) => x.fromAgent === agentId);
+      if (!sub) {
+        sub = { id: uid(), fromAgent: agentId };
+        state.subscriptions.push(sub);
+        changed = true;
+      }
+      const next = {
+        name,
+        amount: +s.amount || 0,
+        renewsOn,
+        note: String(s.note ?? "").trim() || null,
+      };
+      if (
+        sub.name !== next.name ||
+        sub.amount !== next.amount ||
+        sub.renewsOn !== next.renewsOn ||
+        sub.note !== next.note
+      ) {
+        Object.assign(sub, next);
+        changed = true;
+      }
+    }
+  }
+
   // application title enrichment: [{id, title}] — the id comes from the
   // job_applied event; the agent identifies role/company from the link and
   // sends the real title back. Plain updates, no dedupe needed.

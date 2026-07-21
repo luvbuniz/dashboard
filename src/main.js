@@ -27,6 +27,8 @@ import {
 let state = load();
 const sessionStart = Date.now();
 const openLogs = new Set(); // track ids with the log panel expanded
+const openDone = new Set(); // track ids with the ✓ done section expanded
+let activeTab = localStorage.getItem("amys-cc-tab") || "today";
 let editingTaskId = null;
 let quoteOffset = 0; // bumped by the ↻ button when today's quote doesn't land
 let connOpen = false; // ⚙️ agent-connection panel visibility
@@ -762,6 +764,9 @@ function taskHTML(track, task) {
       ${meta}
     </div>
     <div class="task-actions">
+      <button class="icon-btn ${task.today === todayKey() ? "on-today" : ""}"
+        title="${task.today === todayKey() ? "Remove from Today" : "Put on Today's plate"}"
+        data-action="toggle-today" data-track="${track.id}" data-task="${task.id}">☀️</button>
       <button class="icon-btn" title="Set as Frog of the Day" data-action="set-frog"
         data-track="${track.id}" data-task="${task.id}">🐸</button>
       <button class="icon-btn" title="Edit" data-action="edit-task"
@@ -908,8 +913,25 @@ function renderTracks() {
         ${appsBox}
         ${savings}
         <ul class="task-list">${track.tasks
+          .filter((t) => !t.done)
           .map((t) => taskHTML(track, t))
           .join("")}</ul>
+        ${(() => {
+          const done = track.tasks
+            .filter((t) => t.done)
+            .sort((a, b) => (b.doneAt || 0) - (a.doneAt || 0));
+          if (!done.length) return "";
+          return `<button class="log-toggle" data-action="toggle-done-list" data-track="${track.id}">
+              ${openDone.has(track.id) ? "▾" : "▸"} ✓ done (${done.length})
+            </button>
+            ${
+              openDone.has(track.id)
+                ? `<ul class="task-list done-list">${done
+                    .map((t) => taskHTML(track, t))
+                    .join("")}</ul>`
+                : ""
+            }`;
+        })()}
         <form class="add-task" data-add-track="${track.id}">
           <input type="text" name="text" placeholder="＋ Add a task…" />
           <button class="btn" type="submit">Add</button>
@@ -1016,6 +1038,104 @@ function renderCalendar() {
       <select name="track" aria-label="Track">${trackOptions}</select>
       <button class="btn btn-blue" type="submit">＋ Add</button>
     </form>
+  </div>`;
+}
+
+function renderToday() {
+  const el = $("#today-list");
+  const today = todayKey();
+  const rows = [];
+  for (const track of state.tracks) {
+    for (const t of track.tasks) {
+      const isFrog = state.frog?.taskId === t.id;
+      const flagged = t.today === today;
+      if (!isFrog && !flagged) continue;
+      if (t.done && t.doneAt < dayStart()) continue; // yesterday's leftovers
+      rows.push({ track, t, isFrog });
+    }
+  }
+  rows.sort(
+    (a, b) =>
+      (a.t.done ? 1 : 0) - (b.t.done ? 1 : 0) || (b.isFrog ? 1 : 0) - (a.isFrog ? 1 : 0)
+  );
+  el.innerHTML = `<div class="today-card">
+    <h2>☀️ Today's plate</h2>
+    ${
+      rows.length
+        ? `<ul class="task-list">${rows.map((r) => taskHTML(r.track, r.t)).join("")}</ul>`
+        : `<div class="cal-empty">Nothing picked yet — open 🗂 Boards and tap ☀️ on what matters today.</div>`
+    }
+  </div>`;
+}
+
+// ── Subscriptions 💳 ────────────────────────────────────────────────────────
+function subDaysLeft(sub) {
+  const [y, m, d] = sub.renewsOn.split("-").map(Number);
+  return Math.ceil((new Date(y, m - 1, d).getTime() - dayStart()) / 86400000);
+}
+
+function renderSubsDue() {
+  const el = $("#subs-due");
+  const soon = state.subscriptions
+    .filter((s) => subDaysLeft(s) <= 7)
+    .sort((a, b) => subDaysLeft(a) - subDaysLeft(b));
+  el.innerHTML = soon.length
+    ? `<div class="subs-due-strip" data-action="goto-subs" role="button">
+        ${soon
+          .map((s) => {
+            const d = subDaysLeft(s);
+            return `<span class="subs-due-item">💳 <strong>${esc(s.name)}</strong> — ${fmtMoney(
+              +s.amount || 0
+            )} ${d < 0 ? `overdue ${-d}d 😬` : d === 0 ? "renews TODAY" : `renews in ${d}d`}</span>`;
+          })
+          .join("")}
+      </div>`
+    : "";
+}
+
+function renderSubs() {
+  const el = $("#subs");
+  const subs = [...state.subscriptions].sort((a, b) => subDaysLeft(a) - subDaysLeft(b));
+  const monthly = subs.reduce((n, s) => n + (+s.amount || 0), 0);
+  el.innerHTML = `<div class="subs-card">
+    <div class="subs-head">
+      <h2>💳 Subscriptions</h2>
+      <span class="subs-total">${fmtMoney(monthly)}/mo across ${subs.length}</span>
+    </div>
+    ${
+      subs.length
+        ? `<ul class="subs-list">${subs
+            .map((s) => {
+              const d = subDaysLeft(s);
+              const pill =
+                d <= 7
+                  ? `<span class="pill pill-red">${d < 0 ? `${-d}D OVERDUE` : d === 0 ? "TODAY" : `IN ${d}D`}</span>`
+                  : d <= 30
+                    ? `<span class="pill pill-yellow">IN ${d}D</span>`
+                    : `<span class="pill pill-green">IN ${d}D</span>`;
+              return `<li class="sub-item">
+                <div class="sub-main">
+                  <strong>${s.fromAgent ? "🤖 " : ""}${esc(s.name)}</strong> ${pill}
+                  <div class="sub-meta">${fmtMoney(+s.amount || 0)} · renews ${fmtCalDate(
+                    s.renewsOn
+                  )}${s.note ? ` · <em>${esc(s.note)}</em>` : ""}</div>
+                </div>
+                <button class="btn" data-action="sub-renewed" data-sub="${s.id}"
+                  title="Paid/renewed — move to next month">↻</button>
+                <button class="log-del" data-action="sub-del" data-sub="${s.id}" title="Remove (cancelled)">✕</button>
+              </li>`;
+            })
+            .join("")}</ul>`
+        : `<div class="cal-empty">No subscriptions tracked — add the recurring money-leaks below 💸</div>`
+    }
+    <form class="cal-form" id="sub-form">
+      <input type="text" name="name" placeholder="e.g. Google One AI Pro" required />
+      <input type="number" name="amount" placeholder="$/mo" min="0" step="0.01" required />
+      <input type="date" name="renewsOn" required />
+      <input type="text" name="note" placeholder="note (optional)" />
+      <button class="btn btn-blue" type="submit">＋ Track it</button>
+    </form>
+    <div class="progress-label">Renewals within 7 days also show on ☀️ Today. ↻ marks a renewal paid (moves it a month out); ✕ removes a cancelled one.</div>
   </div>`;
 }
 
@@ -1150,11 +1270,14 @@ function render() {
   renderQuote();
   renderFrog();
   renderAgenda();
+  renderSubsDue();
+  renderToday();
   renderSummary();
   renderTimeLog();
   renderCalendar();
   renderTracks();
   renderHistory();
+  renderSubs();
 }
 
 function syncWithAgent(manual = false) {
@@ -1420,6 +1543,37 @@ document.addEventListener("click", (e) => {
       openLogs.has(trackId) ? openLogs.delete(trackId) : openLogs.add(trackId);
       render();
       break;
+    case "toggle-done-list":
+      openDone.has(trackId) ? openDone.delete(trackId) : openDone.add(trackId);
+      render();
+      break;
+    case "toggle-today": {
+      const t = findTask(findTrack(trackId), taskId);
+      if (t) {
+        t.today = t.today === todayKey() ? null : todayKey();
+        commit();
+      }
+      break;
+    }
+    case "goto-subs":
+      setTab("subs");
+      break;
+    case "sub-renewed": {
+      const s = state.subscriptions.find((x) => x.id === btn.dataset.sub);
+      if (s) {
+        const [y, m, d] = s.renewsOn.split("-").map(Number);
+        const next = new Date(y, m, d); // month + 1 (Date rolls over)
+        s.renewsOn = `${next.getFullYear()}-${String(next.getMonth() + 1).padStart(2, "0")}-${String(
+          next.getDate()
+        ).padStart(2, "0")}`;
+        commit();
+      }
+      break;
+    }
+    case "sub-del":
+      state.subscriptions = state.subscriptions.filter((x) => x.id !== btn.dataset.sub);
+      commit();
+      break;
     case "savings-edit": {
       const t = findTrack(trackId);
       if (!t?.savings) break;
@@ -1635,6 +1789,21 @@ document.addEventListener("submit", (e) => {
     logApplication(appsForm.elements.title.value, appsForm.elements.url.value);
     return;
   }
+  if (e.target.id === "sub-form") {
+    e.preventDefault();
+    const f = e.target.elements;
+    if (f.name.value.trim() && f.renewsOn.value) {
+      state.subscriptions.push({
+        id: uid(),
+        name: f.name.value.trim(),
+        amount: +f.amount.value || 0,
+        renewsOn: f.renewsOn.value,
+        note: f.note.value.trim() || null,
+      });
+      commit();
+    }
+    return;
+  }
   if (e.target.id === "cal-form") {
     e.preventDefault();
     addCalendarEvent(
@@ -1697,6 +1866,21 @@ onPingStatus((ok) => {
     : "Hermes webhook: last ping failed";
 });
 
+// ── Tabs ───────────────────────────────────────────────────────────────────
+function applyTab() {
+  document.documentElement.setAttribute("data-tab", activeTab);
+  document.querySelectorAll("[data-tab-btn]").forEach((b) => {
+    b.classList.toggle("active", b.dataset.tabBtn === activeTab);
+  });
+}
+
+function setTab(tab) {
+  activeTab = tab;
+  localStorage.setItem("amys-cc-tab", tab);
+  applyTab();
+  window.scrollTo({ top: 0 });
+}
+
 // ── Theme ──────────────────────────────────────────────────────────────────
 function applyTheme() {
   const dark = state.settings.theme === "dark";
@@ -1708,8 +1892,14 @@ function applyTheme() {
   }
 }
 
+document.addEventListener("click", (e) => {
+  const tabBtn = e.target.closest("[data-tab-btn]");
+  if (tabBtn) setTab(tabBtn.dataset.tabBtn);
+});
+
 // ── Boot ───────────────────────────────────────────────────────────────────
 pomo.remaining = pomoLen("work");
+applyTab();
 applyTheme();
 try {
   $("#build-stamp").textContent = `build ${__BUILD_ID__}`;

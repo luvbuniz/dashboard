@@ -65,7 +65,187 @@ h3,
 #app {
   max-width: 780px;
   margin: 0 auto;
-  padding: 16px 14px 48px;
+  padding: 16px 14px 84px; /* room for the tab bar */
+}
+
+/* ── Tabs: which sections live on which tab ──────────────────────────── */
+html[data-tab="today"] #tracks,
+html[data-tab="today"] #history,
+html[data-tab="today"] #subs,
+html[data-tab="boards"] #quote,
+html[data-tab="boards"] #frog-banner,
+html[data-tab="boards"] #agenda,
+html[data-tab="boards"] #subs-due,
+html[data-tab="boards"] #today-list,
+html[data-tab="boards"] #summary,
+html[data-tab="boards"] #timelog,
+html[data-tab="boards"] #widgets,
+html[data-tab="boards"] #calendar,
+html[data-tab="boards"] #subs,
+html[data-tab="subs"] #quote,
+html[data-tab="subs"] #frog-banner,
+html[data-tab="subs"] #agenda,
+html[data-tab="subs"] #today-list,
+html[data-tab="subs"] #summary,
+html[data-tab="subs"] #timelog,
+html[data-tab="subs"] #widgets,
+html[data-tab="subs"] #calendar,
+html[data-tab="subs"] #tracks,
+html[data-tab="subs"] #history {
+  display: none;
+}
+
+.tabbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  background: rgba(28, 28, 30, 0.96);
+  backdrop-filter: blur(8px);
+  padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
+  border-top: 1px solid #3a3a3c;
+}
+
+.tabbar button {
+  flex: 0 1 160px;
+  background: none;
+  border: none;
+  border-radius: 12px;
+  color: #8e8e93;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.tabbar button.active {
+  background: #2c2c2e;
+  color: var(--yellow);
+}
+
+/* ── Boards tab: tracks as swipeable kanban columns ──────────────────── */
+html[data-tab="boards"] #tracks {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 8px;
+  align-items: flex-start;
+}
+
+html[data-tab="boards"] #tracks .track-card {
+  flex: 0 0 min(86vw, 340px);
+  scroll-snap-align: start;
+  margin-bottom: 4px;
+}
+
+.done-list {
+  opacity: 0.8;
+}
+
+/* ── Today's plate ───────────────────────────────────────────────────── */
+.today-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  border-top: 4px solid var(--yellow);
+  box-shadow: 0 4px 16px var(--card-shadow);
+  padding: 12px 16px 14px;
+  margin-bottom: 14px;
+}
+
+.today-card h2 {
+  margin: 0 0 4px;
+  font-size: 15px;
+}
+
+.icon-btn.on-today {
+  opacity: 1;
+  background: #fff3bf;
+  border-radius: 6px;
+}
+
+html.dark .icon-btn.on-today {
+  background: #4a3f10;
+}
+
+/* ── Subscriptions ───────────────────────────────────────────────────── */
+.subs-due-strip {
+  background: linear-gradient(135deg, #1c1c1e, #33261b);
+  border: 2px solid #ff9f0a;
+  border-radius: 14px;
+  color: #fff;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  font-size: 13.5px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.subs-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  border-top: 4px solid #ff9f0a;
+  box-shadow: 0 4px 16px var(--card-shadow);
+  padding: 14px 16px;
+  margin-bottom: 16px;
+}
+
+.subs-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.subs-head h2 {
+  margin: 0 0 6px;
+  font-size: 16px;
+}
+
+.subs-total {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 700;
+  color: #ff9f0a;
+  font-size: 13px;
+}
+
+.subs-list {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 0;
+}
+
+.sub-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--row);
+  border-radius: 10px;
+  padding: 9px 12px;
+  margin-bottom: 6px;
+}
+
+.sub-main {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+}
+
+.sub-meta {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
 }
 
 button {
