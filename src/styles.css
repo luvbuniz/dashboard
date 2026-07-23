@@ -728,7 +728,8 @@ button:focus-visible {
   margin-bottom: 8px;
 }
 
-.conn-widget input {
+.conn-widget input,
+.conn-widget textarea {
   display: block;
   width: 100%;
   margin-top: 3px;
@@ -737,6 +738,9 @@ button:focus-visible {
   border-radius: 9px;
   padding: 7px 10px;
   color: #fff;
+  font-family: inherit;
+  box-sizing: border-box;
+  resize: vertical;
 }
 
 /* ── Buttons ─────────────────────────────────────────────────────────── */

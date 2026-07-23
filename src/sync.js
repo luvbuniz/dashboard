@@ -82,6 +82,17 @@ export async function pullFromAgent(state) {
     return { ok: false, changed: false, detail: "the file isn't a JSON object — expected {agenda, tasks, message}" };
   }
 
+  return applyFeedData(state, data);
+}
+
+// Apply a feed object ({tasks, frog, events, subscriptions, agenda, message,
+// applications}) to state. Shared by the GitHub pull AND the in-app
+// "Paste from LLM" box, so ANY LLM can drive the dashboard by producing this
+// shape — it never needs GitHub access; the dashboard commits the change.
+export function applyFeedData(state, data) {
+  if (!data || typeof data !== "object" || Array.isArray(data)) {
+    return { ok: false, changed: false, detail: "not a JSON object" };
+  }
   let changed = false;
   let tasksAdded = 0;
 

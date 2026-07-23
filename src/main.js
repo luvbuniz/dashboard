@@ -15,7 +15,7 @@ import { sendEvent, onPingStatus } from "./webhook.js";
 import { confettiBurst } from "./confetti.js";
 import { mergeState } from "./store.js";
 import { quoteForNow } from "./quotes.js";
-import { pullFromAgent } from "./sync.js";
+import { pullFromAgent, applyFeedData } from "./sync.js";
 import {
   cloudEnabled,
   cloudReason,
@@ -32,6 +32,7 @@ let activeTab = localStorage.getItem("amys-cc-tab") || "today";
 let editingTaskId = null;
 let quoteOffset = 0; // bumped by the ↻ button when today's quote doesn't land
 let connOpen = false; // ⚙️ agent-connection panel visibility
+let pasteOpen = false; // 📥 paste-from-LLM panel visibility
 let syncStatus = null; // {ok, detail, at} — last pull result, shown in Data widget
 
 const pomo = {
@@ -476,6 +477,85 @@ function logApplication(title, url) {
   });
   if (count === state.settings.jobTarget) confettiBurst(1800);
   commit();
+}
+
+// ── LLM bridge: brief any LLM, apply its reply — no GitHub access needed ────
+function buildLLMBrief() {
+  const info = frogInfo();
+  const today = todayKey();
+  const openByTrack = state.tracks
+    .map((t) => {
+      const open = t.tasks.filter((x) => !x.done).map((x) => x.text);
+      return open.length ? `  ${t.emoji} ${t.name}: ${open.join("; ")}` : null;
+    })
+    .filter(Boolean)
+    .join("\n");
+  const subsDue = state.subscriptions
+    .filter((s) => subDaysLeft(s) <= 14)
+    .map((s) => `  ${s.name} — ${fmtMoney(+s.amount || 0)} in ${subDaysLeft(s)}d`)
+    .join("\n");
+  const upcoming = [...state.events]
+    .filter((e) => !e.done && e.date >= today)
+    .sort((a, b) => a.date.localeCompare(b.date))
+    .slice(0, 6)
+    .map((e) => `  ${e.date}${e.time ? " " + fmtCalTime(e.time) : ""} — ${e.title}`)
+    .join("\n");
+
+  return `AMY'S COMMAND CENTER — brief for ${today}
+🐸 FROG: ${info && !info.task.done ? info.task.text : "(none set)"}
+OPEN TASKS BY TRACK:
+${openByTrack || "  (none)"}
+📅 UPCOMING:
+${upcoming || "  (none)"}
+💳 SUBS DUE (≤14d):
+${subsDue || "  (none)"}
+
+— You are my daily organizer. Chat/plan with me freely. When I ask you to
+update my dashboard, reply with ONE JSON block in exactly this shape (include
+only what changed; give every item a short unique "id"):
+{
+  "tasks": [{"id":"slug","track":"money|jobhunt|stackadoo|kids|realestate","text":"...","badge":{"text":"TODAY","color":"red|yellow|green|blue|purple"}}],
+  "frog": {"id":"frog-${today}","track":"money","text":"the day's hardest task"},
+  "events": [{"id":"slug","date":"YYYY-MM-DD","time":"HH:MM","title":"...","track":"kids"}],
+  "subscriptions": [{"id":"sub-name","name":"...","amount":0,"renewsOn":"YYYY-MM-DD","note":"..."}],
+  "message": "one short note for the top of my dashboard"
+}
+I paste that block back into my dashboard — you never need GitHub access.`;
+}
+
+function slugId(text) {
+  return (
+    "llm-" +
+    String(text || "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .slice(0, 40)
+  );
+}
+
+function applyPastedFeed(raw) {
+  // tolerant: pull the first {...} block out of whatever the LLM pasted
+  let text = String(raw || "").trim();
+  const m = text.match(/\{[\s\S]*\}/);
+  if (!m) return alert("No JSON found. Paste the { … } block your LLM produced.");
+  let data;
+  try {
+    data = JSON.parse(m[0]);
+  } catch {
+    return alert("That JSON didn't parse. Make sure you copied the whole { … } block.");
+  }
+  // fill missing ids so re-pasting the same text won't duplicate
+  for (const t of data.tasks || []) if (!t.id && t.text) t.id = slugId(t.text);
+  for (const e of data.events || []) if (!e.id && e.title) e.id = slugId(e.title + e.date);
+  for (const s of data.subscriptions || []) if (!s.id && s.name) s.id = slugId("sub-" + s.name);
+  if (data.frog && !data.frog.id && data.frog.text) data.frog.id = slugId("frog-" + data.frog.text);
+
+  const res = applyFeedData(state, data);
+  pasteOpen = false;
+  commit(); // saves + cloud-syncs to buni
+  renderWidgets();
+  alert(res.changed ? `✅ Applied — ${res.detail}` : "Nothing new to apply (already on your board).");
 }
 
 // ── Calendar: future tasks & appointments ──────────────────────────────────
@@ -1219,6 +1299,8 @@ function renderWidgets() {
       <button class="btn" data-action="agent-sync" title="Pull agenda/tasks from your agent now">🔄 Sync agent</button>
       <button class="btn" data-action="conn-toggle" title="Connect Hermes / Telegram on this device">⚙️ Agent setup</button>
       <button class="btn btn-blue" data-action="cloud-sync" title="Sync tasks/logs across all your devices via your private repo">☁️ Sync devices</button>
+      <button class="btn btn-green" data-action="copy-llm" title="Copy your day + reply format to paste into any LLM (Grok, ChatGPT, Sonnet…)">📋 Copy for LLM</button>
+      <button class="btn" data-action="paste-llm" title="Paste an LLM's reply to update your dashboard — no GitHub access needed">📥 Paste from LLM</button>
       <div id="cloud-status" class="sync-status">${
         cloudStatus
           ? `${cloudStatus.ok ? "☁️" : "⚠️"} ${cloudStatus.detail}`
@@ -1229,7 +1311,19 @@ function renderWidgets() {
       <button class="btn btn-red" data-action="reset-seed" title="Restore the original seeded tasks (logs are wiped too)">🧹 Reset</button>
       <div id="sync-status" class="sync-status"></div>
     </div>
-    ${connOpen ? connPanelHTML() : ""}`;
+    ${connOpen ? connPanelHTML() : ""}
+    ${
+      pasteOpen
+        ? `<div class="widget conn-widget">
+            <h3>📥 Paste your LLM's reply — applies here & commits to your repo</h3>
+            <textarea id="paste-feed" rows="6" placeholder="Paste the { … } JSON block your LLM produced…"></textarea>
+            <div class="widget-row">
+              <button class="btn btn-green" data-action="paste-apply">✅ Apply</button>
+              <button class="btn" data-action="paste-llm">Cancel</button>
+            </div>
+          </div>`
+        : ""
+    }`;
   updateCountdownDisplay();
   updateSyncStatusLine();
 }
@@ -1669,6 +1763,26 @@ document.addEventListener("click", (e) => {
       break;
     case "cloud-sync":
       cloudPullMerge(true);
+      break;
+    case "copy-llm": {
+      const brief = buildLLMBrief();
+      const done = () => {
+        btn.textContent = "✅ Copied!";
+        setTimeout(() => renderWidgets(), 1500);
+      };
+      if (navigator.clipboard?.writeText) {
+        navigator.clipboard.writeText(brief).then(done, () => alert(brief));
+      } else {
+        alert(brief);
+      }
+      break;
+    }
+    case "paste-llm":
+      pasteOpen = !pasteOpen;
+      renderWidgets();
+      break;
+    case "paste-apply":
+      applyPastedFeed($("#paste-feed")?.value);
       break;
     case "dismiss-agent-msg":
       if (state.agentMessage) state.agentMessage.dismissed = true;
