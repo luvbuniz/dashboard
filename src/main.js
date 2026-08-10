@@ -1121,29 +1121,63 @@ function renderCalendar() {
   </div>`;
 }
 
+// One simple, tappable checklist row — checkbox + text + badges.
+// Uses the same data-check/data-track/data-task hooks as the Boards view, so
+// ticking here flows through toggleDone → commit → cloud sync just the same.
+function checklistRow(track, t) {
+  const isFrog = state.frog?.taskId === t.id;
+  const badges = (t.badges || []).map(pillHTML).join(" ");
+  return `<li class="cl-item ${t.done ? "done" : ""} ${isFrog ? "is-frog" : ""}">
+    <input type="checkbox" ${t.done ? "checked" : ""} data-check
+      data-track="${track.id}" data-task="${t.id}" aria-label="Mark ${esc(t.text)} done" />
+    <span class="cl-text">${isFrog ? "🐸 " : ""}${esc(t.text)} ${badges}</span>
+  </li>`;
+}
+
+// The Today tab: a clean, grouped checklist of everything open — plus what you
+// finished today, struck through — so you can just open it and check things off.
 function renderToday() {
   const el = $("#today-list");
-  const today = todayKey();
-  const rows = [];
-  for (const track of state.tracks) {
-    for (const t of track.tasks) {
-      const isFrog = state.frog?.taskId === t.id;
-      const flagged = t.today === today;
-      if (!isFrog && !flagged) continue;
-      if (t.done && t.doneAt < dayStart()) continue; // yesterday's leftovers
-      rows.push({ track, t, isFrog });
-    }
-  }
-  rows.sort(
-    (a, b) =>
-      (a.t.done ? 1 : 0) - (b.t.done ? 1 : 0) || (b.isFrog ? 1 : 0) - (a.isFrog ? 1 : 0)
-  );
-  el.innerHTML = `<div class="today-card">
-    <h2>☀️ Today's plate</h2>
+  const groups = state.tracks
+    .map((track) => {
+      const open = track.tasks.filter((t) => !t.done);
+      const doneToday = track.tasks
+        .filter((t) => t.done && (t.doneAt || 0) >= dayStart())
+        .sort((a, b) => (b.doneAt || 0) - (a.doneAt || 0));
+      return { track, open, doneToday };
+    })
+    .filter((g) => g.open.length || g.doneToday.length);
+
+  const totalOpen = groups.reduce((n, g) => n + g.open.length, 0);
+  const totalDone = groups.reduce((n, g) => n + g.doneToday.length, 0);
+  const total = totalOpen + totalDone;
+  const pct = total ? Math.round((totalDone / total) * 100) : 0;
+
+  const groupsHTML = groups
+    .map(
+      (g) => `<section class="cl-group" style="--cl-color:${g.track.color}">
+        <h3 class="cl-group-head">
+          <span>${g.track.emoji} ${esc(g.track.name)}</span>
+          <span class="cl-count">${g.open.length ? `${g.open.length} left` : "✓ clear"}</span>
+        </h3>
+        <ul class="cl-list">
+          ${g.open.map((t) => checklistRow(g.track, t)).join("")}
+          ${g.doneToday.map((t) => checklistRow(g.track, t)).join("")}
+        </ul>
+      </section>`
+    )
+    .join("");
+
+  el.innerHTML = `<div class="today-card checklist">
+    <div class="cl-top">
+      <h2>✅ Today's checklist</h2>
+      <span class="cl-progress">${totalDone}/${total} done</span>
+    </div>
+    <div class="cl-bar"><div class="cl-bar-fill" style="width:${pct}%"></div></div>
     ${
-      rows.length
-        ? `<ul class="task-list">${rows.map((r) => taskHTML(r.track, r.t)).join("")}</ul>`
-        : `<div class="cal-empty">Nothing picked yet — open 🗂 Boards and tap ☀️ on what matters today.</div>`
+      groups.length
+        ? groupsHTML
+        : `<div class="cal-empty">Nothing on the list yet 🎉 — add tasks in 🗂 Boards.</div>`
     }
   </div>`;
 }

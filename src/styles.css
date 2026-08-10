@@ -1585,3 +1585,96 @@ button:focus-visible {
     font-size: 22px;
   }
 }
+
+/* ── Today tab: clean grouped checklist ──────────────────────────────────── */
+.today-card.checklist {
+  padding: 14px 16px 16px;
+}
+.cl-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+.cl-top h2 {
+  margin: 0;
+  font-size: 17px;
+}
+.cl-progress {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--green);
+  white-space: nowrap;
+}
+.cl-bar {
+  height: 6px;
+  border-radius: 6px;
+  background: var(--savings-track);
+  overflow: hidden;
+  margin: 8px 0 6px;
+}
+.cl-bar-fill {
+  height: 100%;
+  background: var(--green);
+  border-radius: 6px;
+  transition: width 0.25s ease;
+}
+.cl-group {
+  margin-top: 12px;
+  border-left: 4px solid var(--cl-color, var(--yellow));
+  padding-left: 10px;
+}
+.cl-group-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0 0 6px;
+  font-size: 14px;
+}
+.cl-count {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.cl-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.cl-item {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  background: var(--row);
+  border-radius: 10px;
+  padding: 11px 13px;
+  margin-bottom: 7px;
+  min-height: 44px;
+}
+.cl-item input[type="checkbox"] {
+  width: 24px;
+  height: 24px;
+  flex: 0 0 auto;
+  accent-color: var(--green);
+  cursor: pointer;
+}
+.cl-text {
+  flex: 1;
+  min-width: 0;
+  font-size: 15px;
+  line-height: 1.35;
+}
+.cl-item.done {
+  opacity: 0.6;
+}
+.cl-item.done .cl-text {
+  text-decoration: line-through;
+  color: var(--muted);
+}
+.cl-item.is-frog {
+  outline: 2px solid var(--yellow);
+  outline-offset: -2px;
+}
