@@ -1,13 +1,13 @@
 {
-  "name": "Amy's Command Center",
-  "short_name": "Command 🚀",
-  "description": "5-track personal productivity dashboard with timers, receipts, and a frog 🐸",
+  "name": "Amy — today",
+  "short_name": "Today",
+  "description": "Day board, campaign lists, one remote-work timer.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#f0ede8",
-  "theme_color": "#1c1c1e",
+  "background_color": "#0c0b0a",
+  "theme_color": "#0c0b0a",
   "icons": [
     {
       "src": "icons/icon-192.png",

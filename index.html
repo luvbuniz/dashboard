@@ -1,63 +1,305 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>🚀 Amy's Command Center</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>" />
-    <link rel="manifest" href="./manifest.webmanifest" />
-    <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-    <meta name="theme-color" content="#1c1c1e" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap"
-      rel="stylesheet"
-    />
-    <!-- Local, gitignored config. A 404 here is fine — the app runs without it.
-         Relative path so it also resolves when hosted under a subpath (GitHub Pages). -->
-    <script src="./config.js"></script>
-  </head>
-  <body>
-    <div id="app">
-      <header class="topbar">
-        <div class="title-block">
-          <h1>🚀 Amy's Command Center</h1>
-          <div class="topbar-sub">
-            <span id="hermes-dot" class="hermes-dot" title="Hermes webhook status">⚪</span>
-            <span id="today-date"></span>
-            <button id="theme-toggle" class="theme-btn" data-action="theme-toggle"
-              title="Toggle dark mode">🌙</button>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0c0b0a" />
+  <title>Amy — today</title>
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0c0b0a;
+      --panel: #141312;
+      --elev: #1b1a18;
+      --ink: #f3efe8;
+      --muted: #9a948a;
+      --faint: #6d675e;
+      --line: rgba(243, 239, 232, 0.08);
+      --copper: #c4784a;
+      --copper-dim: rgba(196, 120, 74, 0.16);
+      --ok: #7ea36b;
+      --radius: 10px;
+      --tabh: calc(56px + env(safe-area-inset-bottom));
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; background: var(--bg); color: var(--ink); }
+    body {
+      font-family: "IBM Plex Sans", system-ui, sans-serif;
+      font-size: 16px;
+      line-height: 1.45;
+      min-height: 100dvh;
+    }
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 20px 16px var(--tabh); }
+    header { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+    .kicker { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--faint); font-weight: 500; }
+    h1 { font-family: Newsreader, Georgia, serif; font-size: clamp(26px, 4vw, 34px); font-weight: 500; letter-spacing: -0.03em; margin: 4px 0 0; line-height: 1.05; }
+    .clock { font-variant-numeric: tabular-nums; color: var(--muted); font-size: 13px; }
+    .alex { margin: 12px 0 20px; color: var(--muted); max-width: 58ch; }
+    .alex strong { color: var(--ink); font-weight: 500; }
+    h2 { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--faint); font-weight: 600; margin: 0 0 10px; }
+    section { margin-bottom: 22px; }
+    .panel, .board { border: 1px solid var(--line); background: var(--panel); border-radius: var(--radius); overflow: hidden; }
+    .head { padding: 12px 16px 8px; display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+    .when { font-family: Newsreader, Georgia, serif; font-size: 20px; font-weight: 500; }
+    .meta { color: var(--faint); font-size: 13px; }
+    .appt, .log-row { display: grid; grid-template-columns: 58px 1fr; gap: 4px 12px; padding: 10px 16px; border-top: 1px solid var(--line); font-size: 14px; }
+    .appt time, .log-row time { font-variant-numeric: tabular-nums; color: var(--muted); font-size: 13px; }
+    .tasks { display: flex; flex-direction: column; gap: 8px; }
+    .task {
+      display: grid; grid-template-columns: 28px 1fr auto; gap: 10px; align-items: start;
+      min-height: 48px; padding: 12px; width: 100%;
+      background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+      color: inherit; font: inherit; text-align: left; cursor: pointer;
+    }
+    .task:hover, .task:active { background: var(--elev); }
+    .task.done .label { color: var(--faint); text-decoration: line-through; }
+    .box { width: 22px; height: 22px; margin-top: 1px; border: 1.5px solid var(--muted); border-radius: 5px; flex-shrink: 0; }
+    .task.done .box, .item.done .box { background: var(--ok); border-color: var(--ok); }
+    .label { font-weight: 500; }
+    .why { color: var(--faint); font-size: 13px; margin-top: 3px; font-weight: 400; }
+    .chip { font-size: 11px; color: var(--copper); background: var(--copper-dim); border-radius: 999px; padding: 5px 8px; white-space: nowrap; }
+    .timer {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+      padding: 10px 12px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+    }
+    .timer .t { font-variant-numeric: tabular-nums; font-size: 22px; letter-spacing: -0.03em; min-width: 4.2ch; }
+    .timer select, .timer button {
+      background: var(--elev); color: var(--ink); border: 1px solid var(--line);
+      border-radius: 6px; font: inherit; font-size: 13px; padding: 8px 10px; min-height: 40px;
+    }
+    .timer button.primary { background: var(--copper-dim); color: var(--copper); border-color: transparent; }
+    .log { color: var(--muted); font-size: 13px; }
+    .log.empty { padding: 10px 16px; color: var(--faint); }
+    .week { display: flex; gap: 8px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .day { flex: 0 0 96px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 10px; min-height: 88px; }
+    .day.on { border-color: rgba(196,120,74,.45); background: var(--copper-dim); }
+    .day .d { font-size: 11px; color: var(--faint); text-transform: uppercase; letter-spacing: .06em; }
+    .day .n { font-family: Newsreader, Georgia, serif; font-size: 18px; margin: 2px 0 6px; }
+    .day .m { font-size: 12px; color: var(--muted); line-height: 1.35; }
+    .boards-grid { display: grid; gap: 12px; }
+    .board-h { padding: 12px 16px 6px; display: flex; justify-content: space-between; gap: 8px; }
+    .board-h .name { font-weight: 600; font-size: 15px; }
+    .board-h .src { color: var(--faint); font-size: 12px; }
+    .item {
+      display: grid; grid-template-columns: 22px 1fr auto; gap: 10px; align-items: start;
+      width: 100%; padding: 11px 16px; border-top: 1px solid var(--line);
+      background: none; border-left: 0; border-right: 0; border-bottom: 0;
+      color: inherit; font: inherit; text-align: left; cursor: pointer;
+    }
+    .item.done .label { color: var(--faint); text-decoration: line-through; }
+    .lane { font-size: 11px; letter-spacing: .04em; text-transform: uppercase; color: var(--faint); padding-top: 2px; }
+    .item.now .lane { color: var(--copper); }
+    .tabbar {
+      position: fixed; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: 1fr 1fr;
+      background: #141312; border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom); z-index: 20;
+    }
+    .tabbar button { background: none; border: 0; color: var(--faint); font: inherit; font-weight: 500; min-height: 48px; cursor: pointer; }
+    .tabbar button.on { color: var(--ink); }
+    [data-tab="today"] #boards, [data-tab="boards"] #today { display: none; }
+    footer { margin-top: 24px; color: var(--faint); font-size: 12px; }
+    @media (min-width: 900px) {
+      .wrap { padding: 28px 24px 40px; }
+      .layout { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: 32px; align-items: start; }
+      [data-tab] #today, [data-tab] #boards { display: block !important; }
+      .tabbar { display: none; }
+      .week { display: grid; grid-template-columns: repeat(7, 1fr); overflow: visible; }
+      .day { flex: none; min-width: 0; }
+    }
+  </style>
+</head>
+<body data-tab="today">
+  <div class="wrap">
+    <header>
+      <div>
+        <div class="kicker">Saturday · remote if you have a block</div>
+        <h1>Sep 12</h1>
+      </div>
+      <div class="clock" id="clock"></div>
+    </header>
+    <p class="alex">Alex: This is the board now. Check a box when it’s done. Timer is only for remote work — leave it alone on sub days.</p>
+
+    <div class="layout">
+      <div id="today">
+        <section>
+          <h2>Today</h2>
+          <div class="tasks">
+            <button class="task" data-id="stack" type="button"><span class="box"></span><span><span class="label">Stackadoo — usage credits running</span><div class="why">Finish the fix you’re in.</div></span><span class="chip">now</span></button>
+            <button class="task" data-id="eat" type="button"><span class="box"></span><span><span class="label">Late lunch</span><div class="why">Then the AI Agent apply.</div></span><span class="chip">rail</span></button>
+            <button class="task" data-id="agent" type="button"><span class="box"></span><span><span class="label">micro1 AI Agent Power User</span><div class="why">Apply + interview. Titan Proton is already signed.</div></span><span class="chip">after lunch</span></button>
+            <button class="task" data-id="cafe" type="button"><span class="box"></span><span><span class="label">Load SchoolCafé</span><div class="why">Fiona was $19.50 vs $20 on Fri.</div></span><span class="chip">you said</span></button>
           </div>
+        </section>
+
+        <section>
+          <h2>Remote timer</h2>
+          <div class="timer">
+            <select id="lane" aria-label="What you’re on">
+              <option value="Stackadoo">Stackadoo</option>
+              <option value="Titan Proton">Titan Proton</option>
+              <option value="AI Agent">AI Agent</option>
+              <option value="Handshake">Handshake</option>
+            </select>
+            <span class="t" id="tleft">25:00</span>
+            <button type="button" class="primary" id="tog">Start</button>
+            <button type="button" id="mode">25 / 5</button>
+          </div>
+          <div class="panel" style="margin-top:8px">
+            <div class="head"><span class="meta">Time log — today</span><span class="meta" id="tot">0m</span></div>
+            <div class="log" id="log"></div>
+          </div>
+        </section>
+
+        <section>
+          <h2>Coming up</h2>
+          <div class="panel">
+            <div class="head"><span class="when">Mon–Fri</span><span class="meta">sub week · Wed is the interview</span></div>
+            <div class="appt"><time>Mon–Tue</time><div>Sub · LWR Prep elementary</div></div>
+            <div class="appt"><time>Wed</time><div>Perio 7:30 · ASG 1:00</div></div>
+            <div class="appt"><time>Thu–Fri</time><div>Sub · LWR Prep upper</div></div>
+            <div class="appt"><time>Tue/Thu</time><div>SearchSeptic at Nuthatch (you’re in FL — watch for invoices)</div></div>
+          </div>
+        </section>
+
+        <section>
+          <h2>Week</h2>
+          <div class="week">
+            <div class="day on"><div class="d">Sat</div><div class="n">12</div><div class="m">Credits · Agent</div></div>
+            <div class="day"><div class="d">Sun</div><div class="n">13</div><div class="m">Open</div></div>
+            <div class="day on"><div class="d">Mon</div><div class="n">14</div><div class="m">Sub elem</div></div>
+            <div class="day on"><div class="d">Tue</div><div class="n">15</div><div class="m">Sub · septic</div></div>
+            <div class="day on"><div class="d">Wed</div><div class="n">16</div><div class="m">Perio · ASG</div></div>
+            <div class="day on"><div class="d">Thu</div><div class="n">17</div><div class="m">Sub · septic</div></div>
+            <div class="day on"><div class="d">Fri</div><div class="n">18</div><div class="m">Sub upper</div></div>
+          </div>
+        </section>
+      </div>
+
+      <div id="boards">
+        <h2>Boards</h2>
+        <div class="boards-grid">
+          <article class="board">
+            <div class="board-h"><span class="name">Stackadoo</span><span class="src">now</span></div>
+            <button class="item now" data-id="b-credits" type="button"><span class="box"></span><span><span class="label">Usage credits running</span></span><span class="lane">now</span></button>
+          </article>
+          <article class="board">
+            <div class="board-h"><span class="name">Income</span><span class="src">gigs + support</span></div>
+            <button class="item now" data-id="b-agent" type="button"><span class="box"></span><span><span class="label">AI Agent Power User</span><div class="why">After lunch.</div></span><span class="lane">now</span></button>
+            <button class="item now" data-id="b-titan" type="button"><span class="box"></span><span><span class="label">Titan Proton onboarding</span><div class="why">$80/hr signed. 2FA + Slack. Password stays in the email.</div></span><span class="lane">today</span></button>
+            <button class="item" data-id="b-asg" type="button"><span class="box"></span><span><span class="label">ASG interview</span><div class="why">Wed 1:00 Teams.</div></span><span class="lane">Wed</span></button>
+            <button class="item" data-id="b-cs" type="button"><span class="box"></span><span><span class="label">David child support $1,800</span><div class="why">1st of the month. Not today.</div></span><span class="lane">1st</span></button>
+          </article>
+          <article class="board">
+            <div class="board-h"><span class="name">Handshake</span><span class="src">Buckeye stumping</span></div>
+            <button class="item" data-id="b-buck" type="button"><span class="box"></span><span><span class="label">Continue / submit Buckeye</span><div class="why">If energy after lunch.</div></span><span class="lane">maybe</span></button>
+          </article>
+          <article class="board">
+            <div class="board-h"><span class="name">Rentals</span><span class="src">AppFolio · Sep 10</span></div>
+            <button class="item" data-id="b-own" type="button"><span class="box"></span><span><span class="label">Sep owner pay $5,367.76 sent</span><div class="why">La Sombra $604 · McLeod $2,248 · Smoke Ranch $922 · Moonmist $1,593</div></span><span class="lane">ref</span></button>
+            <button class="item" data-id="b-mcleod" type="button"><span class="box"></span><span><span class="label">McLeod water tank estimate</span><div class="why">$386 — not the cabin filter. Separate property.</div></span><span class="lane">watch</span></button>
+          </article>
+          <article class="board">
+            <div class="board-h"><span class="name">Cabin · 420 Nuthatch</span><span class="src">sale</span></div>
+            <button class="item done" data-id="b-clear" type="button"><span class="box"></span><span><span class="label">CLEAR ID</span><div class="why">Done.</div></span><span class="lane">done</span></button>
+            <button class="item now" data-id="b-septic" type="button"><span class="box"></span><span><span class="label">Watch septic invoices</span><div class="why">SearchSeptic 9/15 & 9/17. You asked for the invoice first. Card-on-file after 5 days if ignored.</div></span><span class="lane">watch</span></button>
+            <button class="item now" data-id="b-pipes" type="button"><span class="box"></span><span><span class="label">Watch pipe invoices</span><div class="why">Expecting them. As-is sale — Park County only, not buyer extras.</div></span><span class="lane">watch</span></button>
+            <button class="item done" data-id="b-filter" type="button"><span class="box"></span><span><span class="label">Water filter — do not pay</span><div class="why">Not essential to the sale.</div></span><span class="lane">rule</span></button>
+          </article>
+          <article class="board">
+            <div class="board-h"><span class="name">Personal</span><span class="src">home</span></div>
+            <button class="item done" data-id="b-plan" type="button"><span class="box"></span><span><span class="label">Parenting agreement signed</span><div class="why">Decree not in yet. Not the same thing.</div></span><span class="lane">done</span></button>
+            <button class="item" data-id="b-ins" type="button"><span class="box"></span><span><span class="label">Own car insurance</span><div class="why">After the decree. Not now.</div></span><span class="lane">later</span></button>
+          </article>
         </div>
-        <div id="live-clock" class="live-clock">--:--</div>
-      </header>
-
-      <section id="quote"></section>
-      <section id="frog-banner"></section>
-      <section id="agenda"></section>
-      <section id="subs-due"></section>
-      <section id="today-list"></section>
-      <section id="summary"></section>
-      <section id="timelog"></section>
-      <section id="widgets" class="widgets"></section>
-      <section id="calendar"></section>
-      <main id="tracks"></main>
-      <section id="history"></section>
-      <section id="subs"></section>
-
-      <footer class="footer">
-        <span>💛 One task at a time. Receipts beat vibes.</span>
-        <div id="build-stamp" class="build-stamp"></div>
-      </footer>
+      </div>
     </div>
-    <nav class="tabbar">
-      <button data-tab-btn="today">☀️<span>Today</span></button>
-      <button data-tab-btn="boards">🗂<span>Boards</span></button>
-      <button data-tab-btn="subs">💳<span>Subs</span></button>
-      <button onclick="location.href='./ops.html'" title="Agent Ops board">🤖<span>Agents</span></button>
-    </nav>
-    <canvas id="confetti-canvas"></canvas>
-    <script type="module" src="/src/main.js"></script>
-  </body>
+    <footer>Replaces Command Center. Hard-refresh the phone if you still see the old one.</footer>
+  </div>
+  <nav class="tabbar">
+    <button type="button" data-go="today" class="on">Today</button>
+    <button type="button" data-go="boards">Boards</button>
+  </nav>
+  <script>
+    const DONE_KEY = "amy-board-done-v3";
+    const LOG_KEY = "amy-board-log-v3";
+    const PRE = ["b-clear", "b-filter", "b-plan", "b-own"];
+    const done = new Set(JSON.parse(localStorage.getItem(DONE_KEY) || "null") || PRE);
+    const day = new Date().toISOString().slice(0, 10);
+    let logs = JSON.parse(localStorage.getItem(LOG_KEY) || "[]").filter((x) => x.day === day);
+
+    const clock = document.getElementById("clock");
+    const tick = () => { clock.textContent = new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }); };
+    tick(); setInterval(tick, 15000);
+
+    function paintDone() {
+      document.querySelectorAll("[data-id]").forEach((el) => el.classList.toggle("done", done.has(el.dataset.id)));
+      localStorage.setItem(DONE_KEY, JSON.stringify([...done]));
+    }
+    document.querySelectorAll("[data-id]").forEach((el) => {
+      el.addEventListener("click", () => {
+        const id = el.dataset.id;
+        if (done.has(id)) done.delete(id); else done.add(id);
+        paintDone();
+      });
+    });
+    paintDone();
+
+    function paintLog() {
+      const el = document.getElementById("log");
+      const tot = logs.reduce((s, x) => s + x.min, 0);
+      document.getElementById("tot").textContent = tot ? tot + "m" : "0m";
+      if (!logs.length) { el.innerHTML = '<div class="log empty">Nothing logged yet.</div>'; return; }
+      el.innerHTML = logs.map((x) => `<div class="log-row"><time>${x.min}m</time><div>${x.lane}</div></div>`).join("");
+    }
+    paintLog();
+
+    const WORK = 25 * 60, BRK = 5 * 60;
+    let remain = WORK, running = false, endAt = 0, onBreak = false, timerId = null;
+    const tleft = document.getElementById("tleft");
+    const tog = document.getElementById("tog");
+    const fmt = (s) => String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
+    function show() { tleft.textContent = fmt(Math.max(0, remain)); }
+    function stopTimer(logIt) {
+      running = false; clearInterval(timerId); timerId = null; tog.textContent = "Start";
+      if (logIt && !onBreak) {
+        const used = Math.max(1, Math.round((WORK - remain) / 60));
+        logs.push({ day, lane: document.getElementById("lane").value, min: used });
+        localStorage.setItem(LOG_KEY, JSON.stringify(logs));
+        paintLog();
+      }
+    }
+    tog.addEventListener("click", () => {
+      if (running) { stopTimer(true); remain = onBreak ? BRK : WORK; show(); return; }
+      running = true; endAt = Date.now() + remain * 1000; tog.textContent = "Stop";
+      timerId = setInterval(() => {
+        remain = Math.ceil((endAt - Date.now()) / 1000);
+        if (remain <= 0) {
+          const finishingBreak = onBreak;
+          stopTimer(!finishingBreak);
+          onBreak = !finishingBreak;
+          remain = onBreak ? BRK : WORK;
+          document.getElementById("mode").textContent = onBreak ? "break" : "25 / 5";
+          show();
+        } else show();
+      }, 250);
+    });
+    document.getElementById("mode").addEventListener("click", () => {
+      if (running) return;
+      onBreak = !onBreak;
+      remain = onBreak ? BRK : WORK;
+      document.getElementById("mode").textContent = onBreak ? "break" : "25 / 5";
+      show();
+    });
+    show();
+
+    document.querySelectorAll(".tabbar button").forEach((b) => {
+      b.addEventListener("click", () => {
+        document.body.dataset.tab = b.dataset.go;
+        document.querySelectorAll(".tabbar button").forEach((x) => x.classList.toggle("on", x === b));
+      });
+    });
+  </script>
+</body>
 </html>

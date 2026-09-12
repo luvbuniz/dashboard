@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#0c0b0a" />
   <title>Amy — today</title>
+  <link rel="manifest" href="./manifest.webmanifest" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap" rel="stylesheet" />
@@ -20,7 +21,6 @@
       --copper: #c4784a;
       --copper-dim: rgba(196, 120, 74, 0.16);
       --ok: #7ea36b;
-      --warn: #d4a017;
       --radius: 10px;
       --tabh: calc(56px + env(safe-area-inset-bottom));
     }
@@ -32,186 +32,81 @@
       line-height: 1.45;
       min-height: 100dvh;
     }
-    .wrap {
-      max-width: 1120px;
-      margin: 0 auto;
-      padding: 20px 16px var(--tabh);
-    }
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 12px;
-      margin-bottom: 8px;
-    }
-    .kicker {
-      font-size: 11px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--faint);
-      font-weight: 500;
-    }
-    h1 {
-      font-family: Newsreader, Georgia, serif;
-      font-size: clamp(26px, 4vw, 34px);
-      font-weight: 500;
-      letter-spacing: -0.03em;
-      margin: 4px 0 0;
-      line-height: 1.05;
-    }
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 20px 16px var(--tabh); }
+    header { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+    .kicker { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--faint); font-weight: 500; }
+    h1 { font-family: Newsreader, Georgia, serif; font-size: clamp(26px, 4vw, 34px); font-weight: 500; letter-spacing: -0.03em; margin: 4px 0 0; line-height: 1.05; }
     .clock { font-variant-numeric: tabular-nums; color: var(--muted); font-size: 13px; }
-    .alex { margin: 12px 0 20px; color: var(--muted); max-width: 62ch; }
+    .alex { margin: 12px 0 20px; color: var(--muted); max-width: 58ch; }
     .alex strong { color: var(--ink); font-weight: 500; }
-    h2 {
-      font-size: 11px;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--faint);
-      font-weight: 600;
-      margin: 0 0 10px;
-    }
+    h2 { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--faint); font-weight: 600; margin: 0 0 10px; }
     section { margin-bottom: 22px; }
-    .next, .card, .board {
-      border: 1px solid var(--line);
-      background: var(--panel);
-      border-radius: var(--radius);
-      overflow: hidden;
-    }
-    .next-head, .board-h {
-      padding: 14px 16px 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 8px;
-    }
-    .when { font-family: Newsreader, Georgia, serif; font-size: 22px; font-weight: 500; }
-    .countdown { color: var(--copper); font-size: 12px; font-weight: 500; }
-    .appt {
-      display: grid;
-      grid-template-columns: 58px 1fr;
-      gap: 4px 12px;
-      padding: 12px 16px;
-      border-top: 1px solid var(--line);
-    }
-    .appt time { font-variant-numeric: tabular-nums; color: var(--muted); font-size: 13px; }
-    .appt .title { font-weight: 500; }
-    .appt .meta { color: var(--faint); font-size: 13px; margin-top: 2px; }
+    .panel, .board { border: 1px solid var(--line); background: var(--panel); border-radius: var(--radius); overflow: hidden; }
+    .head { padding: 12px 16px 8px; display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+    .when { font-family: Newsreader, Georgia, serif; font-size: 20px; font-weight: 500; }
+    .meta { color: var(--faint); font-size: 13px; }
+    .appt, .log-row { display: grid; grid-template-columns: 58px 1fr; gap: 4px 12px; padding: 10px 16px; border-top: 1px solid var(--line); font-size: 14px; }
+    .appt time, .log-row time { font-variant-numeric: tabular-nums; color: var(--muted); font-size: 13px; }
     .tasks { display: flex; flex-direction: column; gap: 8px; }
     .task {
-      display: grid;
-      grid-template-columns: 28px 1fr auto;
-      gap: 10px;
-      align-items: start;
-      min-height: 48px;
-      padding: 14px 14px 14px 12px;
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      cursor: pointer;
-      text-align: left;
-      color: inherit;
-      font: inherit;
-      width: 100%;
+      display: grid; grid-template-columns: 28px 1fr auto; gap: 10px; align-items: start;
+      min-height: 48px; padding: 12px; width: 100%;
+      background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+      color: inherit; font: inherit; text-align: left; cursor: pointer;
     }
     .task:hover, .task:active { background: var(--elev); }
     .task.done .label { color: var(--faint); text-decoration: line-through; }
-    .box {
-      width: 22px; height: 22px; margin-top: 1px;
-      border: 1.5px solid var(--muted);
-      border-radius: 5px;
-    }
-    .task.done .box { background: var(--ok); border-color: var(--ok); }
+    .box { width: 22px; height: 22px; margin-top: 1px; border: 1.5px solid var(--muted); border-radius: 5px; flex-shrink: 0; }
+    .task.done .box, .item.done .box { background: var(--ok); border-color: var(--ok); }
     .label { font-weight: 500; }
     .why { color: var(--faint); font-size: 13px; margin-top: 3px; font-weight: 400; }
-    .chip {
-      font-size: 11px;
-      color: var(--copper);
-      background: var(--copper-dim);
-      border-radius: 999px;
-      padding: 5px 8px;
-      white-space: nowrap;
-      margin-top: 2px;
+    .chip { font-size: 11px; color: var(--copper); background: var(--copper-dim); border-radius: 999px; padding: 5px 8px; white-space: nowrap; }
+    .timer {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+      padding: 10px 12px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
     }
-    .rails { display: grid; }
-    .rail {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 12px 0;
-      border-bottom: 1px solid var(--line);
-      font-size: 14px;
+    .timer .t { font-variant-numeric: tabular-nums; font-size: 22px; letter-spacing: -0.03em; min-width: 4.2ch; }
+    .timer select, .timer button {
+      background: var(--elev); color: var(--ink); border: 1px solid var(--line);
+      border-radius: 6px; font: inherit; font-size: 13px; padding: 8px 10px; min-height: 40px;
     }
-    .rail:last-child { border-bottom: 0; }
-    .rail .status { color: var(--muted); font-size: 13px; text-align: right; }
-    .week {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      padding-bottom: 4px;
-    }
-    .day {
-      flex: 0 0 108px;
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 10px 10px 12px;
-      min-height: 96px;
-    }
-    .day.on { border-color: rgba(196, 120, 74, 0.45); background: var(--copper-dim); }
-    .day .d { font-size: 11px; color: var(--faint); text-transform: uppercase; letter-spacing: 0.06em; }
+    .timer button.primary { background: var(--copper-dim); color: var(--copper); border-color: transparent; }
+    .log { color: var(--muted); font-size: 13px; }
+    .log.empty { padding: 10px 16px; color: var(--faint); }
+    .week { display: flex; gap: 8px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .day { flex: 0 0 96px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 10px; min-height: 88px; }
+    .day.on { border-color: rgba(196,120,74,.45); background: var(--copper-dim); }
+    .day .d { font-size: 11px; color: var(--faint); text-transform: uppercase; letter-spacing: .06em; }
     .day .n { font-family: Newsreader, Georgia, serif; font-size: 18px; margin: 2px 0 6px; }
     .day .m { font-size: 12px; color: var(--muted); line-height: 1.35; }
     .boards-grid { display: grid; gap: 12px; }
-    .board-h { padding-bottom: 8px; }
+    .board-h { padding: 12px 16px 6px; display: flex; justify-content: space-between; gap: 8px; }
     .board-h .name { font-weight: 600; font-size: 15px; }
     .board-h .src { color: var(--faint); font-size: 12px; }
     .item {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 8px;
-      padding: 11px 16px;
-      border-top: 1px solid var(--line);
-      font-size: 14px;
+      display: grid; grid-template-columns: 22px 1fr auto; gap: 10px; align-items: start;
+      width: 100%; padding: 11px 16px; border-top: 1px solid var(--line);
+      background: none; border-left: 0; border-right: 0; border-bottom: 0;
+      color: inherit; font: inherit; text-align: left; cursor: pointer;
     }
-    .item .meta { color: var(--faint); font-size: 12px; margin-top: 3px; }
-    .lane { font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--faint); white-space: nowrap; padding-top: 2px; }
+    .item.done .label { color: var(--faint); text-decoration: line-through; }
+    .lane { font-size: 11px; letter-spacing: .04em; text-transform: uppercase; color: var(--faint); padding-top: 2px; }
     .item.now .lane { color: var(--copper); }
     .tabbar {
-      position: fixed;
-      left: 0; right: 0; bottom: 0;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      background: #141312;
-      border-top: 1px solid var(--line);
-      padding-bottom: env(safe-area-inset-bottom);
-      z-index: 20;
+      position: fixed; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: 1fr 1fr;
+      background: #141312; border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom); z-index: 20;
     }
-    .tabbar button {
-      background: none; border: 0; color: var(--faint);
-      font: inherit; font-weight: 500; font-size: 14px;
-      min-height: 48px; cursor: pointer;
-    }
+    .tabbar button { background: none; border: 0; color: var(--faint); font: inherit; font-weight: 500; min-height: 48px; cursor: pointer; }
     .tabbar button.on { color: var(--ink); }
     [data-tab="today"] #boards, [data-tab="boards"] #today { display: none; }
     footer { margin-top: 24px; color: var(--faint); font-size: 12px; }
-
     @media (min-width: 900px) {
       .wrap { padding: 28px 24px 40px; }
-      .layout {
-        display: grid;
-        grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
-        gap: 32px;
-        align-items: start;
-      }
+      .layout { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: 32px; align-items: start; }
       [data-tab] #today, [data-tab] #boards { display: block !important; }
       .tabbar { display: none; }
       .week { display: grid; grid-template-columns: repeat(7, 1fr); overflow: visible; }
       .day { flex: none; min-width: 0; }
-      .boards-grid { grid-template-columns: 1fr; }
-    }
-    @media (min-width: 1100px) {
-      .boards-grid { grid-template-columns: 1fr 1fr; }
     }
   </style>
 </head>
@@ -219,151 +114,186 @@
   <div class="wrap">
     <header>
       <div>
-        <div class="kicker">Saturday · late lunch · then income</div>
+        <div class="kicker">Saturday · remote if you have a block</div>
         <h1>Sep 12</h1>
       </div>
       <div class="clock" id="clock"></div>
     </header>
-    <p class="alex">Alex: Wawa 10:00 is gone — that was summer. Boards are from sullivanamy75 mail + what you just told me. Nothing leftover from July taxes or tablet checks.</p>
+    <p class="alex">Alex: This is the board now. Check a box when it’s done. Timer is only for remote work — leave it alone on sub days.</p>
 
     <div class="layout">
       <div id="today">
         <section>
-          <h2>Today — three things</h2>
+          <h2>Today</h2>
           <div class="tasks">
-            <button class="task" data-id="stack" type="button">
-              <span class="box"></span>
-              <span>
-                <span class="label">Stackadoo — get usage credits actually running</span>
-                <div class="why">You said this is what you’re in now. Finish the fix before context-switch.</div>
-              </span>
-              <span class="chip">now</span>
-            </button>
-            <button class="task" data-id="eat" type="button">
-              <span class="box"></span>
-              <span>
-                <span class="label">Late lunch</span>
-                <div class="why">Then the micro1 AI Agent app. Food first.</div>
-              </span>
-              <span class="chip">rail</span>
-            </button>
-            <button class="task" data-id="agent" type="button">
-              <span class="box"></span>
-              <span>
-                <span class="label">micro1 AI Agent Power User — apply + interview</span>
-                <div class="why">Mariana, Fri night, you starred it. After lunch. Separate from Titan Proton, which is already signed.</div>
-              </span>
-              <span class="chip">after lunch</span>
-            </button>
+            <button class="task" data-id="stack" type="button"><span class="box"></span><span><span class="label">Stackadoo — usage credits running</span><div class="why">Finish the fix you’re in.</div></span><span class="chip">now</span></button>
+            <button class="task" data-id="eat" type="button"><span class="box"></span><span><span class="label">Late lunch</span><div class="why">Then the AI Agent apply.</div></span><span class="chip">rail</span></button>
+            <button class="task" data-id="agent" type="button"><span class="box"></span><span><span class="label">micro1 AI Agent Power User</span><div class="why">Apply + interview. Titan Proton is already signed.</div></span><span class="chip">after lunch</span></button>
+            <button class="task" data-id="cafe" type="button"><span class="box"></span><span><span class="label">Load SchoolCafé</span><div class="why">Fiona was $19.50 vs $20 on Fri.</div></span><span class="chip">you said</span></button>
           </div>
         </section>
 
         <section>
-          <h2>Calendar</h2>
-          <div class="next">
-            <div class="next-head">
-              <div class="when">Monday — sub week starts</div>
-              <div class="countdown">2 days</div>
-            </div>
-            <div class="appt"><time>Mon</time><div><div class="title">Sub — LWR Prep elementary</div><div class="meta">7:30–3:15 · confirm bells</div></div></div>
-            <div class="appt"><time>Tue</time><div><div class="title">Sub — LWR Prep elementary</div><div class="meta">7:30–3:15</div></div></div>
-            <div class="appt"><time>Wed</time><div><div class="title">Perio 7:30 · ASG interview 1:00</div><div class="meta">Bradenton, then Teams</div></div></div>
-            <div class="appt"><time>Thu</time><div><div class="title">Sub — LWR Prep upper</div><div class="meta">7:30–3:15</div></div></div>
-            <div class="appt"><time>Fri</time><div><div class="title">Sub — LWR Prep upper</div><div class="meta">7:30–3:15 · no Wawa</div></div></div>
+          <h2>Remote timer</h2>
+          <div class="timer">
+            <select id="lane" aria-label="What you’re on">
+              <option value="Stackadoo">Stackadoo</option>
+              <option value="Titan Proton">Titan Proton</option>
+              <option value="AI Agent">AI Agent</option>
+              <option value="Handshake">Handshake</option>
+            </select>
+            <span class="t" id="tleft">25:00</span>
+            <button type="button" class="primary" id="tog">Start</button>
+            <button type="button" id="mode">25 / 5</button>
+          </div>
+          <div class="panel" style="margin-top:8px">
+            <div class="head"><span class="meta">Time log — today</span><span class="meta" id="tot">0m</span></div>
+            <div class="log" id="log"></div>
           </div>
         </section>
 
         <section>
-          <h2>This week</h2>
+          <h2>Coming up</h2>
+          <div class="panel">
+            <div class="head"><span class="when">Mon–Fri</span><span class="meta">sub week · Wed is the interview</span></div>
+            <div class="appt"><time>Mon–Tue</time><div>Sub · LWR Prep elementary</div></div>
+            <div class="appt"><time>Wed</time><div>Perio 7:30 · ASG 1:00</div></div>
+            <div class="appt"><time>Thu–Fri</time><div>Sub · LWR Prep upper</div></div>
+            <div class="appt"><time>Tue/Thu</time><div>SearchSeptic at Nuthatch (you’re in FL — watch for invoices)</div></div>
+          </div>
+        </section>
+
+        <section>
+          <h2>Week</h2>
           <div class="week">
-            <div class="day on"><div class="d">Sat</div><div class="n">12</div><div class="m">Credits · lunch · AI Agent</div></div>
+            <div class="day on"><div class="d">Sat</div><div class="n">12</div><div class="m">Credits · Agent</div></div>
             <div class="day"><div class="d">Sun</div><div class="n">13</div><div class="m">Open</div></div>
-            <div class="day on"><div class="d">Mon</div><div class="n">14</div><div class="m">Sub elementary</div></div>
-            <div class="day on"><div class="d">Tue</div><div class="n">15</div><div class="m">Sub elementary</div></div>
+            <div class="day on"><div class="d">Mon</div><div class="n">14</div><div class="m">Sub elem</div></div>
+            <div class="day on"><div class="d">Tue</div><div class="n">15</div><div class="m">Sub · septic</div></div>
             <div class="day on"><div class="d">Wed</div><div class="n">16</div><div class="m">Perio · ASG</div></div>
-            <div class="day on"><div class="d">Thu</div><div class="n">17</div><div class="m">Sub upper</div></div>
+            <div class="day on"><div class="d">Thu</div><div class="n">17</div><div class="m">Sub · septic</div></div>
             <div class="day on"><div class="d">Fri</div><div class="n">18</div><div class="m">Sub upper</div></div>
-          </div>
-        </section>
-
-        <section>
-          <h2>Rails</h2>
-          <div class="rails">
-            <div class="rail"><span>School run</span><span class="status">pickups / drop-offs · not a 10:00 Wawa</span></div>
-            <div class="rail"><span>Kids screens</span><span class="status">ban through Nov 10</span></div>
-            <div class="rail"><span>Bills</span><span class="status">LV water paid · Republic auto Sep 20</span></div>
           </div>
         </section>
       </div>
 
       <div id="boards">
-        <h2>Campaign boards</h2>
+        <h2>Boards</h2>
         <div class="boards-grid">
-
           <article class="board">
-            <div class="board-h"><span class="name">Stackadoo</span><span class="src">you, just now</span></div>
-            <div class="item now"><div>Get usage credits running<div class="meta">The live product. Do this before job tabs.</div></div><span class="lane">now</span></div>
-            <div class="item"><div>Daily 15-min after credits work<div class="meta">Waiting on the fix.</div></div><span class="lane">waiting</span></div>
+            <div class="board-h"><span class="name">Stackadoo</span><span class="src">now</span></div>
+            <button class="item now" data-id="b-credits" type="button"><span class="box"></span><span><span class="label">Usage credits running</span></span><span class="lane">now</span></button>
           </article>
-
           <article class="board">
-            <div class="board-h"><span class="name">Income now</span><span class="src">micro1 mail · Sat</span></div>
-            <div class="item now"><div>AI Agent Power User — apply + interview<div class="meta">Mariana Fri 22:00 UTC. Starred. After lunch.</div></div><span class="lane">now</span></div>
-            <div class="item now"><div>Titan Proton $80/hr — onboarding<div class="meta">Contract signed today. Next: 2FA on the expert Gmail, then Slack “micro1 experts.” Password stays in that email — not here.</div></div><span class="lane">today</span></div>
-            <div class="item"><div>ASG Instructional Designer interview<div class="meta">Wed 1:00 Teams. Prep when Stackadoo is unblocked.</div></div><span class="lane">Wed</span></div>
+            <div class="board-h"><span class="name">Income</span><span class="src">gigs + support</span></div>
+            <button class="item now" data-id="b-agent" type="button"><span class="box"></span><span><span class="label">AI Agent Power User</span><div class="why">After lunch.</div></span><span class="lane">now</span></button>
+            <button class="item now" data-id="b-titan" type="button"><span class="box"></span><span><span class="label">Titan Proton onboarding</span><div class="why">$80/hr signed. 2FA + Slack. Password stays in the email.</div></span><span class="lane">today</span></button>
+            <button class="item" data-id="b-asg" type="button"><span class="box"></span><span><span class="label">ASG interview</span><div class="why">Wed 1:00 Teams.</div></span><span class="lane">Wed</span></button>
+            <button class="item" data-id="b-cs" type="button"><span class="box"></span><span><span class="label">David child support $1,800</span><div class="why">1st of the month. Not today.</div></span><span class="lane">1st</span></button>
           </article>
-
           <article class="board">
-            <div class="board-h"><span class="name">Handshake — Buckeye stumping</span><span class="src">Handshake AI mail</span></div>
-            <div class="item now"><div>Submit / continue Buckeye stumping work<div class="meta">You claimed a task. Reminders to submit ran Aug 20–23. Slack still pinging #buckeye-tasking as of Sep 7. Check dashboard after lunch if energy.</div></div><span class="lane">maybe</span></div>
-            <div class="item"><div>India-only Handshake matches<div class="meta">Linguistics / chem $47 — skip. Not US.</div></div><span class="lane">noise</span></div>
+            <div class="board-h"><span class="name">Handshake</span><span class="src">Buckeye stumping</span></div>
+            <button class="item" data-id="b-buck" type="button"><span class="box"></span><span><span class="label">Continue / submit Buckeye</span><div class="why">If energy after lunch.</div></span><span class="lane">maybe</span></button>
           </article>
-
           <article class="board">
-            <div class="board-h"><span class="name">Cabin — 420 Nuthatch</span><span class="src">title + John</span></div>
-            <div class="item now"><div>CLEAR ID for Fidelity title<div class="meta">Emails Sep 8–9. Transaction at 420 Nuthatch Road.</div></div><span class="lane">open</span></div>
-            <div class="item"><div>Sale as-is — no CO<div class="meta">You told John Aug 17: engineer report, will not qualify for Certificate of Occupancy as-is.</div></div><span class="lane">waiting</span></div>
-            <div class="item"><div>Septic vs buyer pipe repairs<div class="meta">Sep 6 to John: separate Park County requirements from buyer requests before spending.</div></div><span class="lane">waiting</span></div>
-            <div class="item"><div>Xcel Energy on<div class="meta">Welcome mail Sep 9 · acct for 420 Nuthatch Dr.</div></div><span class="lane">done?</span></div>
+            <div class="board-h"><span class="name">Rentals</span><span class="src">AppFolio · Sep 10</span></div>
+            <button class="item" data-id="b-own" type="button"><span class="box"></span><span><span class="label">Sep owner pay $5,367.76 sent</span><div class="why">La Sombra $604 · McLeod $2,248 · Smoke Ranch $922 · Moonmist $1,593</div></span><span class="lane">ref</span></button>
+            <button class="item" data-id="b-mcleod" type="button"><span class="box"></span><span><span class="label">McLeod water tank estimate</span><div class="why">$386 — not the cabin filter. Separate property.</div></span><span class="lane">watch</span></button>
           </article>
-
           <article class="board">
-            <div class="board-h"><span class="name">Home / school</span><span class="src">calendar + SchoolCafé</span></div>
-            <div class="item now"><div>Sub week at LWR Prep<div class="meta">Mon/Tue elementary · Thu/Fri upper. Pickups/drop-offs around that.</div></div><span class="lane">week</span></div>
-            <div class="item"><div>Fiona SchoolCafé $19.50<div class="meta">Low-balance alert Fri 9/11 vs $20 threshold. Ignore if you already loaded.</div></div><span class="lane">check</span></div>
-            <div class="item"><div>Parenting plan signed<div class="meta">Dropbox Sign Sat: you + David, Agreed Parenting Plan Sullivan 9.8.26.</div></div><span class="lane">done</span></div>
+            <div class="board-h"><span class="name">Cabin · 420 Nuthatch</span><span class="src">sale</span></div>
+            <button class="item done" data-id="b-clear" type="button"><span class="box"></span><span><span class="label">CLEAR ID</span><div class="why">Done.</div></span><span class="lane">done</span></button>
+            <button class="item now" data-id="b-septic" type="button"><span class="box"></span><span><span class="label">Watch septic invoices</span><div class="why">SearchSeptic 9/15 & 9/17. You asked for the invoice first. Card-on-file after 5 days if ignored.</div></span><span class="lane">watch</span></button>
+            <button class="item now" data-id="b-pipes" type="button"><span class="box"></span><span><span class="label">Watch pipe invoices</span><div class="why">Expecting them. As-is sale — Park County only, not buyer extras.</div></span><span class="lane">watch</span></button>
+            <button class="item done" data-id="b-filter" type="button"><span class="box"></span><span><span class="label">Water filter — do not pay</span><div class="why">Not essential to the sale.</div></span><span class="lane">rule</span></button>
           </article>
-
+          <article class="board">
+            <div class="board-h"><span class="name">Personal</span><span class="src">home</span></div>
+            <button class="item done" data-id="b-plan" type="button"><span class="box"></span><span><span class="label">Parenting agreement signed</span><div class="why">Decree not in yet. Not the same thing.</div></span><span class="lane">done</span></button>
+            <button class="item" data-id="b-ins" type="button"><span class="box"></span><span><span class="label">Own car insurance</span><div class="why">After the decree. Not now.</div></span><span class="lane">later</span></button>
+          </article>
         </div>
       </div>
     </div>
-
-    <footer>https://luvbuniz.github.io/dashboard/day.html · sourced Sat Sep 12 from Gmail + calendar · no leftovers from the old 16-item list</footer>
+    <footer>Replaces Command Center. Hard-refresh the phone if you still see the old one.</footer>
   </div>
-
   <nav class="tabbar">
     <button type="button" data-go="today" class="on">Today</button>
     <button type="button" data-go="boards">Boards</button>
   </nav>
-
   <script>
-    const KEY = "amy-dayboard-2026-09-12b";
-    const done = new Set(JSON.parse(localStorage.getItem(KEY) || "[]"));
+    const DONE_KEY = "amy-board-done-v3";
+    const LOG_KEY = "amy-board-log-v3";
+    const PRE = ["b-clear", "b-filter", "b-plan", "b-own"];
+    const done = new Set(JSON.parse(localStorage.getItem(DONE_KEY) || "null") || PRE);
+    const day = new Date().toISOString().slice(0, 10);
+    let logs = JSON.parse(localStorage.getItem(LOG_KEY) || "[]").filter((x) => x.day === day);
+
     const clock = document.getElementById("clock");
     const tick = () => { clock.textContent = new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }); };
     tick(); setInterval(tick, 15000);
-    function paint() {
-      document.querySelectorAll(".task").forEach((el) => el.classList.toggle("done", done.has(el.dataset.id)));
-      localStorage.setItem(KEY, JSON.stringify([...done]));
+
+    function paintDone() {
+      document.querySelectorAll("[data-id]").forEach((el) => el.classList.toggle("done", done.has(el.dataset.id)));
+      localStorage.setItem(DONE_KEY, JSON.stringify([...done]));
     }
-    document.querySelectorAll(".task").forEach((el) => {
+    document.querySelectorAll("[data-id]").forEach((el) => {
       el.addEventListener("click", () => {
         const id = el.dataset.id;
         if (done.has(id)) done.delete(id); else done.add(id);
-        paint();
+        paintDone();
       });
     });
-    paint();
+    paintDone();
+
+    function paintLog() {
+      const el = document.getElementById("log");
+      const tot = logs.reduce((s, x) => s + x.min, 0);
+      document.getElementById("tot").textContent = tot ? tot + "m" : "0m";
+      if (!logs.length) { el.innerHTML = '<div class="log empty">Nothing logged yet.</div>'; return; }
+      el.innerHTML = logs.map((x) => `<div class="log-row"><time>${x.min}m</time><div>${x.lane}</div></div>`).join("");
+    }
+    paintLog();
+
+    const WORK = 25 * 60, BRK = 5 * 60;
+    let remain = WORK, running = false, endAt = 0, onBreak = false, timerId = null;
+    const tleft = document.getElementById("tleft");
+    const tog = document.getElementById("tog");
+    const fmt = (s) => String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
+    function show() { tleft.textContent = fmt(Math.max(0, remain)); }
+    function stopTimer(logIt) {
+      running = false; clearInterval(timerId); timerId = null; tog.textContent = "Start";
+      if (logIt && !onBreak) {
+        const used = Math.max(1, Math.round((WORK - remain) / 60));
+        logs.push({ day, lane: document.getElementById("lane").value, min: used });
+        localStorage.setItem(LOG_KEY, JSON.stringify(logs));
+        paintLog();
+      }
+    }
+    tog.addEventListener("click", () => {
+      if (running) { stopTimer(true); remain = onBreak ? BRK : WORK; show(); return; }
+      running = true; endAt = Date.now() + remain * 1000; tog.textContent = "Stop";
+      timerId = setInterval(() => {
+        remain = Math.ceil((endAt - Date.now()) / 1000);
+        if (remain <= 0) {
+          const finishingBreak = onBreak;
+          stopTimer(!finishingBreak);
+          onBreak = !finishingBreak;
+          remain = onBreak ? BRK : WORK;
+          document.getElementById("mode").textContent = onBreak ? "break" : "25 / 5";
+          show();
+        } else show();
+      }, 250);
+    });
+    document.getElementById("mode").addEventListener("click", () => {
+      if (running) return;
+      onBreak = !onBreak;
+      remain = onBreak ? BRK : WORK;
+      document.getElementById("mode").textContent = onBreak ? "break" : "25 / 5";
+      show();
+    });
+    show();
+
     document.querySelectorAll(".tabbar button").forEach((b) => {
       b.addEventListener("click", () => {
         document.body.dataset.tab = b.dataset.go;
