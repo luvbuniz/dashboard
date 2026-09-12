@@ -66,11 +66,16 @@
       padding: 10px 12px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
     }
     .timer .t { font-variant-numeric: tabular-nums; font-size: 22px; letter-spacing: -0.03em; min-width: 4.2ch; }
-    .timer select, .timer button {
+    .timer select, .timer button, .timer input {
       background: var(--elev); color: var(--ink); border: 1px solid var(--line);
       border-radius: 6px; font: inherit; font-size: 13px; padding: 8px 10px; min-height: 40px;
     }
+    .timer input { min-width: 0; }
+    .timer input.mins { width: 72px; }
+    .timer input.name { flex: 1 1 140px; }
     .timer button.primary { background: var(--copper-dim); color: var(--copper); border-color: transparent; }
+    .log-row { grid-template-columns: 58px 1fr auto; align-items: center; }
+    .log-row .x { background: none; border: 0; color: var(--faint); font: inherit; cursor: pointer; padding: 4px 6px; min-height: 32px; }
     .log { color: var(--muted); font-size: 13px; }
     .log.empty { padding: 10px 16px; color: var(--faint); }
     .week { display: flex; gap: 8px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
@@ -136,15 +141,14 @@
         <section>
           <h2>Remote timer</h2>
           <div class="timer">
-            <select id="lane" aria-label="What you’re on">
-              <option value="Stackadoo">Stackadoo</option>
-              <option value="Titan Proton">Titan Proton</option>
-              <option value="AI Agent">AI Agent</option>
-              <option value="Handshake">Handshake</option>
-            </select>
+            <select id="lane" aria-label="What you’re on"></select>
+            <input class="name" id="newname" type="text" placeholder="Add a name" maxlength="40" />
+            <button type="button" id="addname">Add</button>
             <span class="t" id="tleft">25:00</span>
             <button type="button" class="primary" id="tog">Start</button>
             <button type="button" id="mode">25 / 5</button>
+            <input class="mins" id="manual" type="number" min="1" max="600" inputmode="numeric" placeholder="min" aria-label="Minutes" />
+            <button type="button" id="logbtn">Log</button>
           </div>
           <div class="panel" style="margin-top:8px">
             <div class="head"><span class="meta">Time log — today</span><span class="meta" id="tot">0m</span></div>
@@ -246,14 +250,54 @@
     });
     paintDone();
 
+    const LANE_KEY = "amy-board-lanes-v3";
+    const DEFAULT_LANES = ["Stackadoo", "Titan Proton", "AI Agent", "Handshake"];
+    let lanes = JSON.parse(localStorage.getItem(LANE_KEY) || "null") || DEFAULT_LANES.slice();
+    const sel = document.getElementById("lane");
+    function paintLanes(pick) {
+      const cur = pick || sel.value || lanes[0];
+      sel.innerHTML = lanes.map((n) => `<option>${n.replace(/</g, "")}</option>`).join("");
+      if (lanes.includes(cur)) sel.value = cur;
+      localStorage.setItem(LANE_KEY, JSON.stringify(lanes));
+    }
+    paintLanes();
+    function addLane() {
+      const n = document.getElementById("newname").value.trim().slice(0, 40);
+      if (!n) return;
+      if (!lanes.includes(n)) lanes.push(n);
+      document.getElementById("newname").value = "";
+      paintLanes(n);
+    }
+    document.getElementById("addname").addEventListener("click", addLane);
+    document.getElementById("newname").addEventListener("keydown", (e) => { if (e.key === "Enter") addLane(); });
+
+    function addLog(min, lane) {
+      const m = Math.round(Number(min));
+      if (!m || m < 1) return;
+      logs.push({ day, lane: lane || sel.value, min: m });
+      localStorage.setItem(LOG_KEY, JSON.stringify(logs));
+      paintLog();
+    }
     function paintLog() {
       const el = document.getElementById("log");
       const tot = logs.reduce((s, x) => s + x.min, 0);
       document.getElementById("tot").textContent = tot ? tot + "m" : "0m";
       if (!logs.length) { el.innerHTML = '<div class="log empty">Nothing logged yet.</div>'; return; }
-      el.innerHTML = logs.map((x) => `<div class="log-row"><time>${x.min}m</time><div>${x.lane}</div></div>`).join("");
+      el.innerHTML = logs.map((x, i) => `<div class="log-row"><time>${x.min}m</time><div>${String(x.lane).replace(/</g, "")}</div><button type="button" class="x" data-i="${i}" aria-label="Remove">×</button></div>`).join("");
+      el.querySelectorAll(".x").forEach((b) => b.addEventListener("click", () => {
+        logs.splice(Number(b.dataset.i), 1);
+        localStorage.setItem(LOG_KEY, JSON.stringify(logs));
+        paintLog();
+      }));
     }
     paintLog();
+    document.getElementById("logbtn").addEventListener("click", () => {
+      addLog(document.getElementById("manual").value);
+      document.getElementById("manual").value = "";
+    });
+    document.getElementById("manual").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") { addLog(e.target.value); e.target.value = ""; }
+    });
 
     const WORK = 25 * 60, BRK = 5 * 60;
     let remain = WORK, running = false, endAt = 0, onBreak = false, timerId = null;
