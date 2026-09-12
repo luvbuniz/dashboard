@@ -134,9 +134,9 @@
         <section>
           <h2>Today</h2>
           <div class="tasks">
-            <button class="task" data-id="stack" type="button"><span class="box"></span><span><span class="label">Stackadoo — usage credits running</span><div class="why">Finish the fix you’re in.</div></span><span class="chip">now</span></button>
+            <button class="task" data-id="b-credits" type="button"><span class="box"></span><span><span class="label">Stackadoo — usage credits running</span><div class="why">Finish the fix you’re in.</div></span><span class="chip">now</span></button>
             <button class="task" data-id="eat" type="button"><span class="box"></span><span><span class="label">Late lunch</span><div class="why">Then the AI Agent apply.</div></span><span class="chip">rail</span></button>
-            <button class="task" data-id="agent" type="button"><span class="box"></span><span><span class="label">micro1 AI Agent Power User</span><div class="why">Apply + interview. Titan Proton is already signed.</div></span><span class="chip">after lunch</span></button>
+            <button class="task" data-id="b-agent" type="button"><span class="box"></span><span><span class="label">micro1 AI Agent Power User</span><div class="why">Apply + interview. Titan Proton is already signed.</div></span><span class="chip">after lunch</span></button>
             <button class="task" data-id="cafe" type="button"><span class="box"></span><span><span class="label">Load SchoolCafé</span><div class="why">Fiona was $19.50 vs $20 on Fri.</div></span><span class="chip">you said</span></button>
           </div>
         </section>
@@ -232,7 +232,11 @@
     const DONE_KEY = "amy-board-done-v3";
     const LOG_KEY = "amy-board-log-v3";
     const PRE = ["b-clear", "b-filter", "b-plan", "b-own"];
-    const done = new Set(JSON.parse(localStorage.getItem(DONE_KEY) || "null") || PRE);
+    // Today + Boards share one id per task. Old Today-only keys still count.
+    const ALIAS = { stack: "b-credits", agent: "b-agent" };
+    const canon = (id) => ALIAS[id] || id;
+    const rawDone = JSON.parse(localStorage.getItem(DONE_KEY) || "null") || PRE;
+    const done = new Set((Array.isArray(rawDone) ? rawDone : PRE).map(canon));
     const day = new Date().toISOString().slice(0, 10);
     let logs = JSON.parse(localStorage.getItem(LOG_KEY) || "[]").filter((x) => x.day === day);
 
@@ -241,12 +245,12 @@
     tick(); setInterval(tick, 15000);
 
     function paintDone() {
-      document.querySelectorAll("[data-id]").forEach((el) => el.classList.toggle("done", done.has(el.dataset.id)));
+      document.querySelectorAll("[data-id]").forEach((el) => el.classList.toggle("done", done.has(canon(el.dataset.id))));
       localStorage.setItem(DONE_KEY, JSON.stringify([...done]));
     }
     document.querySelectorAll("[data-id]").forEach((el) => {
       el.addEventListener("click", () => {
-        const id = el.dataset.id;
+        const id = canon(el.dataset.id);
         if (done.has(id)) done.delete(id); else done.add(id);
         paintDone();
       });
