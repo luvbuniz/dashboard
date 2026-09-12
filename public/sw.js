@@ -1,7 +1,7 @@
 // Minimal service worker: network-first with cache fallback, so the
 // dashboard opens instantly from the home screen and still works offline
 // (data is in localStorage anyway — this just keeps the shell available).
-const CACHE = "amys-cc-v3";
+const CACHE = "amys-cc-v4";
 
 self.addEventListener("install", (e) => {
   self.skipWaiting();
