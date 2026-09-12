@@ -33,7 +33,7 @@
       min-height: 100dvh;
     }
     .wrap {
-      max-width: 640px;
+      max-width: 1120px;
       margin: 0 auto;
       padding: 20px 16px var(--tabh);
     }
@@ -42,6 +42,7 @@
       justify-content: space-between;
       align-items: baseline;
       gap: 12px;
+      margin-bottom: 8px;
     }
     .kicker {
       font-size: 11px;
@@ -52,16 +53,15 @@
     }
     h1 {
       font-family: Newsreader, Georgia, serif;
-      font-size: 30px;
+      font-size: clamp(26px, 4vw, 34px);
       font-weight: 500;
       letter-spacing: -0.03em;
       margin: 4px 0 0;
       line-height: 1.05;
     }
     .clock { font-variant-numeric: tabular-nums; color: var(--muted); font-size: 13px; }
-    .alex { margin: 16px 0 24px; color: var(--muted); }
+    .alex { margin: 12px 0 20px; color: var(--muted); max-width: 62ch; }
     .alex strong { color: var(--ink); font-weight: 500; }
-    section { margin-bottom: 26px; }
     h2 {
       font-size: 11px;
       letter-spacing: 0.14em;
@@ -70,13 +70,14 @@
       font-weight: 600;
       margin: 0 0 10px;
     }
-    .next, .card {
+    section { margin-bottom: 22px; }
+    .next, .card, .board {
       border: 1px solid var(--line);
       background: var(--panel);
       border-radius: var(--radius);
       overflow: hidden;
     }
-    .next-head, .proj-h {
+    .next-head, .board-h {
       padding: 14px 16px 10px;
       display: flex;
       justify-content: space-between;
@@ -114,7 +115,6 @@
     }
     .task:hover, .task:active { background: var(--elev); }
     .task.done .label { color: var(--faint); text-decoration: line-through; }
-    .task.optional { opacity: 0.75; }
     .box {
       width: 22px; height: 22px; margin-top: 1px;
       border: 1.5px solid var(--muted);
@@ -132,7 +132,6 @@
       white-space: nowrap;
       margin-top: 2px;
     }
-    .chip.warn { color: var(--warn); background: rgba(212,160,23,.16); }
     .rails { display: grid; }
     .rail {
       display: flex;
@@ -144,7 +143,6 @@
     }
     .rail:last-child { border-bottom: 0; }
     .rail .status { color: var(--muted); font-size: 13px; text-align: right; }
-    .rail.warn .status { color: var(--warn); }
     .week {
       display: flex;
       gap: 8px;
@@ -161,31 +159,24 @@
       min-height: 96px;
     }
     .day.on { border-color: rgba(196, 120, 74, 0.45); background: var(--copper-dim); }
-    .day.conflict { border-color: rgba(212, 160, 23, 0.5); }
     .day .d { font-size: 11px; color: var(--faint); text-transform: uppercase; letter-spacing: 0.06em; }
     .day .n { font-family: Newsreader, Georgia, serif; font-size: 18px; margin: 2px 0 6px; }
     .day .m { font-size: 12px; color: var(--muted); line-height: 1.35; }
-    .proj { border-top: 1px solid var(--line); }
-    .proj:first-child { border-top: 0; }
-    .proj-h { cursor: pointer; width: 100%; background: none; border: 0; color: inherit; font: inherit; text-align: left; min-height: 48px; }
-    .proj-h .name { font-weight: 500; }
-    .proj-h .count { color: var(--faint); font-size: 12px; }
-    .items { display: none; padding: 0 12px 12px; }
-    .proj.open .items { display: block; }
+    .boards-grid { display: grid; gap: 12px; }
+    .board-h { padding-bottom: 8px; }
+    .board-h .name { font-weight: 600; font-size: 15px; }
+    .board-h .src { color: var(--faint); font-size: 12px; }
     .item {
-      display: flex;
-      justify-content: space-between;
+      display: grid;
+      grid-template-columns: 1fr auto;
       gap: 8px;
-      padding: 10px 4px;
+      padding: 11px 16px;
       border-top: 1px solid var(--line);
       font-size: 14px;
     }
-    .item .lane { color: var(--faint); font-size: 12px; white-space: nowrap; }
-    .item.week .lane { color: var(--copper); }
-    .parked details { color: var(--muted); }
-    .parked summary { cursor: pointer; color: var(--faint); font-size: 13px; min-height: 44px; display: flex; align-items: center; }
-    .parked ul { margin: 0; padding-left: 18px; }
-    .parked li { margin: 6px 0; }
+    .item .meta { color: var(--faint); font-size: 12px; margin-top: 3px; }
+    .lane { font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--faint); white-space: nowrap; padding-top: 2px; }
+    .item.now .lane { color: var(--copper); }
     .tabbar {
       position: fixed;
       left: 0; right: 0; bottom: 0;
@@ -203,118 +194,151 @@
     }
     .tabbar button.on { color: var(--ink); }
     [data-tab="today"] #boards, [data-tab="boards"] #today { display: none; }
-    footer { margin-top: 28px; color: var(--faint); font-size: 12px; }
+    footer { margin-top: 24px; color: var(--faint); font-size: 12px; }
+
+    @media (min-width: 900px) {
+      .wrap { padding: 28px 24px 40px; }
+      .layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+        gap: 32px;
+        align-items: start;
+      }
+      [data-tab] #today, [data-tab] #boards { display: block !important; }
+      .tabbar { display: none; }
+      .week { display: grid; grid-template-columns: repeat(7, 1fr); overflow: visible; }
+      .day { flex: none; min-width: 0; }
+      .boards-grid { grid-template-columns: 1fr; }
+    }
+    @media (min-width: 1100px) {
+      .boards-grid { grid-template-columns: 1fr 1fr; }
+    }
   </style>
 </head>
 <body data-tab="today">
   <div class="wrap">
     <header>
       <div>
-        <div class="kicker">Weekend · last free day before sub week</div>
-        <h1>Saturday, Sep 12</h1>
+        <div class="kicker">Saturday · late lunch · then income</div>
+        <h1>Sep 12</h1>
       </div>
       <div class="clock" id="clock"></div>
     </header>
+    <p class="alex">Alex: Wawa 10:00 is gone — that was summer. Boards are from sullivanamy75 mail + what you just told me. Nothing leftover from July taxes or tablet checks.</p>
 
-    <div id="today">
-      <p class="alex">Alex: Phone view of the new board. <strong>Mon–Tue elementary, Thu–Fri upper at LWR Prep</strong> are on Google Calendar (7:30–3:15, confirm bells). Wednesday is perio + ASG. Friday also still has Wawa at 10 — that collides with subbing.</p>
-
-      <section>
-        <h2>Next on the calendar</h2>
-        <div class="next">
-          <div class="next-head">
-            <div class="when">Monday, Sep 14</div>
-            <div class="countdown">in 2 days</div>
+    <div class="layout">
+      <div id="today">
+        <section>
+          <h2>Today — three things</h2>
+          <div class="tasks">
+            <button class="task" data-id="stack" type="button">
+              <span class="box"></span>
+              <span>
+                <span class="label">Stackadoo — get usage credits actually running</span>
+                <div class="why">You said this is what you’re in now. Finish the fix before context-switch.</div>
+              </span>
+              <span class="chip">now</span>
+            </button>
+            <button class="task" data-id="eat" type="button">
+              <span class="box"></span>
+              <span>
+                <span class="label">Late lunch</span>
+                <div class="why">Then the micro1 AI Agent app. Food first.</div>
+              </span>
+              <span class="chip">rail</span>
+            </button>
+            <button class="task" data-id="agent" type="button">
+              <span class="box"></span>
+              <span>
+                <span class="label">micro1 AI Agent Power User — apply + interview</span>
+                <div class="why">Mariana, Fri night, you starred it. After lunch. Separate from Titan Proton, which is already signed.</div>
+              </span>
+              <span class="chip">after lunch</span>
+            </button>
           </div>
-          <div class="appt">
-            <time>7:30</time>
-            <div>
-              <div class="title">Sub — LWR Prep (elementary)</div>
-              <div class="meta">Through 3:15 · confirm with the school</div>
+        </section>
+
+        <section>
+          <h2>Calendar</h2>
+          <div class="next">
+            <div class="next-head">
+              <div class="when">Monday — sub week starts</div>
+              <div class="countdown">2 days</div>
             </div>
+            <div class="appt"><time>Mon</time><div><div class="title">Sub — LWR Prep elementary</div><div class="meta">7:30–3:15 · confirm bells</div></div></div>
+            <div class="appt"><time>Tue</time><div><div class="title">Sub — LWR Prep elementary</div><div class="meta">7:30–3:15</div></div></div>
+            <div class="appt"><time>Wed</time><div><div class="title">Perio 7:30 · ASG interview 1:00</div><div class="meta">Bradenton, then Teams</div></div></div>
+            <div class="appt"><time>Thu</time><div><div class="title">Sub — LWR Prep upper</div><div class="meta">7:30–3:15</div></div></div>
+            <div class="appt"><time>Fri</time><div><div class="title">Sub — LWR Prep upper</div><div class="meta">7:30–3:15 · no Wawa</div></div></div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section>
-        <h2>Today — three things</h2>
-        <div class="tasks">
-          <button class="task" data-id="prep" type="button">
-            <span class="box"></span>
-            <span>
-              <span class="label">Prep the ASG interview</span>
-              <div class="why">Wednesday 1:00. JD + three stories. After Monday you will be tired from subbing.</div>
-            </span>
-            <span class="chip">45 min</span>
-          </button>
-          <button class="task" data-id="eat" type="button">
-            <span class="box"></span>
-            <span>
-              <span class="label">Eat something</span>
-              <div class="why">Rail, not a productivity item.</div>
-            </span>
-            <span class="chip">now</span>
-          </button>
-          <button class="task optional" data-id="bag" type="button">
-            <span class="box"></span>
-            <span>
-              <span class="label">Bag for Monday elementary</span>
-              <div class="why">Optional. ID, water, backup activities. Sub week starts 7:30 Monday.</div>
-            </span>
-            <span class="chip">optional</span>
-          </button>
-        </div>
-      </section>
+        <section>
+          <h2>This week</h2>
+          <div class="week">
+            <div class="day on"><div class="d">Sat</div><div class="n">12</div><div class="m">Credits · lunch · AI Agent</div></div>
+            <div class="day"><div class="d">Sun</div><div class="n">13</div><div class="m">Open</div></div>
+            <div class="day on"><div class="d">Mon</div><div class="n">14</div><div class="m">Sub elementary</div></div>
+            <div class="day on"><div class="d">Tue</div><div class="n">15</div><div class="m">Sub elementary</div></div>
+            <div class="day on"><div class="d">Wed</div><div class="n">16</div><div class="m">Perio · ASG</div></div>
+            <div class="day on"><div class="d">Thu</div><div class="n">17</div><div class="m">Sub upper</div></div>
+            <div class="day on"><div class="d">Fri</div><div class="n">18</div><div class="m">Sub upper</div></div>
+          </div>
+        </section>
 
-      <section>
-        <h2>Rails</h2>
-        <div class="rails">
-          <div class="rail warn">
-            <span>Friday</span>
-            <span class="status">Sub 7:30–3:15 and Wawa 10:00 — pick one</span>
+        <section>
+          <h2>Rails</h2>
+          <div class="rails">
+            <div class="rail"><span>School run</span><span class="status">pickups / drop-offs · not a 10:00 Wawa</span></div>
+            <div class="rail"><span>Kids screens</span><span class="status">ban through Nov 10</span></div>
+            <div class="rail"><span>Bills</span><span class="status">LV water paid · Republic auto Sep 20</span></div>
           </div>
-          <div class="rail">
-            <span>Kids screens</span>
-            <span class="status">ban through Nov 10</span>
-          </div>
-          <div class="rail">
-            <span>Bills</span>
-            <span class="status">LV water paid · Republic auto Sep 20</span>
-          </div>
-        </div>
-      </section>
+        </section>
+      </div>
 
-      <section>
-        <h2>This week</h2>
-        <div class="week">
-          <div class="day on"><div class="d">Sat</div><div class="n">12</div><div class="m">Today · ASG prep</div></div>
-          <div class="day"><div class="d">Sun</div><div class="n">13</div><div class="m">Open</div></div>
-          <div class="day on"><div class="d">Mon</div><div class="n">14</div><div class="m">Sub · elementary</div></div>
-          <div class="day on"><div class="d">Tue</div><div class="n">15</div><div class="m">Sub · elementary</div></div>
-          <div class="day on"><div class="d">Wed</div><div class="n">16</div><div class="m">Perio 7:30 · ASG 1:00</div></div>
-          <div class="day on"><div class="d">Thu</div><div class="n">17</div><div class="m">Sub · upper</div></div>
-          <div class="day on conflict"><div class="d">Fri</div><div class="n">18</div><div class="m">Sub · upper · Wawa 10?</div></div>
+      <div id="boards">
+        <h2>Campaign boards</h2>
+        <div class="boards-grid">
+
+          <article class="board">
+            <div class="board-h"><span class="name">Stackadoo</span><span class="src">you, just now</span></div>
+            <div class="item now"><div>Get usage credits running<div class="meta">The live product. Do this before job tabs.</div></div><span class="lane">now</span></div>
+            <div class="item"><div>Daily 15-min after credits work<div class="meta">Waiting on the fix.</div></div><span class="lane">waiting</span></div>
+          </article>
+
+          <article class="board">
+            <div class="board-h"><span class="name">Income now</span><span class="src">micro1 mail · Sat</span></div>
+            <div class="item now"><div>AI Agent Power User — apply + interview<div class="meta">Mariana Fri 22:00 UTC. Starred. After lunch.</div></div><span class="lane">now</span></div>
+            <div class="item now"><div>Titan Proton $80/hr — onboarding<div class="meta">Contract signed today. Next: 2FA on the expert Gmail, then Slack “micro1 experts.” Password stays in that email — not here.</div></div><span class="lane">today</span></div>
+            <div class="item"><div>ASG Instructional Designer interview<div class="meta">Wed 1:00 Teams. Prep when Stackadoo is unblocked.</div></div><span class="lane">Wed</span></div>
+          </article>
+
+          <article class="board">
+            <div class="board-h"><span class="name">Handshake — Buckeye stumping</span><span class="src">Handshake AI mail</span></div>
+            <div class="item now"><div>Submit / continue Buckeye stumping work<div class="meta">You claimed a task. Reminders to submit ran Aug 20–23. Slack still pinging #buckeye-tasking as of Sep 7. Check dashboard after lunch if energy.</div></div><span class="lane">maybe</span></div>
+            <div class="item"><div>India-only Handshake matches<div class="meta">Linguistics / chem $47 — skip. Not US.</div></div><span class="lane">noise</span></div>
+          </article>
+
+          <article class="board">
+            <div class="board-h"><span class="name">Cabin — 420 Nuthatch</span><span class="src">title + John</span></div>
+            <div class="item now"><div>CLEAR ID for Fidelity title<div class="meta">Emails Sep 8–9. Transaction at 420 Nuthatch Road.</div></div><span class="lane">open</span></div>
+            <div class="item"><div>Sale as-is — no CO<div class="meta">You told John Aug 17: engineer report, will not qualify for Certificate of Occupancy as-is.</div></div><span class="lane">waiting</span></div>
+            <div class="item"><div>Septic vs buyer pipe repairs<div class="meta">Sep 6 to John: separate Park County requirements from buyer requests before spending.</div></div><span class="lane">waiting</span></div>
+            <div class="item"><div>Xcel Energy on<div class="meta">Welcome mail Sep 9 · acct for 420 Nuthatch Dr.</div></div><span class="lane">done?</span></div>
+          </article>
+
+          <article class="board">
+            <div class="board-h"><span class="name">Home / school</span><span class="src">calendar + SchoolCafé</span></div>
+            <div class="item now"><div>Sub week at LWR Prep<div class="meta">Mon/Tue elementary · Thu/Fri upper. Pickups/drop-offs around that.</div></div><span class="lane">week</span></div>
+            <div class="item"><div>Fiona SchoolCafé $19.50<div class="meta">Low-balance alert Fri 9/11 vs $20 threshold. Ignore if you already loaded.</div></div><span class="lane">check</span></div>
+            <div class="item"><div>Parenting plan signed<div class="meta">Dropbox Sign Sat: you + David, Agreed Parenting Plan Sullivan 9.8.26.</div></div><span class="lane">done</span></div>
+          </article>
+
         </div>
-      </section>
+      </div>
     </div>
 
-    <div id="boards">
-      <p class="alex">Boards are <strong>project lists</strong>, not today. Daily agent should pull at most one due item onto Today and leave the rest here.</p>
-      <div class="card" id="kanban"></div>
-      <section class="parked" style="margin-top:20px">
-        <details>
-          <summary>Aged out of the old Command Center</summary>
-          <ul>
-            <li>July tax nags — need a real date, not a daily card.</li>
-            <li>Tablets / screen-time — contradicts the no-screens trial.</li>
-            <li>“2 applications today” — paused while ASG + sub week are live.</li>
-            <li>Audio transcript frog — not on calendar or mail.</li>
-          </ul>
-        </details>
-      </section>
-    </div>
-
-    <footer>https://luvbuniz.github.io/dashboard/day.html · Google Calendar is source of truth</footer>
+    <footer>https://luvbuniz.github.io/dashboard/day.html · sourced Sat Sep 12 from Gmail + calendar · no leftovers from the old 16-item list</footer>
   </div>
 
   <nav class="tabbar">
@@ -323,12 +347,11 @@
   </nav>
 
   <script>
-    const KEY = "amy-dayboard-2026-09-12";
+    const KEY = "amy-dayboard-2026-09-12b";
     const done = new Set(JSON.parse(localStorage.getItem(KEY) || "[]"));
     const clock = document.getElementById("clock");
     const tick = () => { clock.textContent = new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }); };
     tick(); setInterval(tick, 15000);
-
     function paint() {
       document.querySelectorAll(".task").forEach((el) => el.classList.toggle("done", done.has(el.dataset.id)));
       localStorage.setItem(KEY, JSON.stringify([...done]));
@@ -341,45 +364,11 @@
       });
     });
     paint();
-
     document.querySelectorAll(".tabbar button").forEach((b) => {
       b.addEventListener("click", () => {
         document.body.dataset.tab = b.dataset.go;
         document.querySelectorAll(".tabbar button").forEach((x) => x.classList.toggle("on", x === b));
       });
-    });
-
-    const projects = [
-      { name: "Work", count: "1 this week", items: [
-        { t: "ASG interview — Instructional Designer", lane: "Wed 1:00", week: true },
-        { t: "Job hunt quota / Micro1", lane: "parked" },
-      ]},
-      { name: "Subbing", count: "4 days", items: [
-        { t: "LWR Prep elementary", lane: "Mon + Tue", week: true },
-        { t: "LWR Prep upper", lane: "Thu + Fri", week: true },
-      ]},
-      { name: "Stackadoo", count: "waiting", items: [
-        { t: "Daily 15-min touch", lane: "waiting — sub week" },
-      ]},
-      { name: "Kids", count: "1 conflict", items: [
-        { t: "No screens trial", lane: "rail through Nov 10", week: true },
-        { t: "Friday Wawa 10:00", lane: "conflicts with sub", week: true },
-        { t: "Library / camps", lane: "waiting" },
-      ]},
-      { name: "Properties", count: "parked", items: [
-        { t: "Smoke Ranch / Moonmist taxes", lane: "need a real date" },
-        { t: "McLeod deed", lane: "waiting" },
-        { t: "La Sombra utilities — Brian", lane: "waiting" },
-      ]},
-    ];
-    const kb = document.getElementById("kanban");
-    kb.innerHTML = projects.map((p, i) => `
-      <div class="proj${i === 0 ? " open" : ""}">
-        <button class="proj-h" type="button"><span class="name">${p.name}</span><span class="count">${p.count}</span></button>
-        <div class="items">${p.items.map((it) => `<div class="item${it.week ? " week" : ""}"><span>${it.t}</span><span class="lane">${it.lane}</span></div>`).join("")}</div>
-      </div>`).join("");
-    kb.querySelectorAll(".proj-h").forEach((btn) => {
-      btn.addEventListener("click", () => btn.parentElement.classList.toggle("open"));
     });
   </script>
 </body>
