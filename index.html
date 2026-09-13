@@ -40,6 +40,11 @@
     .kicker { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--faint); font-weight: 500; }
     h1 { font-family: Newsreader, Georgia, serif; font-size: clamp(26px, 4vw, 34px); font-weight: 500; letter-spacing: -0.03em; margin: 4px 0 0; line-height: 1.05; }
     .clock { font-variant-numeric: tabular-nums; color: var(--muted); font-size: 13px; }
+    .sync {
+      display: block; margin-left: auto; margin-top: 6px;
+      background: var(--elev); color: var(--muted); border: 1px solid var(--line);
+      border-radius: 6px; font: inherit; font-size: 12px; padding: 6px 10px; min-height: 36px; cursor: pointer;
+    }
     .alex { margin: 12px 0 20px; color: var(--muted); max-width: 58ch; }
     .alex strong { color: var(--ink); font-weight: 500; }
     h2 { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--faint); font-weight: 600; margin: 0 0 10px; }
@@ -122,12 +127,15 @@
   <div class="wrap">
     <header>
       <div>
-        <div class="kicker">Saturday · remote if you have a block</div>
-        <h1>Sep 12</h1>
+        <div class="kicker" id="kicker">Saturday · remote if you have a block</div>
+        <h1 id="heading">Sep 12</h1>
       </div>
-      <div class="clock" id="clock"></div>
+      <div>
+        <div class="clock" id="clock"></div>
+        <button type="button" class="sync" id="sync">Sync</button>
+      </div>
     </header>
-    <p class="alex">Alex: This is the board now. Check a box when it’s done. Timer is only for remote work — leave it alone on sub days.</p>
+    <p class="alex" id="alex">Alex: This is the board now. Check a box when it’s done. Timer is only for remote work — leave it alone on sub days.</p>
 
     <div class="layout">
       <div id="today">
@@ -162,11 +170,13 @@
         <section>
           <h2>Coming up</h2>
           <div class="panel">
-            <div class="head"><span class="when">Mon–Fri</span><span class="meta">sub week · Wed is the interview</span></div>
+            <div class="head"><span class="when">Mon–Fri</span><span class="meta" id="agenda-note">sub week · Wed is the interview</span></div>
+            <div id="agenda">
             <div class="appt"><time>Mon–Tue</time><div>Sub · LWR Prep elementary</div></div>
             <div class="appt"><time>Wed</time><div>Perio 7:30 · ASG 1:00</div></div>
             <div class="appt"><time>Thu–Fri</time><div>Sub · LWR Prep upper</div></div>
             <div class="appt"><time>Tue/Thu</time><div>SearchSeptic at Nuthatch (you’re in FL — watch for invoices)</div></div>
+            </div>
           </div>
         </section>
 
@@ -222,7 +232,7 @@
         </div>
       </div>
     </div>
-    <footer>Replaces Command Center. Hard-refresh the phone if you still see the old one.</footer>
+    <footer id="sync-status">Pull: ./feed.json · Sync fetches Alex’s list. Taps stay on this phone.</footer>
   </div>
   <nav class="tabbar">
     <button type="button" data-go="today" class="on">Today</button>
@@ -351,6 +361,37 @@
         document.querySelectorAll(".tabbar button").forEach((x) => x.classList.toggle("on", x === b));
       });
     });
+
+    const FEED = "./feed.json";
+    const esc = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
+    async function pullFeed() {
+      const status = document.getElementById("sync-status");
+      const btn = document.getElementById("sync");
+      btn.disabled = true;
+      try {
+        const res = await fetch(FEED + "?t=" + Date.now(), { cache: "no-store" });
+        if (!res.ok) throw new Error(res.status);
+        const data = await res.json();
+        if (data.message) document.getElementById("alex").textContent = data.message;
+        if (data.kicker) document.getElementById("kicker").textContent = data.kicker;
+        if (data.heading) document.getElementById("heading").textContent = data.heading;
+        if (Array.isArray(data.agenda) && data.agenda.length) {
+          document.getElementById("agenda").innerHTML = data.agenda.map((a) =>
+            `<div class="appt"><time>${esc(a.time)}</time><div>${esc(a.title)}</div></div>`
+          ).join("");
+        }
+        if (Array.isArray(data.done)) {
+          for (const id of data.done) done.add(canon(id));
+          paintDone();
+        }
+        status.textContent = "Synced " + (data.updated ? data.updated.replace("T", " ").slice(0, 16) : "now");
+      } catch {
+        status.textContent = "Sync failed — feed.json not reachable yet.";
+      }
+      btn.disabled = false;
+    }
+    document.getElementById("sync").addEventListener("click", pullFeed);
+    pullFeed();
   </script>
 </body>
 </html>

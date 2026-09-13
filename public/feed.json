@@ -1,0 +1,13 @@
+{
+  "updated": "2026-09-12T20:00:00-04:00",
+  "message": "Alex: Pull URL is live. 8am/8pm I rewrite this file from calendar + mail. Your taps stay on the phone until you hit Sync after a deploy.",
+  "kicker": "Saturday · remote if you have a block",
+  "heading": "Sep 12",
+  "agenda": [
+    { "time": "Mon–Tue", "title": "Sub · LWR Prep elementary" },
+    { "time": "Wed", "title": "Perio 7:30 · ASG 1:00" },
+    { "time": "Thu–Fri", "title": "Sub · LWR Prep upper" },
+    { "time": "Tue/Thu", "title": "SearchSeptic at Nuthatch — watch invoices" }
+  ],
+  "done": ["b-clear", "b-filter", "b-plan", "b-own"]
+}
