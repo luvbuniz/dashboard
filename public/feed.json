@@ -1,13 +1,13 @@
 {
-  "updated": "2026-09-12T20:00:00-04:00",
-  "message": "Alex: Pull URL is live. 8am/8pm I rewrite this file from calendar + mail. Your taps stay on the phone until you hit Sync after a deploy.",
-  "kicker": "Saturday · remote if you have a block",
+  "updated": "2026-09-12T21:45:00-04:00",
+  "message": "Alex: Saturday night. Sub week starts Monday 7:30 elementary. Wed is perio + ASG. Sync is the copper line under the button — it was hiding in the footer before.",
+  "kicker": "Saturday night · last free day",
   "heading": "Sep 12",
   "agenda": [
-    { "time": "Mon–Tue", "title": "Sub · LWR Prep elementary" },
-    { "time": "Wed", "title": "Perio 7:30 · ASG 1:00" },
-    { "time": "Thu–Fri", "title": "Sub · LWR Prep upper" },
-    { "time": "Tue/Thu", "title": "SearchSeptic at Nuthatch — watch invoices" }
+    { "time": "Mon 7:30", "title": "Sub — LWR Prep elementary" },
+    { "time": "Tue 7:30", "title": "Sub — LWR Prep elementary · SearchSeptic in CO" },
+    { "time": "Wed", "title": "Perio 7:30 · ASG interview 1:00" },
+    { "time": "Thu–Fri", "title": "Sub — LWR Prep upper" }
   ],
   "done": ["b-clear", "b-filter", "b-plan", "b-own"]
 }

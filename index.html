@@ -42,9 +42,10 @@
     .clock { font-variant-numeric: tabular-nums; color: var(--muted); font-size: 13px; }
     .sync {
       display: block; margin-left: auto; margin-top: 6px;
-      background: var(--elev); color: var(--muted); border: 1px solid var(--line);
+      background: var(--elev); color: var(--ink); border: 1px solid var(--line);
       border-radius: 6px; font: inherit; font-size: 12px; padding: 6px 10px; min-height: 36px; cursor: pointer;
     }
+    .sync-note { margin-top: 6px; font-size: 11px; color: var(--copper); text-align: right; min-height: 1.2em; }
     .alex { margin: 12px 0 20px; color: var(--muted); max-width: 58ch; }
     .alex strong { color: var(--ink); font-weight: 500; }
     h2 { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--faint); font-weight: 600; margin: 0 0 10px; }
@@ -133,6 +134,7 @@
       <div>
         <div class="clock" id="clock"></div>
         <button type="button" class="sync" id="sync">Sync</button>
+        <div class="sync-note" id="sync-status"></div>
       </div>
     </header>
     <p class="alex" id="alex">Alex: This is the board now. Check a box when it’s done. Timer is only for remote work — leave it alone on sub days.</p>
@@ -232,7 +234,7 @@
         </div>
       </div>
     </div>
-    <footer id="sync-status">Pull: ./feed.json · Sync fetches Alex’s list. Taps stay on this phone.</footer>
+    <footer>https://luvbuniz.github.io/dashboard/feed.json</footer>
   </div>
   <nav class="tabbar">
     <button type="button" data-go="today" class="on">Today</button>
@@ -384,7 +386,9 @@
           for (const id of data.done) done.add(canon(id));
           paintDone();
         }
-        status.textContent = "Synced " + (data.updated ? data.updated.replace("T", " ").slice(0, 16) : "now");
+        status.textContent = "Synced " + new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+        btn.textContent = "Synced";
+        setTimeout(() => { btn.textContent = "Sync"; }, 2000);
       } catch {
         status.textContent = "Sync failed — feed.json not reachable yet.";
       }
