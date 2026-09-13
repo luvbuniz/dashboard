@@ -1,8 +1,8 @@
 {
-  "updated": "2026-09-13T08:00:00-04:00",
+  "updated": "2026-09-12T22:05:00-04:00",
   "quote": "Fortune favors the prepared mind.",
   "cite": "Louis Pasteur",
-  "message": "Alex: Sleep in. Breakfast, workspace, ASG notes, elementary backups, one Handshake task. 5am shopping job is weekdays — not today.",
+  "message": "Alex: SchoolCafé is paid. Titan contract is live (weekday 2FA/Slack). Sunday stays: sleep in, ASG notes, elem backups, one Handshake task. Law invoice — nothing due.",
   "kicker": "Sunday · sleep in, then workspace",
   "heading": "Sep 13",
   "agenda": [
@@ -11,5 +11,5 @@
     { "time": "Wed", "title": "Perio 7:30 · ASG 1:00" },
     { "time": "Thu–Fri", "title": "Sub — LWR Prep upper" }
   ],
-  "done": ["b-clear", "b-filter", "b-plan", "b-own"]
+  "done": ["b-clear", "b-filter", "b-plan", "b-own", "b-schoolcafe"]
 }

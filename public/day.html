@@ -227,8 +227,8 @@
           </article>
           <article class="board">
             <div class="board-h"><span class="name">Income</span><span class="src">gigs + support</span></div>
-            <button class="item now" data-id="b-agent" type="button"><span class="box"></span><span><span class="label">AI Agent Power User</span><div class="why">After lunch.</div></span><span class="lane">now</span></button>
-            <button class="item" data-id="b-titan" type="button"><span class="box"></span><span><span class="label">Titan Proton onboarding</span><div class="why">$80/hr signed. 2FA + Slack when you have a weekday block.</div></span><span class="lane">waiting</span></button>
+            <button class="item" data-id="b-agent" type="button"><span class="box"></span><span><span class="label">AI Agent Power User</span><div class="why">Mariana starred. Not Sunday — after workspace if leftover energy.</div></span><span class="lane">waiting</span></button>
+            <button class="item now" data-id="b-titan" type="button"><span class="box"></span><span><span class="label">Titan Proton — contract is live</span><div class="why">Mail Sat night. Next: 2FA on expert Gmail + Slack. Weekday block, not Sunday sleep-in.</div></span><span class="lane">next</span></button>
             <button class="item" data-id="b-asg" type="button"><span class="box"></span><span><span class="label">ASG interview</span><div class="why">Wed 1:00. Sunday = notes + questions.</div></span><span class="lane">Wed</span></button>
             <button class="item" data-id="b-cs" type="button"><span class="box"></span><span><span class="label">David child support $1,800</span><div class="why">1st of the month. Not today.</div></span><span class="lane">1st</span></button>
           </article>
@@ -251,6 +251,8 @@
           <article class="board">
             <div class="board-h"><span class="name">Personal</span><span class="src">home</span></div>
             <button class="item done" data-id="b-plan" type="button"><span class="box"></span><span><span class="label">Parenting agreement signed</span><div class="why">Decree not in yet. Not the same thing.</div></span><span class="lane">done</span></button>
+            <button class="item done" data-id="b-schoolcafe" type="button"><span class="box"></span><span><span class="label">SchoolCafé loaded</span><div class="why">$57.25 Sat 8:42pm. Fiona $20 · Leo $35. Allow 24h to post.</div></span><span class="lane">done</span></button>
+            <button class="item" data-id="b-law" type="button"><span class="box"></span><span><span class="label">McDermott July invoice</span><div class="why">Clio: no additional payment due.</div></span><span class="lane">ref</span></button>
             <button class="item" data-id="b-ins" type="button"><span class="box"></span><span><span class="label">Own car insurance</span><div class="why">After the decree. Not now.</div></span><span class="lane">later</span></button>
           </article>
         </div>
@@ -267,8 +269,8 @@
     const LOG_KEY = "amy-board-log-v3";
     const DAY_KEY = "amy-board-day";
     const ARCH_KEY = "amy-board-archive-v1";
-    const PRE = ["b-clear", "b-filter", "b-plan", "b-own"];
-    const STANDING = new Set(["b-clear", "b-filter", "b-plan", "b-own", "b-cs", "b-ins", "b-mcleod", "b-septic", "b-pipes", "b-asg", "b-titan"]);
+    const PRE = ["b-clear", "b-filter", "b-plan", "b-own", "b-schoolcafe"];
+    const STANDING = new Set(["b-clear", "b-filter", "b-plan", "b-own", "b-cs", "b-ins", "b-mcleod", "b-septic", "b-pipes", "b-asg", "b-titan", "b-schoolcafe", "b-law"]);
     const ALIAS = { stack: "b-credits", agent: "b-agent" };
     const canon = (id) => ALIAS[id] || id;
     const localDay = () => {
