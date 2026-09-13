@@ -46,6 +46,23 @@
       border-radius: 6px; font: inherit; font-size: 12px; padding: 6px 10px; min-height: 36px; cursor: pointer;
     }
     .sync-note { margin-top: 6px; font-size: 11px; color: var(--copper); text-align: right; min-height: 1.2em; }
+    .quote {
+      font-family: Newsreader, Georgia, serif;
+      font-size: 18px;
+      line-height: 1.35;
+      margin: 18px 0 6px;
+      color: var(--ink);
+      max-width: 28em;
+    }
+    .quote cite {
+      display: block;
+      font-family: "IBM Plex Sans", system-ui, sans-serif;
+      font-size: 12px;
+      font-style: normal;
+      color: var(--faint);
+      margin-top: 6px;
+      letter-spacing: 0.04em;
+    }
     .alex { margin: 12px 0 20px; color: var(--muted); max-width: 58ch; }
     .alex strong { color: var(--ink); font-weight: 500; }
     h2 { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--faint); font-weight: 600; margin: 0 0 10px; }
@@ -128,8 +145,8 @@
   <div class="wrap">
     <header>
       <div>
-        <div class="kicker" id="kicker">Saturday · remote if you have a block</div>
-        <h1 id="heading">Sep 12</h1>
+        <div class="kicker" id="kicker">Sunday · sleep in, then workspace</div>
+        <h1 id="heading">Sep 13</h1>
       </div>
       <div>
         <div class="clock" id="clock"></div>
@@ -137,18 +154,23 @@
         <div class="sync-note" id="sync-status"></div>
       </div>
     </header>
-    <p class="alex" id="alex">Alex: This is the board now. Check a box when it’s done. Timer is only for remote work — leave it alone on sub days.</p>
+    <blockquote class="quote" id="quote">Fortune favors the prepared mind.<cite>Louis Pasteur</cite></blockquote>
+    <p class="alex" id="alex">Alex: Sleep in. Then breakfast, workspace, interview notes, elementary backups, one Handshake task. Weekdays you’re up at 5 for the shopping job — not tomorrow.</p>
 
     <div class="layout">
       <div id="today">
         <section>
           <h2>Today</h2>
           <div class="tasks">
-            <button class="task" data-id="b-credits" type="button"><span class="box"></span><span><span class="label">Stackadoo — usage credits running</span><div class="why">Finish the fix you’re in.</div></span><span class="chip">now</span></button>
-            <button class="task" data-id="eat" type="button"><span class="box"></span><span><span class="label">Late lunch</span><div class="why">Then the AI Agent apply.</div></span><span class="chip">rail</span></button>
-            <button class="task" data-id="b-agent" type="button"><span class="box"></span><span><span class="label">micro1 AI Agent Power User</span><div class="why">Apply + interview. Titan Proton is already signed.</div></span><span class="chip">after lunch</span></button>
-            <button class="task" data-id="cafe" type="button"><span class="box"></span><span><span class="label">Load SchoolCafé</span><div class="why">Fiona was $19.50 vs $20 on Fri.</div></span><span class="chip">you said</span></button>
+            <button class="task" data-id="sun-breakfast" type="button"><span class="box"></span><span><span class="label">Breakfast after you sleep in</span><div class="why">Normal morning. No 5am. Eat first.</div></span><span class="chip">rail</span></button>
+            <button class="task" data-id="sun-asg" type="button"><span class="box"></span><span><span class="label">ASG interview notes, questions, brainstorm</span><div class="why">Workspace block. Instructional Designer, Wed 1:00. Stories + questions for them.</div></span><span class="chip">main</span></button>
+            <button class="task" data-id="sun-elem" type="button"><span class="box"></span><span><span class="label">Elementary sub extras</span><div class="why">Art class. Teacher has an agenda — still pack backups if it runs thin.</div></span><span class="chip">Mon</span></button>
+            <button class="task" data-id="sun-hand" type="button"><span class="box"></span><span><span class="label">Handshake — one Buckeye task</span><div class="why">Jargon prework, then finish one. Not fun. One is enough.</div></span><span class="chip">one</span></button>
           </div>
+          <details class="parked" id="archive-box" style="margin-top:10px">
+            <summary>Archived checks</summary>
+            <ul id="archive-list"></ul>
+          </details>
         </section>
 
         <section>
@@ -185,9 +207,9 @@
         <section>
           <h2>Week</h2>
           <div class="week">
-            <div class="day on"><div class="d">Sat</div><div class="n">12</div><div class="m">Credits · Agent</div></div>
-            <div class="day"><div class="d">Sun</div><div class="n">13</div><div class="m">Open</div></div>
-            <div class="day on"><div class="d">Mon</div><div class="n">14</div><div class="m">Sub elem</div></div>
+            <div class="day"><div class="d">Sat</div><div class="n">12</div><div class="m">Done</div></div>
+            <div class="day on"><div class="d">Sun</div><div class="n">13</div><div class="m">Workspace</div></div>
+            <div class="day on"><div class="d">Mon</div><div class="n">14</div><div class="m">Sub elem · 5am shop</div></div>
             <div class="day on"><div class="d">Tue</div><div class="n">15</div><div class="m">Sub · septic</div></div>
             <div class="day on"><div class="d">Wed</div><div class="n">16</div><div class="m">Perio · ASG</div></div>
             <div class="day on"><div class="d">Thu</div><div class="n">17</div><div class="m">Sub · septic</div></div>
@@ -206,13 +228,13 @@
           <article class="board">
             <div class="board-h"><span class="name">Income</span><span class="src">gigs + support</span></div>
             <button class="item now" data-id="b-agent" type="button"><span class="box"></span><span><span class="label">AI Agent Power User</span><div class="why">After lunch.</div></span><span class="lane">now</span></button>
-            <button class="item now" data-id="b-titan" type="button"><span class="box"></span><span><span class="label">Titan Proton onboarding</span><div class="why">$80/hr signed. 2FA + Slack. Password stays in the email.</div></span><span class="lane">today</span></button>
-            <button class="item" data-id="b-asg" type="button"><span class="box"></span><span><span class="label">ASG interview</span><div class="why">Wed 1:00 Teams.</div></span><span class="lane">Wed</span></button>
+            <button class="item" data-id="b-titan" type="button"><span class="box"></span><span><span class="label">Titan Proton onboarding</span><div class="why">$80/hr signed. 2FA + Slack when you have a weekday block.</div></span><span class="lane">waiting</span></button>
+            <button class="item" data-id="b-asg" type="button"><span class="box"></span><span><span class="label">ASG interview</span><div class="why">Wed 1:00. Sunday = notes + questions.</div></span><span class="lane">Wed</span></button>
             <button class="item" data-id="b-cs" type="button"><span class="box"></span><span><span class="label">David child support $1,800</span><div class="why">1st of the month. Not today.</div></span><span class="lane">1st</span></button>
           </article>
           <article class="board">
             <div class="board-h"><span class="name">Handshake</span><span class="src">Buckeye stumping</span></div>
-            <button class="item" data-id="b-buck" type="button"><span class="box"></span><span><span class="label">Continue / submit Buckeye</span><div class="why">If energy after lunch.</div></span><span class="lane">maybe</span></button>
+            <button class="item now" data-id="sun-hand" type="button"><span class="box"></span><span><span class="label">One Buckeye task</span><div class="why">Jargon prework, then submit one.</div></span><span class="lane">Sunday</span></button>
           </article>
           <article class="board">
             <div class="board-h"><span class="name">Rentals</span><span class="src">AppFolio · Sep 10</span></div>
@@ -243,14 +265,47 @@
   <script>
     const DONE_KEY = "amy-board-done-v3";
     const LOG_KEY = "amy-board-log-v3";
+    const DAY_KEY = "amy-board-day";
+    const ARCH_KEY = "amy-board-archive-v1";
     const PRE = ["b-clear", "b-filter", "b-plan", "b-own"];
-    // Today + Boards share one id per task. Old Today-only keys still count.
+    const STANDING = new Set(["b-clear", "b-filter", "b-plan", "b-own", "b-cs", "b-ins", "b-mcleod", "b-septic", "b-pipes", "b-asg", "b-titan"]);
     const ALIAS = { stack: "b-credits", agent: "b-agent" };
     const canon = (id) => ALIAS[id] || id;
+    const localDay = () => {
+      const n = new Date();
+      return n.getFullYear() + "-" + String(n.getMonth() + 1).padStart(2, "0") + "-" + String(n.getDate()).padStart(2, "0");
+    };
+    const day = localDay();
     const rawDone = JSON.parse(localStorage.getItem(DONE_KEY) || "null") || PRE;
     const done = new Set((Array.isArray(rawDone) ? rawDone : PRE).map(canon));
-    const day = new Date().toISOString().slice(0, 10);
+    let archive = JSON.parse(localStorage.getItem(ARCH_KEY) || "[]");
+    const lastDay = localStorage.getItem(DAY_KEY);
+    if (lastDay && lastDay !== day) {
+      const labels = {};
+      document.querySelectorAll("[data-id]").forEach((el) => {
+        const lab = el.querySelector(".label");
+        if (lab) labels[canon(el.dataset.id)] = lab.textContent.trim();
+      });
+      const snap = [...done].filter((id) => !STANDING.has(id));
+      if (snap.length) {
+        archive.push({ day: lastDay, done: snap.map((id) => ({ id, text: labels[id] || id })) });
+        archive = archive.slice(-60);
+      }
+      snap.forEach((id) => done.delete(id));
+      localStorage.setItem(ARCH_KEY, JSON.stringify(archive));
+      localStorage.setItem(DONE_KEY, JSON.stringify([...done]));
+    }
+    localStorage.setItem(DAY_KEY, day);
     let logs = JSON.parse(localStorage.getItem(LOG_KEY) || "[]").filter((x) => x.day === day);
+
+    function paintArchive() {
+      const ul = document.getElementById("archive-list");
+      if (!ul) return;
+      if (!archive.length) { ul.innerHTML = "<li>Nothing archived yet.</li>"; return; }
+      ul.innerHTML = archive.slice().reverse().slice(0, 14).map((a) =>
+        `<li><strong>${a.day}</strong> — ${(a.done || []).map((x) => x.text || x.id).join("; ")}</li>`
+      ).join("");
+    }
 
     const clock = document.getElementById("clock");
     const tick = () => { clock.textContent = new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }); };
@@ -268,6 +323,7 @@
       });
     });
     paintDone();
+    paintArchive();
 
     const LANE_KEY = "amy-board-lanes-v3";
     const DEFAULT_LANES = ["Stackadoo", "Titan Proton", "AI Agent", "Handshake"];
@@ -374,6 +430,10 @@
         const res = await fetch(FEED + "?t=" + Date.now(), { cache: "no-store" });
         if (!res.ok) throw new Error(res.status);
         const data = await res.json();
+        if (data.quote) {
+          const q = document.getElementById("quote");
+          if (q) q.innerHTML = esc(data.quote) + (data.cite ? "<cite>" + esc(data.cite) + "</cite>" : "");
+        }
         if (data.message) document.getElementById("alex").textContent = data.message;
         if (data.kicker) document.getElementById("kicker").textContent = data.kicker;
         if (data.heading) document.getElementById("heading").textContent = data.heading;

@@ -1,12 +1,14 @@
 {
-  "updated": "2026-09-12T21:45:00-04:00",
-  "message": "Alex: Saturday night. Sub week starts Monday 7:30 elementary. Wed is perio + ASG. Sync is the copper line under the button — it was hiding in the footer before.",
-  "kicker": "Saturday night · last free day",
-  "heading": "Sep 12",
+  "updated": "2026-09-13T08:00:00-04:00",
+  "quote": "Fortune favors the prepared mind.",
+  "cite": "Louis Pasteur",
+  "message": "Alex: Sleep in. Breakfast, workspace, ASG notes, elementary backups, one Handshake task. 5am shopping job is weekdays — not today.",
+  "kicker": "Sunday · sleep in, then workspace",
+  "heading": "Sep 13",
   "agenda": [
     { "time": "Mon 7:30", "title": "Sub — LWR Prep elementary" },
-    { "time": "Tue 7:30", "title": "Sub — LWR Prep elementary · SearchSeptic in CO" },
-    { "time": "Wed", "title": "Perio 7:30 · ASG interview 1:00" },
+    { "time": "Tue 7:30", "title": "Sub elementary · SearchSeptic in CO" },
+    { "time": "Wed", "title": "Perio 7:30 · ASG 1:00" },
     { "time": "Thu–Fri", "title": "Sub — LWR Prep upper" }
   ],
   "done": ["b-clear", "b-filter", "b-plan", "b-own"]
