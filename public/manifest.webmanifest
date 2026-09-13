@@ -1,8 +1,9 @@
 {
+  "id": "https://luvbuniz.github.io/dashboard/today",
   "name": "Amy — today",
   "short_name": "Today",
-  "description": "Day board, campaign lists, one remote-work timer.",
-  "start_url": "./?v=6",
+  "description": "Day board with calendar, boards, and a remote-work timer.",
+  "start_url": "./?v=7",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",

@@ -2,7 +2,7 @@
   "name": "amys-command-center",
   "private": true,
   "version": "1.0.0",
-  "description": "Amy's Command Center — personal productivity dashboard 🚀",
+  "description": "Amy today board",
   "type": "module",
   "scripts": {
     "dev": "vite",
