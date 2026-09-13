@@ -1,15 +1,31 @@
 {
-  "updated": "2026-09-12T22:05:00-04:00",
-  "quote": "Fortune favors the prepared mind.",
-  "cite": "Louis Pasteur",
-  "message": "Alex: SchoolCafé is paid. Titan contract is live (weekday 2FA/Slack). Sunday stays: sleep in, ASG notes, elem backups, one Handshake task. Law invoice — nothing due.",
-  "kicker": "Sunday · sleep in, then workspace",
-  "heading": "Sep 13",
+  "updated": "2026-09-13T08:02:01-04:00",
+  "message": "Board matches last night. SchoolCafé paid. Week: elem Mon–Tue, perio+ASG Wed, upper Thu–Fri.",
+  "kicker": "Sunday · workspace only",
+  "heading": "Sun, Sep 13",
   "agenda": [
-    { "time": "Mon 7:30", "title": "Sub — LWR Prep elementary" },
-    { "time": "Tue 7:30", "title": "Sub elementary · SearchSeptic in CO" },
-    { "time": "Wed", "title": "Perio 7:30 · ASG 1:00" },
-    { "time": "Thu–Fri", "title": "Sub — LWR Prep upper" }
+    {
+      "time": "Mon 7:30",
+      "title": "Sub — LWR Prep elementary"
+    },
+    {
+      "time": "Tue 7:30",
+      "title": "Sub elementary · SearchSeptic in CO"
+    },
+    {
+      "time": "Wed",
+      "title": "Perio 7:30 · ASG 1:00"
+    },
+    {
+      "time": "Thu–Fri",
+      "title": "Sub — LWR Prep upper"
+    }
   ],
-  "done": ["b-clear", "b-filter", "b-plan", "b-own", "b-schoolcafe"]
+  "done": [
+    "b-clear",
+    "b-filter",
+    "b-plan",
+    "b-own",
+    "b-schoolcafe"
+  ]
 }
