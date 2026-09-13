@@ -100,6 +100,8 @@
     .timer input { min-width: 0; }
     .timer input.mins { width: 72px; }
     .timer input.name { flex: 1 1 140px; }
+    .timer button.kind { color: var(--faint); }
+    .timer button.kind.on { color: var(--ink); background: var(--copper-dim); }
     .timer button.primary { background: var(--copper-dim); color: var(--copper); border-color: transparent; }
     .log-row { grid-template-columns: 58px 1fr auto; align-items: center; }
     .log-row .x { background: none; border: 0; color: var(--faint); font: inherit; cursor: pointer; padding: 4px 6px; min-height: 32px; }
@@ -177,10 +179,12 @@
         <section>
           <h2>Remote timer</h2>
           <div class="timer">
+            <button type="button" class="kind on" id="kind-free">Free</button>
+            <button type="button" class="kind" id="kind-pomo">Pomodoro</button>
             <select id="lane" aria-label="What you’re on"></select>
             <input class="name" id="newname" type="text" placeholder="Add a name" maxlength="40" />
             <button type="button" id="addname">Add</button>
-            <span class="t" id="tleft">25:00</span>
+            <span class="t" id="tleft">0:00</span>
             <button type="button" class="primary" id="tog">Start</button>
             <button type="button" id="mode">25 / 5</button>
             <input class="mins" id="manual" type="number" min="1" max="600" inputmode="numeric" placeholder="min" aria-label="Minutes" />
@@ -329,8 +333,9 @@
     paintArchive();
 
     const LANE_KEY = "amy-board-lanes-v3";
-    const DEFAULT_LANES = ["Stackadoo", "Titan Proton", "AI Agent", "Handshake"];
+    const DEFAULT_LANES = ["ASG interview prep", "Stackadoo", "Titan Proton", "AI Agent", "Handshake"];
     let lanes = JSON.parse(localStorage.getItem(LANE_KEY) || "null") || DEFAULT_LANES.slice();
+    if (!lanes.includes("ASG interview prep")) lanes.unshift("ASG interview prep");
     const sel = document.getElementById("lane");
     function paintLanes(pick) {
       const cur = pick || sel.value || lanes[0];
@@ -338,7 +343,7 @@
       if (lanes.includes(cur)) sel.value = cur;
       localStorage.setItem(LANE_KEY, JSON.stringify(lanes));
     }
-    paintLanes();
+    paintLanes("ASG interview prep");
     function addLane() {
       const n = document.getElementById("newname").value.trim().slice(0, 40);
       if (!n) return;
@@ -378,43 +383,82 @@
     });
 
     const WORK = 25 * 60, BRK = 5 * 60;
-    let remain = WORK, running = false, endAt = 0, onBreak = false, timerId = null;
+    let kind = localStorage.getItem("amy-timer-kind") || "free";
+    let remain = WORK, elapsed = 0, running = false, endAt = 0, startedAt = 0, onBreak = false, timerId = null;
     const tleft = document.getElementById("tleft");
     const tog = document.getElementById("tog");
-    const fmt = (s) => String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
-    function show() { tleft.textContent = fmt(Math.max(0, remain)); }
+    const modeBtn = document.getElementById("mode");
+    const fmt = (s) => {
+      s = Math.max(0, s);
+      const h = Math.floor(s / 3600);
+      const m = Math.floor((s % 3600) / 60);
+      const sec = s % 60;
+      return (h ? h + ":" : "") + String(m).padStart(h ? 2 : 1, "0") + ":" + String(sec).padStart(2, "0");
+    };
+    function paintKind() {
+      document.getElementById("kind-free").classList.toggle("on", kind === "free");
+      document.getElementById("kind-pomo").classList.toggle("on", kind === "pomo");
+      modeBtn.style.display = kind === "pomo" ? "" : "none";
+      localStorage.setItem("amy-timer-kind", kind);
+      show();
+    }
+    function show() {
+      tleft.textContent = kind === "free" ? fmt(elapsed) : fmt(Math.max(0, remain));
+    }
     function stopTimer(logIt) {
       running = false; clearInterval(timerId); timerId = null; tog.textContent = "Start";
-      if (logIt && !onBreak) {
-        const used = Math.max(1, Math.round((WORK - remain) / 60));
-        logs.push({ day, lane: document.getElementById("lane").value, min: used });
-        localStorage.setItem(LOG_KEY, JSON.stringify(logs));
-        paintLog();
+      if (logIt) {
+        const used = kind === "free"
+          ? Math.max(1, Math.round(elapsed / 60))
+          : (!onBreak ? Math.max(1, Math.round((WORK - remain) / 60)) : 0);
+        if (used) addLog(used);
       }
     }
     tog.addEventListener("click", () => {
-      if (running) { stopTimer(true); remain = onBreak ? BRK : WORK; show(); return; }
-      running = true; endAt = Date.now() + remain * 1000; tog.textContent = "Stop";
-      timerId = setInterval(() => {
-        remain = Math.ceil((endAt - Date.now()) / 1000);
-        if (remain <= 0) {
-          const finishingBreak = onBreak;
-          stopTimer(!finishingBreak);
-          onBreak = !finishingBreak;
-          remain = onBreak ? BRK : WORK;
-          document.getElementById("mode").textContent = onBreak ? "break" : "25 / 5";
-          show();
-        } else show();
-      }, 250);
+      if (running) {
+        stopTimer(true);
+        if (kind === "pomo") remain = onBreak ? BRK : WORK;
+        show();
+        return;
+      }
+      running = true; tog.textContent = "Stop";
+      if (kind === "free") {
+        startedAt = Date.now() - elapsed * 1000;
+        timerId = setInterval(() => { elapsed = Math.floor((Date.now() - startedAt) / 1000); show(); }, 250);
+      } else {
+        endAt = Date.now() + remain * 1000;
+        timerId = setInterval(() => {
+          remain = Math.ceil((endAt - Date.now()) / 1000);
+          if (remain <= 0) {
+            const finishingBreak = onBreak;
+            stopTimer(!finishingBreak);
+            onBreak = !finishingBreak;
+            remain = onBreak ? BRK : WORK;
+            elapsed = 0;
+            modeBtn.textContent = onBreak ? "break" : "25 / 5";
+            show();
+          } else show();
+        }, 250);
+      }
     });
-    document.getElementById("mode").addEventListener("click", () => {
-      if (running) return;
+    function setKind(next) {
+      if (kind === next) return;
+      if (running) stopTimer(true);
+      kind = next;
+      elapsed = 0; remain = WORK; onBreak = false;
+      modeBtn.textContent = "25 / 5";
+      paintKind();
+    }
+    document.getElementById("kind-free").addEventListener("click", () => setKind("free"));
+    document.getElementById("kind-pomo").addEventListener("click", () => setKind("pomo"));
+    modeBtn.addEventListener("click", () => {
+      if (running || kind !== "pomo") return;
       onBreak = !onBreak;
       remain = onBreak ? BRK : WORK;
-      document.getElementById("mode").textContent = onBreak ? "break" : "25 / 5";
+      modeBtn.textContent = onBreak ? "break" : "25 / 5";
       show();
     });
-    show();
+    paintKind();
 
     document.querySelectorAll(".tabbar button").forEach((b) => {
       b.addEventListener("click", () => {
