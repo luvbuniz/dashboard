@@ -64,6 +64,39 @@
       margin-top: 6px;
       letter-spacing: 0.04em;
     }
+    /* AGENT-SYNC: revolving quote fade + archive + agent link */
+    #quote { transition: opacity .45s ease; }
+    #quote.quote-fade { opacity: 0; }
+    .quote-next {
+      background: none; border: 1px solid var(--line); border-radius: 6px;
+      color: var(--faint); font-size: 12px; padding: 3px 10px; margin: 2px 0 0 2px;
+      cursor: pointer;
+    }
+    .quote-next:hover { color: var(--ink); border-color: var(--faint); }
+    #archive-list { list-style: none; margin: 8px 0 0; padding: 0; font-size: 13px; color: var(--muted); }
+    #archive-list li { padding: 7px 0; border-top: 1px solid var(--line); line-height: 1.7; }
+    #archive-list strong { color: var(--ink); font-weight: 600; }
+    .arch-btn {
+      background: none; border: 1px solid var(--line); border-radius: 5px;
+      color: var(--muted); font-size: 11px; padding: 1px 7px; margin-left: 6px; cursor: pointer;
+    }
+    .arch-btn:hover { color: var(--ink); border-color: var(--faint); }
+    .agent-box {
+      margin: 0 0 20px; border: 1px dashed var(--line);
+      border-radius: var(--radius); padding: 10px 14px;
+    }
+    .agent-box summary { cursor: pointer; font-size: 13px; color: var(--muted); }
+    .agent-form { display: grid; gap: 8px; margin-top: 10px; font-size: 13px; color: var(--muted); }
+    .agent-form input {
+      background: var(--elev); border: 1px solid var(--line); border-radius: 6px;
+      color: var(--ink); padding: 8px 10px; font: inherit; width: 100%;
+    }
+    .agent-form button {
+      justify-self: start; background: var(--elev); border: 1px solid var(--line);
+      border-radius: 6px; color: var(--ink); padding: 8px 14px; font: inherit; cursor: pointer;
+    }
+    .agent-status { font-size: 12px; color: var(--copper); }
+    .agent-hint { font-size: 12px; color: var(--faint); margin: 0; }
     .alex { margin: 12px 0 20px; color: var(--muted); max-width: 58ch; }
     .alex strong { color: var(--ink); font-weight: 500; }
     h2 { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--faint); font-weight: 600; margin: 0 0 10px; }
@@ -158,7 +191,19 @@
       </div>
     </header>
     <blockquote class="quote" id="quote">Fortune favors the prepared mind.<cite>Louis Pasteur</cite></blockquote>
+    <button id="quote-next" class="quote-next" type="button" title="Another quote">↻ another quote</button>
     <p class="alex" id="alex">Alex: Sleep in. Then breakfast, workspace, interview notes, elementary backups, one Handshake task. Weekdays you’re up at 5 for the shopping job — not tomorrow.</p>
+    <!-- AGENT-SYNC: per-device agent link. Token lives only in this browser's localStorage. -->
+    <details class="agent-box" id="agent-box">
+      <summary>⚙️ Agent link <span id="agent-status" class="agent-status"></span></summary>
+      <div class="agent-form">
+        <label>GitHub token (fine-grained PAT, Contents: read &amp; write on the events repo)
+          <input type="password" id="agent-token" autocomplete="off" placeholder="github_pat_…"></label>
+        <label>Events repo <input id="agent-repo" value="luvbuniz/buni" autocomplete="off"></label>
+        <div><button id="agent-save" type="button">Save link</button></div>
+        <p class="agent-hint">When linked, every check-off is sent to your agent's event log within seconds, and the agent can check things off for you from its side. Stored only in this browser, never in the page.</p>
+      </div>
+    </details>
 
     <div class="layout">
       <div id="today">
@@ -286,6 +331,16 @@
     const rawDone = JSON.parse(localStorage.getItem(DONE_KEY) || "null") || PRE;
     const done = new Set((Array.isArray(rawDone) ? rawDone : PRE).map(canon));
     let archive = JSON.parse(localStorage.getItem(ARCH_KEY) || "[]");
+    // AGENT-SYNC: archived checks auto-delete after 30 days
+    {
+      const ago = new Date(); ago.setDate(ago.getDate() - 30);
+      const agoKey = ago.getFullYear() + "-" + String(ago.getMonth() + 1).padStart(2, "0") + "-" + String(ago.getDate()).padStart(2, "0");
+      const kept = archive.filter((a) => a.day >= agoKey);
+      if (kept.length !== archive.length) {
+        archive = kept;
+        localStorage.setItem(ARCH_KEY, JSON.stringify(archive));
+      }
+    }
     const lastDay = localStorage.getItem(DAY_KEY);
     if (lastDay && lastDay !== day) {
       const labels = {};
@@ -305,14 +360,124 @@
     localStorage.setItem(DAY_KEY, day);
     let logs = JSON.parse(localStorage.getItem(LOG_KEY) || "[]").filter((x) => x.day === day);
 
+    // ── AGENT-SYNC: two-way check-off sync ──────────────────────────────
+    // Outbound: every tap appends {event:"task_checked", id, label, done} to
+    // elodie/events/YYYY-MM-DD.jsonl in the events repo via the GitHub API,
+    // so the agent sees check-offs within minutes. Inbound: the agent's
+    // feed.json "done" array marks tasks done remotely (see pullFeed).
+    const escHtml = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    const AGENT_CONN_KEY = "amy-agent-conn-v1";
+    const agentConn = (() => {
+      try { return JSON.parse(localStorage.getItem(AGENT_CONN_KEY)) || {}; }
+      catch { return {}; }
+    })();
+    function paintAgentStatus(extra) {
+      const el = document.getElementById("agent-status");
+      if (!el) return;
+      const where = agentConn.token ? `linked → ${agentConn.repo || "luvbuniz/buni"}` : "not linked — check-offs stay on this device";
+      el.textContent = extra && agentConn.token ? `${where} · ${extra}` : where;
+    }
+    const b64e = (s) => btoa(String.fromCharCode(...new TextEncoder().encode(s)));
+    const b64d = (b) => new TextDecoder().decode(Uint8Array.from(atob(String(b).replace(/\s/g, "")), (c) => c.charCodeAt(0)));
+    let agentQueue = Promise.resolve();
+    function notifyAgent(evt) {
+      if (!agentConn.token) return;
+      agentQueue = agentQueue.then(() => sendAgentEvent(evt)).catch(() => {});
+    }
+    async function sendAgentEvent(evt) {
+      const repo = agentConn.repo || "luvbuniz/buni";
+      const url = `https://api.github.com/repos/${repo}/contents/elodie/events/${localDay()}.jsonl`;
+      const headers = { Authorization: `Bearer ${agentConn.token}`, Accept: "application/vnd.github+json" };
+      const line = JSON.stringify({ ...evt, at: new Date().toISOString() }) + "\n";
+      let sha, existing = "";
+      try {
+        const r = await fetch(url, { headers });
+        if (r.ok) { const m = await r.json(); sha = m.sha; existing = b64d(m.content || ""); }
+        else if (r.status !== 404) { paintAgentStatus("send failed (" + r.status + ")"); return; }
+      } catch { paintAgentStatus("send failed (network)"); return; }
+      try {
+        const r = await fetch(url, {
+          method: "PUT",
+          headers: { ...headers, "Content-Type": "application/json" },
+          body: JSON.stringify({ message: "dashboard check-off events", content: b64e(existing + line), ...(sha ? { sha } : {}) }),
+        });
+        paintAgentStatus(r.ok ? "sent ✓ " + new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) : "send failed (" + r.status + ")");
+      } catch { paintAgentStatus("send failed (network)"); }
+    }
+
     function paintArchive() {
       const ul = document.getElementById("archive-list");
       if (!ul) return;
       if (!archive.length) { ul.innerHTML = "<li>Nothing archived yet.</li>"; return; }
-      ul.innerHTML = archive.slice().reverse().slice(0, 14).map((a) =>
-        `<li><strong>${a.day}</strong> — ${(a.done || []).map((x) => x.text || x.id).join("; ")}</li>`
+      ul.innerHTML = archive.slice().reverse().slice(0, 31).map((a) =>
+        `<li><strong>${escHtml(a.day)}</strong> — ${(a.done || []).map((x) =>
+          `<span>${escHtml(x.text || x.id)}<button type="button" class="arch-btn" data-arch="restore" data-day="${escHtml(a.day)}" data-id="${escHtml(x.id)}" title="Put back on today's board">↩</button><button type="button" class="arch-btn" data-arch="del" data-day="${escHtml(a.day)}" data-id="${escHtml(x.id)}" title="Delete forever">×</button></span>`
+        ).join("; ")}</li>`
       ).join("");
     }
+    document.getElementById("archive-list").addEventListener("click", (e) => {
+      const b = e.target.closest("[data-arch]");
+      if (!b) return;
+      const entry = archive.find((a) => a.day === b.dataset.day);
+      if (!entry) return;
+      entry.done = (entry.done || []).filter((x) => x.id !== b.dataset.id);
+      if (!entry.done.length) archive = archive.filter((a) => a !== entry);
+      if (b.dataset.arch === "restore") { done.delete(canon(b.dataset.id)); paintDone(); }
+      localStorage.setItem(ARCH_KEY, JSON.stringify(archive));
+      paintArchive();
+    });
+
+    // ── AGENT-SYNC: revolving quotes ────────────────────────────────────
+    // A new quote every 20 minutes (fade transition); the ↻ button deals
+    // another on demand. A quote set by the agent in feed.json always wins.
+    const QUOTES = [
+      { t: "How we spend our days is, of course, how we spend our lives.", by: "Annie Dillard" },
+      { t: "Start where you are. Use what you have. Do what you can.", by: "Arthur Ashe" },
+      { t: "You do not rise to the level of your goals. You fall to the level of your systems.", by: "James Clear" },
+      { t: "Done is better than perfect.", by: "" },
+      { t: "It always seems impossible until it's done.", by: "Nelson Mandela" },
+      { t: "The best way out is always through.", by: "Robert Frost" },
+      { t: "You can do anything, but not everything.", by: "David Allen" },
+      { t: "Focus on being productive instead of busy.", by: "Tim Ferriss" },
+      { t: "Action isn't just the effect of motivation; it's also the cause of it.", by: "Mark Manson" },
+      { t: "Nothing is so fatiguing as the eternal hanging on of an uncompleted task.", by: "William James" },
+      { t: "Just five minutes. You're allowed to quit after five minutes. (You won't.)", by: "the Frog" },
+      { t: "Well done is better than well said.", by: "Benjamin Franklin" },
+      { t: "Success is the sum of small efforts, repeated day in and day out.", by: "Robert Collier" },
+      { t: "Finish each day and be done with it. You have done what you could.", by: "Ralph Waldo Emerson" },
+      { t: "Tomorrow is always fresh, with no mistakes in it.", by: "L. M. Montgomery" },
+      { t: "Don't count the days; make the days count.", by: "Muhammad Ali" },
+      { t: "Momentum or it dies. Small daily touches count.", by: "house rule" },
+      { t: "Receipts beat vibes.", by: "house motto" },
+    ];
+    let quoteIdx = Math.floor(Date.now() / 1200000) % QUOTES.length;
+    let feedQuote = null;
+    function paintQuote() {
+      const q = document.getElementById("quote");
+      if (!q) return;
+      const item = feedQuote || QUOTES[quoteIdx % QUOTES.length];
+      q.classList.add("quote-fade");
+      setTimeout(() => {
+        q.innerHTML = `\u201C${escHtml(item.t)}\u201D` + (item.by ? `<cite>\u2014 ${escHtml(item.by)}</cite>` : "");
+        q.classList.remove("quote-fade");
+      }, 480);
+    }
+    setInterval(() => { if (!feedQuote) { quoteIdx++; paintQuote(); } }, 1200000);
+    document.getElementById("quote-next").addEventListener("click", () => {
+      feedQuote = null; quoteIdx++; paintQuote();
+    });
+    paintQuote();
+
+    // agent settings wiring
+    document.getElementById("agent-repo").value = agentConn.repo || "luvbuniz/buni";
+    document.getElementById("agent-save").addEventListener("click", () => {
+      agentConn.token = document.getElementById("agent-token").value.trim();
+      agentConn.repo = document.getElementById("agent-repo").value.trim() || "luvbuniz/buni";
+      document.getElementById("agent-token").value = "";
+      try { localStorage.setItem(AGENT_CONN_KEY, JSON.stringify(agentConn)); } catch {}
+      paintAgentStatus(agentConn.token ? "link saved" : "link cleared");
+    });
+    paintAgentStatus();
 
     const clock = document.getElementById("clock");
     const tick = () => { clock.textContent = new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }); };
@@ -325,8 +490,11 @@
     document.querySelectorAll("[data-id]").forEach((el) => {
       el.addEventListener("click", () => {
         const id = canon(el.dataset.id);
-        if (done.has(id)) done.delete(id); else done.add(id);
+        const lab = el.querySelector(".label");
+        const nowDone = !done.has(id);
+        if (nowDone) done.add(id); else done.delete(id);
         paintDone();
+        notifyAgent({ event: "task_checked", id, label: lab ? lab.textContent.trim() : id, done: nowDone, day });
       });
     });
     paintDone();
@@ -478,8 +646,8 @@
         if (!res.ok) throw new Error(res.status);
         const data = await res.json();
         if (data.quote) {
-          const q = document.getElementById("quote");
-          if (q) q.innerHTML = esc(data.quote) + (data.cite ? "<cite>" + esc(data.cite) + "</cite>" : "");
+          feedQuote = { t: data.quote, by: data.cite || "" };
+          paintQuote();
         }
         if (data.message) document.getElementById("alex").textContent = data.message;
         if (data.kicker) document.getElementById("kicker").textContent = data.kicker;
