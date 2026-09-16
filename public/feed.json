@@ -1,14 +1,36 @@
 {
-  "updated": "2026-09-16T07:20:48-04:00",
-  "message": "Interview day: perio at 7:30, then ASG at 1:00. Bring your prep sheet and your best stories.",
-  "kicker": "Wednesday · perio + ASG interview",
+  "updated": "2026-09-16T08:04:07-04:00",
+  "message": "Perio now. ASG 1:00 — bring prep sheet. Still no Fidelity reply on Nuthatch CLEAR.",
+  "kicker": "Wednesday · perio now, ASG 1:00",
   "heading": "Wed, Sep 16",
   "quote": "The best way out is always through.",
   "cite": "Robert Frost",
   "agenda": [
-    {"time": "Wed 7:30", "title": "Perio cleaning, Rubino Periodontics"},
-    {"time": "Wed 1:00", "title": "ASG interview (Teams) — bring prep sheet"},
-    {"time": "Thu", "title": "Septic System Service, Nuthatch"}
+    {
+      "time": "Wed 7:30",
+      "title": "Perio cleaning"
+    },
+    {
+      "time": "Wed 1:00",
+      "title": "ASG interview — bring prep sheet"
+    },
+    {
+      "time": "Thu–Fri",
+      "title": "Sub — LWR Prep upper, in by 7:15"
+    },
+    {
+      "time": "Mon 10:00",
+      "title": "Miami mortgage broker (tentative)"
+    },
+    {
+      "time": "Wed 4:00",
+      "title": "Kids observation (Julie Smith)"
+    }
   ],
-  "done": ["b-clear", "b-filter", "b-plan", "b-own", "b-schoolcafe", "tue-early", "sun-hand"]
+  "done": [
+    "b-clear",
+    "b-filter",
+    "b-plan",
+    "b-own"
+  ]
 }
