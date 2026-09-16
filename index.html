@@ -105,7 +105,7 @@
     .head { padding: 12px 16px 8px; display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
     .when { font-family: Newsreader, Georgia, serif; font-size: 20px; font-weight: 500; }
     .meta { color: var(--faint); font-size: 13px; }
-    .appt, .log-row { display: grid; grid-template-columns: 58px 1fr; gap: 4px 12px; padding: 10px 16px; border-top: 1px solid var(--line); font-size: 14px; }
+    .appt, .log-row { display: grid; grid-template-columns: 76px 1fr; gap: 4px 12px; padding: 10px 16px; border-top: 1px solid var(--line); font-size: 14px; }
     .appt time, .log-row time { font-variant-numeric: tabular-nums; color: var(--muted); font-size: 13px; }
     .tasks { display: flex; flex-direction: column; gap: 8px; }
     .task {
@@ -136,7 +136,7 @@
     .timer button.kind { color: var(--faint); }
     .timer button.kind.on { color: var(--ink); background: var(--copper-dim); }
     .timer button.primary { background: var(--copper-dim); color: var(--copper); border-color: transparent; }
-    .log-row { grid-template-columns: 58px 1fr auto; align-items: center; }
+    .log-row { grid-template-columns: 76px 1fr auto; align-items: center; }
     .log-row .x { background: none; border: 0; color: var(--faint); font: inherit; cursor: pointer; padding: 4px 6px; min-height: 32px; }
     .log { color: var(--muted); font-size: 13px; }
     .log.empty { padding: 10px 16px; color: var(--faint); }
@@ -479,8 +479,11 @@
     });
     paintAgentStatus();
 
+    const TZ = "America/New_York";
+    const clockOpts = { timeZone: TZ, hour: "numeric", minute: "2-digit" };
+    const fmtClock = (iso) => iso ? new Date(iso).toLocaleTimeString("en-US", clockOpts) : "";
     const clock = document.getElementById("clock");
-    const tick = () => { clock.textContent = new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }); };
+    const tick = () => { clock.textContent = new Date().toLocaleTimeString("en-US", clockOpts); };
     tick(); setInterval(tick, 15000);
 
     function paintDone() {
@@ -522,10 +525,18 @@
     document.getElementById("addname").addEventListener("click", addLane);
     document.getElementById("newname").addEventListener("keydown", (e) => { if (e.key === "Enter") addLane(); });
 
-    function addLog(min, lane) {
+    function addLog(min, lane, startedMs) {
       const m = Math.round(Number(min));
       if (!m || m < 1) return;
-      logs.push({ day, lane: lane || sel.value, min: m });
+      const end = Date.now();
+      const start = startedMs != null ? startedMs : end - m * 60 * 1000;
+      logs.push({
+        day,
+        lane: lane || sel.value,
+        min: m,
+        at: new Date(end).toISOString(),
+        start: new Date(start).toISOString()
+      });
       localStorage.setItem(LOG_KEY, JSON.stringify(logs));
       paintLog();
     }
@@ -534,7 +545,14 @@
       const tot = logs.reduce((s, x) => s + x.min, 0);
       document.getElementById("tot").textContent = tot ? tot + "m" : "0m";
       if (!logs.length) { el.innerHTML = '<div class="log empty">Nothing logged yet.</div>'; return; }
-      el.innerHTML = logs.map((x, i) => `<div class="log-row"><time>${x.min}m</time><div>${String(x.lane).replace(/</g, "")}</div><button type="button" class="x" data-i="${i}" aria-label="Remove">×</button></div>`).join("");
+      el.innerHTML = logs.map((x, i) => {
+        const doneAt = fmtClock(x.at);
+        const when = doneAt || (x.min + "m");
+        const body = doneAt
+          ? (x.min + "m · " + String(x.lane).replace(/</g, ""))
+          : String(x.lane).replace(/</g, "");
+        return `<div class="log-row"><time>${when}</time><div>${body}</div><button type="button" class="x" data-i="${i}" aria-label="Remove">×</button></div>`;
+      }).join("");
       el.querySelectorAll(".x").forEach((b) => b.addEventListener("click", () => {
         logs.splice(Number(b.dataset.i), 1);
         localStorage.setItem(LOG_KEY, JSON.stringify(logs));
@@ -579,7 +597,7 @@
         const used = kind === "free"
           ? Math.max(1, Math.round(elapsed / 60))
           : (!onBreak ? Math.max(1, Math.round((WORK - remain) / 60)) : 0);
-        if (used) addLog(used);
+        if (used) addLog(used, sel.value, kind === "free" ? startedAt : Date.now() - used * 60 * 1000);
       }
     }
     tog.addEventListener("click", () => {
