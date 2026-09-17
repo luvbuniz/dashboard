@@ -1,36 +1,31 @@
 {
-  "updated": "2026-09-16T08:04:07-04:00",
-  "message": "Perio now. ASG 1:00 — bring prep sheet. Still no Fidelity reply on Nuthatch CLEAR.",
-  "kicker": "Wednesday · perio now, ASG 1:00",
-  "heading": "Wed, Sep 16",
-  "quote": "The best way out is always through.",
-  "cite": "Robert Frost",
+  "updated": "2026-09-16T20:02:08-04:00",
+  "message": "Tomorrow: sub 7:15 LWR Prep upper. Game On 3:15\u20135:00 Gene Witt, pickup 5:00. Nuthatch pump tomorrow \u2014 John pays SearchSeptic from closing. Do not pay the cabin filter.",
+  "kicker": "Wednesday night \u00b7 sub 7:15 tomorrow",
+  "heading": "Thu, Sep 17",
   "agenda": [
     {
-      "time": "Wed 7:30",
-      "title": "Perio cleaning"
+      "time": "Thu 7:15",
+      "title": "Sub \u2014 LWR Prep upper"
     },
     {
-      "time": "Wed 1:00",
-      "title": "ASG interview — bring prep sheet"
+      "time": "Thu 3:15",
+      "title": "Game On \u2014 Gene Witt, pickup 5:00"
     },
     {
-      "time": "Thu–Fri",
-      "title": "Sub — LWR Prep upper, in by 7:15"
+      "time": "Thu",
+      "title": "Nuthatch septic pump \u2014 John follows up on invoice"
     },
     {
-      "time": "Mon 10:00",
-      "title": "Miami mortgage broker (tentative)"
-    },
-    {
-      "time": "Wed 4:00",
-      "title": "Kids observation (Julie Smith)"
+      "time": "Fri 7:15",
+      "title": "Sub \u2014 LWR Prep upper"
     }
   ],
   "done": [
     "b-clear",
     "b-filter",
     "b-plan",
-    "b-own"
+    "b-own",
+    "b-schoolcafe"
   ]
 }
