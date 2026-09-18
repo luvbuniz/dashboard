@@ -1,18 +1,14 @@
 {
-  "updated": "2026-09-17T20:02:58-04:00",
-  "message": "NEW: esign Nuthatch closing instructions (CTM) — cost split. John will share septic invoice. Tomorrow: sub 7:15, kids 3:00, BINGO 6:10 Gene Witt.",
-  "kicker": "Thursday night · esign closing instructions",
+  "updated": "2026-09-18T07:20:27-04:00",
+  "message": "Tell the kids the good news tonight: BINGO Night at Gene Witt, 6:10 PM, luau theme with dinner included. Sub the upper level first, 7:15 to 3:15.",
+  "kicker": "Friday · sub upper",
   "heading": "Fri, Sep 18",
-  "quote": "The secret of getting ahead is getting started.",
-  "cite": "Mark Twain",
+  "quote": "It is the courage to continue that counts.",
+  "cite": "Winston Churchill",
   "agenda": [
     {
-      "time": "Thu",
-      "title": "Esign Nuthatch closing instructions (CTM)"
-    },
-    {
       "time": "Fri 7:15",
-      "title": "Sub — LWR Prep upper"
+      "title": "Sub — LWR Prep (upper)"
     },
     {
       "time": "Fri 3:00",
@@ -21,10 +17,6 @@
     {
       "time": "Fri 6:10",
       "title": "Family BINGO Night — Gene Witt (luau, dinner incl.)"
-    },
-    {
-      "time": "Wed 4:00",
-      "title": "Kids observation — Julie Smith"
     }
   ],
   "done": [
