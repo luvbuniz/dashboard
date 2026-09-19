@@ -1,30 +1,22 @@
 {
-  "updated": "2026-09-18T08:03:54-04:00",
-  "message": "NEW: SearchSeptic invoice $1,385 cash/check (Inv 10402; $1,434.86 card) — 5-day auto-charge. John offered closing-proceeds reimburse. Still esign closing instructions.",
-  "kicker": "Friday · septic invoice in",
+  "updated": "2026-09-18T20:02:54-04:00",
+  "message": "SearchSeptic $1,385 cash/check still open (Inv 10402; 5-day auto-charge). Witt picture packet due today; pictures Mon. Still esign closing.",
+  "kicker": "Friday evening · septic still open",
   "heading": "Fri, Sep 18",
   "quote": "It is the courage to continue that counts.",
   "cite": "Winston Churchill",
   "agenda": [
     {
-      "time": "Fri",
+      "time": "open",
       "title": "Esign Nuthatch closing instructions (CTM)"
     },
     {
-      "time": "Fri 7:15",
-      "title": "Sub — LWR Prep (upper)"
+      "time": "Sun",
+      "title": "Hope Church Fall Festival (verify)"
     },
     {
-      "time": "Fri 6:10",
-      "title": "Family BINGO Night — Gene Witt (luau, dinner incl.)"
-    },
-    {
-      "time": "Wed 4:00",
-      "title": "Kids observation — Julie Smith"
-    },
-    {
-      "time": "Thu 3:15",
-      "title": "Game On Sports Club — Gene Witt"
+      "time": "Mon",
+      "title": "Witt Fall Picture Day"
     }
   ],
   "done": [
