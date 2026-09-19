@@ -1,1 +1,48 @@
-{"agenda":[{"time":"All day","title":"Mommy with Kids (custody weekend through Sep 25 morning)"},{"time":"due today","title":"Saturday dragon post (dragon close-up queued in caption bank)"},{"time":"open","title":"Esign Nuthatch closing instructions (CTM)"},{"time":"open","title":"SearchSeptic $1,385 cash/check (Inv 10402)"},{"time":"Mon","title":"Witt Fall Picture Day"},{"time":"optional","title":"Google AI Educator Badge-a-thon"}],"cite":"Theodore Roosevelt","done":["b-clear","b-filter","b-plan","b-own"],"heading":"Sat, Sep 19","kicker":"Saturday · custody weekend","message":"Kids' weekend is on: soak it up, and clear the cabin esign plus the dragon post while the morning is quiet.","quote":"Do what you can, with what you have, where you are.","updated":"2026-09-19T07:20:00-04:00"}
+{
+  "updated": "2026-09-19T08:02:51-04:00",
+  "message": "Kids weekend. Stale: esign Nuthatch + septic $1,385. Watch: micro1 auto-withdraw optional. Dragon post today.",
+  "kicker": "Saturday · custody weekend",
+  "heading": "Sat, Sep 19",
+  "quote": "Do what you can, with what you have, where you are.",
+  "cite": "Theodore Roosevelt",
+  "agenda": [
+    {
+      "time": "All day",
+      "title": "Mommy with Kids (custody weekend through Sep 25 morning)"
+    },
+    {
+      "time": "due today",
+      "title": "Saturday dragon post (dragon close-up queued in caption bank)"
+    },
+    {
+      "time": "open",
+      "title": "Esign Nuthatch closing instructions (CTM)"
+    },
+    {
+      "time": "open",
+      "title": "SearchSeptic $1,385 cash/check (Inv 10402)"
+    },
+    {
+      "time": "Mon",
+      "title": "Witt Fall Picture Day"
+    },
+    {
+      "time": "Wed 4pm",
+      "title": "Kids observation (Julie Smith)"
+    },
+    {
+      "time": "Thu 3:15",
+      "title": "Game On Sports Club — pickup 5pm Witt"
+    },
+    {
+      "time": "optional",
+      "title": "Google AI Educator Badge-a-thon"
+    }
+  ],
+  "done": [
+    "b-clear",
+    "b-filter",
+    "b-plan",
+    "b-own"
+  ]
+}
