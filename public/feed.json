@@ -1,1 +1,56 @@
-{"agenda":[{"time":"9:00","title":"Text John Angelico — confirm both septic bills paid at closing, ask about the effluent filter for county paperwork"},{"time":"8:20-2:30","title":"Micro1 day one — work block (Kids Week)"},{"time":"All day","title":"Witt Elementary Fall Picture Day"},{"time":"6:30 PM","title":"Cub Scout Pack 126 Den Meeting (Sanctuary)"},{"time":"All day","title":"Mommy with Kids — custody through Fri Sep 25, 8:00 AM"}],"cite":"Aristotle","done":["b-clear","b-filter","b-plan","b-own"],"heading":"Mon, Sep 21","kicker":"Monday · Micro1 day one, kids week","message":"Day one of Micro1: text John about the septic at 9, then clear sign-in and the first onboarding module before the 2:30 pickup.","quote":"Well begun is half done.","updated":"2026-09-21T07:22:00-04:00"}
+{
+  "updated": "2026-09-21T09:32:33-04:00",
+  "message": "HOA $780 follow-up is sitting on KeyPM (Stephanie OOO). Still no Nuthatch pump invoice — do not ping John. SchoolCafé meals not in mail.",
+  "kicker": "Monday · Micro1 day one",
+  "heading": "Mon, Sep 21",
+  "cite": "Aristotle",
+  "quote": "Well begun is half done.",
+  "agenda": [
+    {
+      "time": "8:20-2:30",
+      "title": "Micro1 day one — work block (Kids Week)"
+    },
+    {
+      "time": "All day",
+      "title": "Witt Elementary Fall Picture Day"
+    },
+    {
+      "time": "6:30 PM",
+      "title": "Cub Scout Pack 126 Den Meeting (Sanctuary)"
+    },
+    {
+      "time": "All day",
+      "title": "Mommy with Kids — custody through Fri Sep 25, 8:00 AM"
+    },
+    {
+      "time": "open",
+      "title": "SchoolCafé meal reapply — Fiona & Leo (no mail yet)"
+    },
+    {
+      "time": "watch",
+      "title": "KeyPM — 5701B duplicate HOA ACH, $780 credit"
+    },
+    {
+      "time": "watch",
+      "title": "SearchSeptic pump invoice — John CCs, reimburses at closing"
+    },
+    {
+      "time": "Wed 4:00",
+      "title": "Kids observation (Julie Smith)"
+    },
+    {
+      "time": "Thu 3:15",
+      "title": "Game On Sports Club — Witt pickup 5:00"
+    },
+    {
+      "time": "Sun 27",
+      "title": "Library books due"
+    }
+  ],
+  "done": [
+    "b-clear",
+    "b-filter",
+    "b-plan",
+    "b-own"
+  ]
+}
