@@ -210,10 +210,8 @@
         <section>
           <h2>Today</h2>
           <div class="tasks">
-            <button class="task" data-id="tue-early" type="button"><span class="box"></span><span><span class="label">Up 5:30, out by 7:30</span><div class="why">Elementary sub day. No sleep-in.</div></span><span class="chip">early</span></button>
-            <button class="task" data-id="sun-asg" type="button"><span class="box"></span><span><span class="label">ASG interview notes, questions, brainstorm</span><div class="why">Workspace block. Instructional Designer, Wed 1:00. Stories + questions for them.</div></span><span class="chip">main</span></button>
-            <button class="task" data-id="sun-elem" type="button"><span class="box"></span><span><span class="label">Elementary sub extras</span><div class="why">Art class. Teacher has an agenda — still pack backups if it runs thin.</div></span><span class="chip">Mon</span></button>
-            <button class="task" data-id="sun-hand" type="button"><span class="box"></span><span><span class="label">Handshake — one Buckeye task</span><div class="why">Jargon prework, then finish one. Not fun. One is enough.</div></span><span class="chip">one</span></button>
+            <button class="task" data-id="mon-micro1" type="button"><span class="box"></span><span><span class="label">Micro1 training — 4 modules</span><div class="why">Progress saved. Started 9:46 AM. Log every session with the timer below.</div></span><span class="chip">main</span></button>
+            <button class="task" data-id="mon-pickup" type="button"><span class="box"></span><span><span class="label">Pick up the kids</span><div class="why">Van call at 2:30.</div></span><span class="chip">2:30</span></button>
           </div>
           <details class="parked" id="archive-box" style="margin-top:10px">
             <summary>Archived checks</summary>
@@ -279,12 +277,7 @@
             <div class="board-h"><span class="name">Income</span><span class="src">gigs + support</span></div>
             <button class="item" data-id="b-agent" type="button"><span class="box"></span><span><span class="label">AI Agent Power User</span><div class="why">Mariana starred. Not Sunday — after workspace if leftover energy.</div></span><span class="lane">waiting</span></button>
             <button class="item now" data-id="b-titan" type="button"><span class="box"></span><span><span class="label">Titan Proton — contract is live</span><div class="why">Mail Sat night. Next: 2FA on expert Gmail + Slack. Weekday block, not Sunday sleep-in.</div></span><span class="lane">next</span></button>
-            <button class="item" data-id="b-asg" type="button"><span class="box"></span><span><span class="label">ASG interview</span><div class="why">Wed 1:00. Sunday = notes + questions.</div></span><span class="lane">Wed</span></button>
             <button class="item" data-id="b-cs" type="button"><span class="box"></span><span><span class="label">David child support $1,800</span><div class="why">1st of the month. Not today.</div></span><span class="lane">1st</span></button>
-          </article>
-          <article class="board">
-            <div class="board-h"><span class="name">Handshake</span><span class="src">Buckeye stumping</span></div>
-            <button class="item now" data-id="sun-hand" type="button"><span class="box"></span><span><span class="label">One Buckeye task</span><div class="why">Jargon prework, then submit one.</div></span><span class="lane">Sunday</span></button>
           </article>
           <article class="board">
             <div class="board-h"><span class="name">Rentals</span><span class="src">AppFolio · Sep 10</span></div>
@@ -504,7 +497,7 @@
     paintArchive();
 
     const LANE_KEY = "amy-board-lanes-v3";
-    const DEFAULT_LANES = ["Micro1 training", "ASG interview prep", "Stackadoo", "Titan Proton", "AI Agent", "Handshake"];
+    const DEFAULT_LANES = ["Micro1 training", "ASG interview prep", "Stackadoo", "Titan Proton", "AI Agent"];
     let lanes = JSON.parse(localStorage.getItem(LANE_KEY) || "null") || DEFAULT_LANES.slice();
     if (!lanes.includes("ASG interview prep")) lanes.unshift("ASG interview prep");
     if (!lanes.includes("Micro1 training")) lanes.unshift("Micro1 training");
