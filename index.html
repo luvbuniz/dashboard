@@ -255,15 +255,7 @@
 
         <section>
           <h2>Week</h2>
-          <div class="week">
-            <div class="day"><div class="d">Sat</div><div class="n">12</div><div class="m">Done</div></div>
-            <div class="day on"><div class="d">Sun</div><div class="n">13</div><div class="m">Workspace</div></div>
-            <div class="day on"><div class="d">Mon</div><div class="n">14</div><div class="m">Sub elem · 5am shop</div></div>
-            <div class="day on"><div class="d">Tue</div><div class="n">15</div><div class="m">Sub · septic</div></div>
-            <div class="day on"><div class="d">Wed</div><div class="n">16</div><div class="m">Perio · ASG</div></div>
-            <div class="day on"><div class="d">Thu</div><div class="n">17</div><div class="m">Sub · septic</div></div>
-            <div class="day on"><div class="d">Fri</div><div class="n">18</div><div class="m">Sub upper</div></div>
-          </div>
+          <div class="week" id="weekstrip"></div>
         </section>
       </div>
 
@@ -479,6 +471,38 @@
     const clock = document.getElementById("clock");
     const tick = () => { clock.textContent = new Date().toLocaleTimeString("en-US", clockOpts); };
     tick(); setInterval(tick, 15000);
+
+    // Week strip: always the real current week (Mon-Sun, Eastern), never stale.
+    (function paintWeek() {
+      const el = document.getElementById("weekstrip");
+      if (!el) return;
+      const memos = {
+        "2026-09-21": "Micro1 day 1 \u00b7 4 modules",
+        "2026-09-22": "Micro1 8:20\u20132:30",
+        "2026-09-23": "Micro1 \u00b7 observation 4:00",
+        "2026-09-24": "Micro1 to 4:30 \u00b7 sushi noon",
+        "2026-09-25": "Free after 8:15 drop-off"
+      };
+      const pad = (n) => String(n).padStart(2, "0");
+      const nowNY = new Date(new Date().toLocaleString("en-US", { timeZone: TZ }));
+      const isoOf = (d) => d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+      const todayIso = isoOf(nowNY);
+      const monday = new Date(nowNY);
+      monday.setDate(nowNY.getDate() - ((nowNY.getDay() + 6) % 7));
+      const names = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+      let html = "";
+      for (let i = 0; i < 7; i++) {
+        const d = new Date(monday);
+        d.setDate(monday.getDate() + i);
+        const iso = isoOf(d);
+        const isToday = iso === todayIso;
+        const memo = (memos[iso] || "").replace(/</g, "");
+        html += '<div class="day' + (isToday ? " on" : "") + '"><div class="d">' + names[i] +
+          (isToday ? " \u00b7 today" : "") + '</div><div class="n">' + d.getDate() +
+          '</div><div class="m">' + memo + "</div></div>";
+      }
+      el.innerHTML = html;
+    })();
 
     function paintDone() {
       document.querySelectorAll("[data-id]").forEach((el) => el.classList.toggle("done", done.has(canon(el.dataset.id))));
