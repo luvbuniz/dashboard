@@ -504,9 +504,10 @@
     paintArchive();
 
     const LANE_KEY = "amy-board-lanes-v3";
-    const DEFAULT_LANES = ["ASG interview prep", "Stackadoo", "Titan Proton", "AI Agent", "Handshake"];
+    const DEFAULT_LANES = ["Micro1 training", "ASG interview prep", "Stackadoo", "Titan Proton", "AI Agent", "Handshake"];
     let lanes = JSON.parse(localStorage.getItem(LANE_KEY) || "null") || DEFAULT_LANES.slice();
     if (!lanes.includes("ASG interview prep")) lanes.unshift("ASG interview prep");
+    if (!lanes.includes("Micro1 training")) lanes.unshift("Micro1 training");
     const sel = document.getElementById("lane");
     function paintLanes(pick) {
       const cur = pick || sel.value || lanes[0];
@@ -514,7 +515,7 @@
       if (lanes.includes(cur)) sel.value = cur;
       localStorage.setItem(LANE_KEY, JSON.stringify(lanes));
     }
-    paintLanes("ASG interview prep");
+    paintLanes("Micro1 training");
     function addLane() {
       const n = document.getElementById("newname").value.trim().slice(0, 40);
       if (!n) return;
@@ -571,6 +572,12 @@
     const WORK = 25 * 60, BRK = 5 * 60;
     let kind = localStorage.getItem("amy-timer-kind") || "free";
     let remain = WORK, elapsed = 0, running = false, endAt = 0, startedAt = 0, onBreak = false, timerId = null;
+    const RUN_KEY = "amy-timer-running-v1";
+    function tickFree() { elapsed = Math.floor((Date.now() - startedAt) / 1000); show(); }
+    function saveRun() {
+      try { localStorage.setItem(RUN_KEY, JSON.stringify({ startedAt, lane: sel.value, at: Date.now() })); } catch {}
+    }
+    function clearRun() { try { localStorage.removeItem(RUN_KEY); } catch {} }
     const tleft = document.getElementById("tleft");
     const tog = document.getElementById("tog");
     const modeBtn = document.getElementById("mode");
@@ -592,7 +599,7 @@
       tleft.textContent = kind === "free" ? fmt(elapsed) : fmt(Math.max(0, remain));
     }
     function stopTimer(logIt) {
-      running = false; clearInterval(timerId); timerId = null; tog.textContent = "Start";
+      running = false; clearInterval(timerId); timerId = null; tog.textContent = "Start"; clearRun();
       if (logIt) {
         const used = kind === "free"
           ? Math.max(1, Math.round(elapsed / 60))
@@ -610,8 +617,10 @@
       running = true; tog.textContent = "Stop";
       if (kind === "free") {
         startedAt = Date.now() - elapsed * 1000;
-        timerId = setInterval(() => { elapsed = Math.floor((Date.now() - startedAt) / 1000); show(); }, 250);
+        saveRun();
+        timerId = setInterval(tickFree, 250);
       } else {
+        clearRun();
         endAt = Date.now() + remain * 1000;
         timerId = setInterval(() => {
           remain = Math.ceil((endAt - Date.now()) / 1000);
@@ -645,6 +654,17 @@
       show();
     });
     paintKind();
+    // Resume a free-mode run that was live across a reload.
+    try {
+      const saved = JSON.parse(localStorage.getItem(RUN_KEY) || "null");
+      if (saved && saved.startedAt && kind === "free" && !running) {
+        startedAt = saved.startedAt;
+        if (saved.lane && lanes.includes(saved.lane)) sel.value = saved.lane;
+        running = true; tog.textContent = "Stop";
+        timerId = setInterval(tickFree, 250);
+        tickFree();
+      }
+    } catch {}
 
     document.querySelectorAll(".tabbar button").forEach((b) => {
       b.addEventListener("click", () => {
