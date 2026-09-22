@@ -1,1 +1,54 @@
-{"agenda":[{"time":"All day","title":"Mommy with Kids — custody through Fri Sep 25, 8:00 AM"},{"time":"open","title":"Micro1 training — modules still open, progress saved"},{"time":"open","title":"Fidelity CLEAR verify — 420 Nuthatch (10-day link in Gmail)"},{"time":"open","title":"SchoolCafé meal reapply — Fiona & Leo (no mail yet)"},{"time":"watch","title":"KeyPM — $780 refund requested, waiting on Stephanie"},{"time":"watch","title":"SearchSeptic — failed inspection; John arranging payment"},{"time":"Wed 4:00","title":"Kids observation (Julie Smith)"},{"time":"Thu 11:30","title":"Roots — Root and Seed; Thu 3:15 Game On Sports Club — Witt pickup 5:00"}],"cite":"Peter Marshall","done":["b-clear","b-filter","b-plan","b-own","mon-pickup"],"heading":"Tue, Sep 22","kicker":"Tuesday · kids week","message":"Your day is wide open for Micro1, so bank the hours before tomorrow's 4:00 observation.","quote":"Small deeds done are better than great deeds planned.","updated":"2026-09-22T07:25:00-04:00"}
+{
+  "updated": "2026-09-22T09:16:00-04:00",
+  "message": "John paid SearchSeptic last night. Report should land today — do not pay, do not ping. Fidelity CLEAR still in Gmail.",
+  "kicker": "Tuesday · kids week",
+  "heading": "Tue, Sep 22",
+  "agenda": [
+    {
+      "time": "All day",
+      "title": "Mommy with Kids — custody through Fri Sep 25, 8:00 AM"
+    },
+    {
+      "time": "open",
+      "title": "SchoolCafé meal reapply — Fiona & Leo (no mail yet)"
+    },
+    {
+      "time": "open",
+      "title": "Fidelity CLEAR verify — 420 Nuthatch (10-day link in Gmail)"
+    },
+    {
+      "time": "open",
+      "title": "Micro1 training — modules still open, progress saved"
+    },
+    {
+      "time": "watch",
+      "title": "KeyPM — $780 refund requested, waiting on Stephanie"
+    },
+    {
+      "time": "watch",
+      "title": "SearchSeptic — John paid; inspection report expected today"
+    },
+    {
+      "time": "Wed 4:00",
+      "title": "Kids observation (Julie Smith)"
+    },
+    {
+      "time": "Thu 11:30",
+      "title": "Roots — Root and Seed"
+    },
+    {
+      "time": "Thu 3:15",
+      "title": "Game On Sports Club — Witt pickup 5:00"
+    },
+    {
+      "time": "Sun 27",
+      "title": "Library books due"
+    }
+  ],
+  "done": [
+    "b-clear",
+    "b-filter",
+    "b-plan",
+    "b-own"
+  ]
+}
