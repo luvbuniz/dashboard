@@ -1,1 +1,59 @@
-{"agenda":[{"time":"All day","title":"Mommy with Kids — custody through Fri Sep 25, 8:00 AM"},{"time":"All day","title":"Wear Green Day (Gene Witt Elementary) — kids dress green"},{"time":"Wed 4:00","title":"Kids observation appointment (Julie Smith) 4:00–5:00"},{"time":"open","title":"SchoolCafé meal reapply — Fiona & Leo (no mail yet)"},{"time":"open","title":"Fidelity CLEAR verify — 420 Nuthatch (10-day link in Gmail)"},{"time":"open","title":"Micro1 training — modules still open, progress saved"},{"time":"watch","title":"KeyPM — $780 refund requested, waiting on Stephanie"},{"time":"watch","title":"Unique Accounting — 2023-2024 tax invoice follow-up"}],"cite":"Annie Dillard","done":["b-clear","b-filter","b-plan","b-own","b-agent"],"heading":"Wed, Sep 23","kicker":"Wednesday · kids week","message":"Kids observation with Julie Smith at 4:00 today, so keep the afternoon clear and the kids in something green for Wear Green Day.","quote":"How we spend our days is, of course, how we spend our lives.","updated":"2026-09-23T07:20:00-04:00"}
+{
+  "updated": "2026-09-23T09:56:00-04:00",
+  "message": "You told Liz invoice #43189 is David’s to pay. Kids observation 4:00 — Wear Green Day at Witt.",
+  "kicker": "Wednesday · kids observation 4:00",
+  "heading": "Wed, Sep 23",
+  "agenda": [
+    {
+      "time": "All day",
+      "title": "Mommy with Kids — custody through Fri Sep 25, 8:00 AM"
+    },
+    {
+      "time": "All day",
+      "title": "Wear Green Day (Gene Witt Elementary)"
+    },
+    {
+      "time": "4:00",
+      "title": "Kids observation (Julie Smith)"
+    },
+    {
+      "time": "open",
+      "title": "SchoolCafé meal reapply — Fiona & Leo (no mail yet)"
+    },
+    {
+      "time": "open",
+      "title": "Micro1 training — modules still open, progress saved"
+    },
+    {
+      "time": "watch",
+      "title": "KeyPM — $780 refund requested, waiting on Stephanie"
+    },
+    {
+      "time": "watch",
+      "title": "SearchSeptic — report + paid invoice in Gmail; do not pay"
+    },
+    {
+      "time": "watch",
+      "title": "Unique Accounting — you told Liz David pays invoice #43189"
+    },
+    {
+      "time": "Thu 11:30",
+      "title": "Roots — Root and Seed"
+    },
+    {
+      "time": "Thu 3:15",
+      "title": "Game On Sports Club — Witt pickup 5:00"
+    },
+    {
+      "time": "Sun 27",
+      "title": "Library books due"
+    }
+  ],
+  "done": [
+    "b-clear",
+    "b-filter",
+    "b-plan",
+    "b-own",
+    "b-agent"
+  ]
+}
