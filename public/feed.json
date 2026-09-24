@@ -1,42 +1,44 @@
 {
-  "updated": "2026-09-24T07:20:45-04:00",
-  "message": "Roots at 11:30, then Game On at 3:15. Pickup at Witt by 5:00.",
-  "kicker": "Thursday · Roots + Game On",
+  "updated": "2026-09-24T13:05:00-04:00",
+  "message": "Game On 3:15 at Witt, pickup 5:00. Roots already happened.",
+  "kicker": "Thursday · Game On pickup 5:00",
   "heading": "Thu, Sep 24",
-  "quote": "Do what you can, with what you have, where you are.",
-  "cite": "Theodore Roosevelt",
   "agenda": [
     {
-      "time": "11:30 AM",
-      "title": "Roots, Root and Seed (coffee and GF bakery, Natures Way)"
-    },
-    {
-      "time": "3:15 PM",
-      "title": "Game On Sports Club, Gene Witt; pickup 5:00"
-    },
-    {
       "time": "All day",
-      "title": "Mommy with Kids, custody through Fri 8:00 AM"
+      "title": "Mommy with Kids — custody through Fri Sep 25, 8:00 AM"
     },
     {
-      "time": "watch",
-      "title": "KeyPM, $780 refund requested, waiting on Stephanie"
-    },
-    {
-      "time": "open",
-      "title": "Micro1 training, modules still open, progress saved"
+      "time": "Thu 3:15",
+      "title": "Game On Sports Club — Witt pickup 5:00"
     },
     {
       "time": "open",
-      "title": "SchoolCafé meal reapply, Fiona and Leo (no mail yet)"
+      "title": "SchoolCafé meal reapply — Fiona & Leo (no mail yet)"
+    },
+    {
+      "time": "open",
+      "title": "Micro1 training — modules still open, progress saved"
     },
     {
       "time": "watch",
-      "title": "SearchSeptic, report + paid invoice in Gmail, do not pay"
+      "title": "KeyPM — $780 refund requested, waiting on Stephanie"
+    },
+    {
+      "time": "watch",
+      "title": "SearchSeptic — report + paid invoice in Gmail; do not pay"
+    },
+    {
+      "time": "watch",
+      "title": "Unique Accounting — you told Liz David pays invoice #43189"
     },
     {
       "time": "Fri",
       "title": "Spirit Jersey Day, Gene Witt Elementary"
+    },
+    {
+      "time": "Sun 27",
+      "title": "Library books due"
     }
   ],
   "done": [
