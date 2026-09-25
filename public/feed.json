@@ -1,9 +1,17 @@
 {
-  "updated": "2026-09-25T09:12:00-04:00",
-  "message": "Fidelity title commitment in (review only). Nuthatch e-sign still open. Witt early dismissal 1:00.",
-  "kicker": "Friday · title commitment in",
+  "updated": "2026-09-25T10:42:00-04:00",
+  "message": "Gig day: onboarding now, then tasks. Peeking at the Project Insight assessment.",
+  "kicker": "Friday · onboarding day",
   "heading": "Fri, Sep 25",
   "agenda": [
+    {
+      "time": "now",
+      "title": "Onboarding — gig work (backup), then tasks"
+    },
+    {
+      "time": "today",
+      "title": "Project Insight — peek at the assessment, see how coding-heavy it is"
+    },
     {
       "time": "now",
       "title": "Nuthatch — e-sign amend/extend (close 9/30 + 1031 language)"
