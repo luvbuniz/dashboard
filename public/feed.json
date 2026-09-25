@@ -1,7 +1,7 @@
 {
-  "updated": "2026-09-24T13:05:00-04:00",
-  "message": "Game On 3:15 at Witt, pickup 5:00. Roots already happened.",
-  "kicker": "Thursday · Game On pickup 5:00",
+  "updated": "2026-09-24T21:21:00-04:00",
+  "message": "Nuthatch amend/extend to close 9/30 — e-sign in Gmail. Tomorrow: Spirit Jersey; custody ends 8:00 AM.",
+  "kicker": "Thursday evening · Nuthatch e-sign",
   "heading": "Thu, Sep 24",
   "agenda": [
     {
@@ -9,8 +9,8 @@
       "title": "Mommy with Kids — custody through Fri Sep 25, 8:00 AM"
     },
     {
-      "time": "Thu 3:15",
-      "title": "Game On Sports Club — Witt pickup 5:00"
+      "time": "now",
+      "title": "Nuthatch — e-sign amend/extend (close 9/30 + 1031 language)"
     },
     {
       "time": "open",
@@ -18,7 +18,7 @@
     },
     {
       "time": "open",
-      "title": "Micro1 training — modules still open, progress saved"
+      "title": "Micro1 — Hubstaff: check spam; Zara is the bot, not a resend"
     },
     {
       "time": "watch",
@@ -31,6 +31,10 @@
     {
       "time": "watch",
       "title": "Unique Accounting — you told Liz David pays invoice #43189"
+    },
+    {
+      "time": "Fri 8:00",
+      "title": "Custody handoff"
     },
     {
       "time": "Fri",
