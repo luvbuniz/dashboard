@@ -1,48 +1,42 @@
 {
-  "updated": "2026-09-24T21:21:00-04:00",
-  "message": "Nuthatch amend/extend to close 9/30 — e-sign in Gmail. Tomorrow: Spirit Jersey; custody ends 8:00 AM.",
-  "kicker": "Thursday evening · Nuthatch e-sign",
-  "heading": "Thu, Sep 24",
+  "updated": "2026-09-25T07:22:00-04:00",
+  "message": "Sign the Nuthatch amend-extend so the 9/30 close stays on track. Handoff 8:00 AM, early dismissal 1:00 PM.",
+  "kicker": "Friday \u00b7 custody swap, early dismissal",
+  "heading": "Fri, Sep 25",
+  "quote": "Nothing will work unless you do.",
+  "cite": "Maya Angelou",
   "agenda": [
     {
-      "time": "All day",
-      "title": "Mommy with Kids — custody through Fri Sep 25, 8:00 AM"
-    },
-    {
       "time": "now",
-      "title": "Nuthatch — e-sign amend/extend (close 9/30 + 1031 language)"
+      "title": "Nuthatch: e-sign amend/extend (close 9/30 + 1031 language)"
     },
     {
-      "time": "open",
-      "title": "SchoolCafé meal reapply — Fiona & Leo (no mail yet)"
+      "time": "8:00 AM",
+      "title": "Custody handoff: Mommy's week ends"
     },
     {
-      "time": "open",
-      "title": "Micro1 — Hubstaff: check spam; Zara is the bot, not a resend"
+      "time": "1:00 PM",
+      "title": "Witt Elementary early dismissal (pickup early)"
     },
     {
-      "time": "watch",
-      "title": "KeyPM — $780 refund requested, waiting on Stephanie"
-    },
-    {
-      "time": "watch",
-      "title": "SearchSeptic — report + paid invoice in Gmail; do not pay"
-    },
-    {
-      "time": "watch",
-      "title": "Unique Accounting — you told Liz David pays invoice #43189"
-    },
-    {
-      "time": "Fri 8:00",
-      "title": "Custody handoff"
-    },
-    {
-      "time": "Fri",
+      "time": "All day",
       "title": "Spirit Jersey Day, Gene Witt Elementary"
     },
     {
-      "time": "Sun 27",
-      "title": "Library books due"
+      "time": "3:00 PM",
+      "title": "Daddy's week with kids begins"
+    },
+    {
+      "time": "open",
+      "title": "SchoolCafe meal reapply: Fiona & Leo (no mail yet)"
+    },
+    {
+      "time": "watch",
+      "title": "KeyPM: $780 refund requested, waiting on Stephanie"
+    },
+    {
+      "time": "watch",
+      "title": "Micro1: Hubstaff, check spam; Zara is the bot, not a resend"
     }
   ],
   "done": [
