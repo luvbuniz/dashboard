@@ -1,49 +1,62 @@
 {
-  "updated": "2026-09-25T07:22:00-04:00",
-  "message": "Sign the Nuthatch amend-extend so the 9/30 close stays on track. Handoff 8:00 AM, early dismissal 1:00 PM.",
-  "kicker": "Friday \u00b7 custody swap, early dismissal",
+  "updated": "2026-09-25T09:12:00-04:00",
+  "message": "Fidelity title commitment in (review only). Nuthatch e-sign still open. Witt early dismissal 1:00.",
+  "kicker": "Friday · title commitment in",
   "heading": "Fri, Sep 25",
-  "quote": "Nothing will work unless you do.",
-  "cite": "Maya Angelou",
   "agenda": [
     {
       "time": "now",
-      "title": "Nuthatch: e-sign amend/extend (close 9/30 + 1031 language)"
+      "title": "Nuthatch — e-sign amend/extend (close 9/30 + 1031 language)"
     },
     {
-      "time": "8:00 AM",
-      "title": "Custody handoff: Mommy's week ends"
+      "time": "new",
+      "title": "Fidelity title commitment — review only, not a bill (buyer: 420 Nuthatch LLC)"
     },
     {
       "time": "1:00 PM",
-      "title": "Witt Elementary early dismissal (pickup early)"
+      "title": "Witt Elementary early dismissal"
     },
     {
-      "time": "All day",
+      "time": "today",
       "title": "Spirit Jersey Day, Gene Witt Elementary"
     },
     {
-      "time": "3:00 PM",
-      "title": "Daddy's week with kids begins"
+      "time": "today",
+      "title": "Smoke Ranch water may be off today or Mon 28 (KeyPM notifying tenant)"
     },
     {
       "time": "open",
-      "title": "SchoolCafe meal reapply: Fiona & Leo (no mail yet)"
+      "title": "SchoolCafé meal reapply — Fiona & Leo (no mail yet)"
+    },
+    {
+      "time": "open",
+      "title": "Micro1 — Hubstaff: check spam; Zara is the bot, not a resend"
     },
     {
       "time": "watch",
-      "title": "KeyPM: $780 refund requested, waiting on Stephanie"
+      "title": "KeyPM — $780 refund requested, waiting on Stephanie"
     },
     {
       "time": "watch",
-      "title": "Micro1: Hubstaff, check spam; Zara is the bot, not a resend"
+      "title": "SearchSeptic — report + paid invoice in Gmail; do not pay"
+    },
+    {
+      "time": "watch",
+      "title": "Unique Accounting — you told Liz David pays invoice #43189"
+    },
+    {
+      "time": "Sun 27",
+      "title": "Library books due"
+    },
+    {
+      "time": "Wed 30",
+      "title": "Nuthatch closing target"
     }
   ],
   "done": [
     "b-clear",
     "b-filter",
     "b-plan",
-    "b-own",
-    "b-agent"
+    "b-own"
   ]
 }
