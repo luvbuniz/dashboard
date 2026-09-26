@@ -1,36 +1,24 @@
 {
-  "updated": "2026-09-25T10:42:00-04:00",
-  "message": "Gig day: onboarding now, then tasks. Peeking at the Project Insight assessment.",
-  "kicker": "Friday · onboarding day",
+  "updated": "2026-09-25T20:01:00-04:00",
+  "message": "Lynette is setting up Nuthatch remote notary (NOTARIZE/PROOF). Watch for login email; rest of docs via DocuSign.",
+  "kicker": "Friday · remote notary incoming",
   "heading": "Fri, Sep 25",
   "agenda": [
     {
       "time": "now",
-      "title": "Onboarding — gig work (backup), then tasks"
+      "title": "Nuthatch — watch for NOTARIZE/PROOF login; remaining docs via DocuSign"
     },
     {
-      "time": "today",
-      "title": "Project Insight — peek at the assessment, see how coding-heavy it is"
+      "time": "open",
+      "title": "Nuthatch — e-sign amend/extend still open (close 9/30 + 1031 language)"
     },
     {
-      "time": "now",
-      "title": "Nuthatch — e-sign amend/extend (close 9/30 + 1031 language)"
-    },
-    {
-      "time": "new",
+      "time": "open",
       "title": "Fidelity title commitment — review only, not a bill (buyer: 420 Nuthatch LLC)"
     },
     {
-      "time": "1:00 PM",
-      "title": "Witt Elementary early dismissal"
-    },
-    {
-      "time": "today",
-      "title": "Spirit Jersey Day, Gene Witt Elementary"
-    },
-    {
-      "time": "today",
-      "title": "Smoke Ranch water may be off today or Mon 28 (KeyPM notifying tenant)"
+      "time": "open",
+      "title": "Project Insight — peek at the assessment, see how coding-heavy it is"
     },
     {
       "time": "open",
@@ -38,7 +26,11 @@
     },
     {
       "time": "open",
-      "title": "Micro1 — Hubstaff: check spam; Zara is the bot, not a resend"
+      "title": "Micro1 — you emailed onboarding about missing Hubstaff; Zara is the bot"
+    },
+    {
+      "time": "watch",
+      "title": "Smoke Ranch water may be off today or Mon 28 (KeyPM notifying tenant)"
     },
     {
       "time": "watch",
