@@ -1,38 +1,66 @@
 {
-  "updated": "2026-09-26T07:22:00-04:00",
-  "message": "Kids are with David, so front-load the heavy work today: Micro1 prep, Insight assessment, cabin closing Wednesday.",
-  "kicker": "Saturday · Project Week",
+  "updated": "2026-09-26T08:00:19-04:00",
+  "message": "Still no NOTARIZE/PROOF login. Library books due tomorrow. Close 9/30.",
+  "kicker": "Saturday · library books tomorrow",
   "heading": "Sat, Sep 26",
   "quote": "The secret of getting ahead is getting started.",
   "cite": "Mark Twain",
   "agenda": [
     {
-      "time": "now",
-      "title": "Daddy with Kids — kids with David through Fri Oct 2 (Project Week: front-load heavy work)"
+      "time": "watch",
+      "title": "Nuthatch — still no NOTARIZE/PROOF login (Lynette said Friday)"
     },
     {
-      "time": "watch",
-      "title": "Micro1 — still no Hubstaff or HubSpot invite; escalated to human onboarding, check spam"
+      "time": "open",
+      "title": "Nuthatch — e-sign amend/extend still open (close 9/30 + 1031 language)"
+    },
+    {
+      "time": "open",
+      "title": "Fidelity title commitment — review only, not a bill (buyer: 420 Nuthatch LLC)"
+    },
+    {
+      "time": "now",
+      "title": "Kids with David through Fri Oct 2 — Project Week"
     },
     {
       "time": "open",
       "title": "Project Insight — peek at the assessment, see how coding-heavy it is"
     },
     {
-      "time": "watch",
-      "title": "Smoke Ranch water may be off today or Mon 28 (KeyPM notifying tenant)"
+      "time": "open",
+      "title": "SchoolCafé meal reapply — Fiona & Leo (no mail yet)"
     },
     {
-      "time": "Wed 30",
-      "title": "Cabin closing target — sale docs signed yesterday"
+      "time": "open",
+      "title": "Micro1 — still no Hubstaff invite; you emailed onboarding Friday; Zara is the bot"
+    },
+    {
+      "time": "watch",
+      "title": "Smoke Ranch water — KeyPM said Fri or Mon 28 (notifying tenant)"
+    },
+    {
+      "time": "watch",
+      "title": "KeyPM — $780 refund requested, waiting on Stephanie"
+    },
+    {
+      "time": "watch",
+      "title": "SearchSeptic — report + paid invoice in Gmail; do not pay"
+    },
+    {
+      "time": "watch",
+      "title": "Unique Accounting — you told Liz David pays invoice #43189"
+    },
+    {
+      "time": "Sun 27",
+      "title": "Library books due"
     },
     {
       "time": "Mon 28",
-      "title": "AllCare appointment with Farida Scriber may still be on the books"
+      "title": "AllCare with Farida Scriber may still be on the books"
     },
     {
-      "time": "watch",
-      "title": "KeyPM — $780 Ashford Park refund requested, waiting on Stephanie"
+      "time": "Wed 30",
+      "title": "Nuthatch closing target"
     },
     {
       "time": "Mon 5",
