@@ -1,14 +1,18 @@
 {
-  "updated": "2026-09-27T07:22:30-04:00",
-  "message": "Cabin closes Wednesday; watch for the funds landing so the payoff list can fire.",
-  "kicker": "Sunday · project week",
+  "updated": "2026-09-27T08:50:57-04:00",
+  "message": "Library books due today. No new Nuthatch F12638 / septic / Micro1 mail overnight.",
+  "kicker": "Sunday · library books due",
   "heading": "Sun, Sep 27",
-  "quote": "The best way out is always through.",
-  "cite": "Robert Frost",
+  "quote": "The secret of getting ahead is getting started.",
+  "cite": "Mark Twain",
   "agenda": [
     {
       "time": "now",
-      "title": "Kids with David through Fri Oct 2 — Project Week"
+      "title": "Library books due — return + LWR hold pickup"
+    },
+    {
+      "time": "now",
+      "title": "Sunday workspace — kids with David through Fri Oct 2"
     },
     {
       "time": "now",
@@ -16,11 +20,15 @@
     },
     {
       "time": "watch",
-      "title": "Nuthatch — closing target Wed 9/30, docs signed Sep 25"
+      "title": "Nuthatch F12638 — still no Proof login mail (Fri “all done” was file 361-f12628-26)"
     },
     {
-      "time": "watch",
-      "title": "Micro1 — still no Hubstaff invite; you emailed onboarding Friday"
+      "time": "open",
+      "title": "Nuthatch — e-sign amend/extend still open (close 9/30 + 1031 language)"
+    },
+    {
+      "time": "open",
+      "title": "Fidelity title commitment — review only, not a bill (buyer: 420 Nuthatch LLC)"
     },
     {
       "time": "open",
@@ -31,12 +39,36 @@
       "title": "SchoolCafé meal reapply — Fiona & Leo (no mail yet)"
     },
     {
+      "time": "open",
+      "title": "Micro1 — still no Hubstaff invite; you emailed onboarding Friday; Zara is the bot"
+    },
+    {
+      "time": "watch",
+      "title": "Smoke Ranch water — KeyPM said Fri or Mon 28 (notifying tenant)"
+    },
+    {
       "time": "watch",
       "title": "KeyPM — $780 refund requested, waiting on Stephanie"
     },
     {
+      "time": "watch",
+      "title": "SearchSeptic — report + paid invoice in Gmail; do not pay"
+    },
+    {
+      "time": "watch",
+      "title": "Unique Accounting — you told Liz David pays invoice #43189"
+    },
+    {
       "time": "Mon 28",
       "title": "AllCare with Farida Scriber may still be on the books"
+    },
+    {
+      "time": "Wed 30",
+      "title": "Nuthatch closing target"
+    },
+    {
+      "time": "Mon 5",
+      "title": "Check Urban Air: no charges after cancelled membership ends Oct 4"
     }
   ],
   "done": [
