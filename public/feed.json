@@ -1,42 +1,42 @@
 {
-  "updated": "2026-09-28T07:21:00-04:00",
-  "message": "Cabin closing is Wednesday, so today is all about finishing loose ends and keeping the landing zone clear.",
+  "updated": "2026-09-28T07:55:00-04:00",
+  "message": "Today's push: finish the Micro1 robot calibration courses, then line up the Upwork bids and the other freelance sites.",
   "kicker": "Monday · project week",
   "heading": "Mon, Sep 28",
   "quote": "Well begun is half done.",
   "cite": "Aristotle",
   "agenda": [
     {
-      "time": "Mon",
-      "title": "Project Week — kids with David through Fri Oct 2"
+      "time": "due",
+      "title": "Micro1 — finish robot calibration courses (training two due today)"
     },
     {
-      "time": "due",
-      "title": "Micro1 — training two due today"
+      "time": "today",
+      "title": "Upwork — get GPT to review the scouted gigs, decide which to bid on"
+    },
+    {
+      "time": "today",
+      "title": "Freelancer + other sites — push Grok to finish scouting"
+    },
+    {
+      "time": "today",
+      "title": "Handshake — give one project a go, finally try the prework"
+    },
+    {
+      "time": "daytime",
+      "title": "Plumber dodge — Panera or another cafe, then the library"
+    },
+    {
+      "time": "6:20 PM",
+      "title": "Toilet maintenance check — cancel reminder if they already came"
     },
     {
       "time": "Wed 30",
       "title": "Nuthatch cabin closing (docs signed, 1031 language added)"
     },
     {
-      "time": "today",
-      "title": "AllCare Sep 28 with Farida Scriber — should be cancelled; watch for no-show fee"
-    },
-    {
-      "time": "Mon 5",
-      "title": "Check Urban Air: no charges after cancelled membership ends Oct 4"
-    },
-    {
-      "time": "open",
-      "title": "Nuthatch — Proof login mail still pending (last file was 361-f12628-26)"
-    },
-    {
-      "time": "open",
-      "title": "Smoke Ranch water — KeyPM said Fri or Mon 28, tenant being notified"
-    },
-    {
-      "time": "open",
-      "title": "Project Insight — peek at the assessment, see how coding-heavy it is"
+      "time": "Mon",
+      "title": "Project Week — kids with David through Fri Oct 2, 8:00 AM"
     }
   ],
   "done": [
