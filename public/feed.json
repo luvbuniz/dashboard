@@ -1,74 +1,42 @@
 {
-  "updated": "2026-09-27T20:01:48-04:00",
-  "message": "No new Nuthatch/septic/Micro1 mail. Library books due today. AllCare maybe tomorrow.",
-  "kicker": "Sunday · library books due",
-  "heading": "Sun, Sep 27",
-  "quote": "The secret of getting ahead is getting started.",
-  "cite": "Mark Twain",
+  "updated": "2026-09-28T07:21:00-04:00",
+  "message": "Cabin closing is Wednesday, so today is all about finishing loose ends and keeping the landing zone clear.",
+  "kicker": "Monday · project week",
+  "heading": "Mon, Sep 28",
+  "quote": "Well begun is half done.",
+  "cite": "Aristotle",
   "agenda": [
     {
-      "time": "now",
-      "title": "Library books due — return + LWR hold pickup"
+      "time": "Mon",
+      "title": "Project Week — kids with David through Fri Oct 2"
     },
     {
-      "time": "now",
-      "title": "Sunday workspace — kids with David through Fri Oct 2"
-    },
-    {
-      "time": "now",
-      "title": "Kids: no screens trial until Nov 10"
-    },
-    {
-      "time": "watch",
-      "title": "Nuthatch F12638 — still no Proof login mail (Fri “all done” was file 361-f12628-26)"
-    },
-    {
-      "time": "open",
-      "title": "Nuthatch — e-sign amend/extend still open (close 9/30 + 1031 language)"
-    },
-    {
-      "time": "open",
-      "title": "Fidelity title commitment — review only, not a bill (buyer: 420 Nuthatch LLC)"
-    },
-    {
-      "time": "open",
-      "title": "Project Insight — peek at the assessment, see how coding-heavy it is"
-    },
-    {
-      "time": "open",
-      "title": "SchoolCafé meal reapply — Fiona & Leo (no mail yet)"
-    },
-    {
-      "time": "open",
-      "title": "Micro1 — still no Hubstaff invite; you emailed onboarding Friday; Zara is the bot"
-    },
-    {
-      "time": "watch",
-      "title": "Smoke Ranch water — KeyPM said Fri or Mon 28 (notifying tenant)"
-    },
-    {
-      "time": "watch",
-      "title": "KeyPM — 80 refund requested, waiting on Stephanie"
-    },
-    {
-      "time": "watch",
-      "title": "SearchSeptic — report + paid invoice in Gmail; do not pay"
-    },
-    {
-      "time": "watch",
-      "title": "Unique Accounting — you told Liz David pays invoice #43189"
-    },
-    {
-      "time": "Mon 28",
-      "title": "AllCare with Farida Scriber may still be on the books"
+      "time": "due",
+      "title": "Micro1 — training two due today"
     },
     {
       "time": "Wed 30",
-      "title": "Nuthatch closing target"
+      "title": "Nuthatch cabin closing (docs signed, 1031 language added)"
+    },
+    {
+      "time": "today",
+      "title": "AllCare Sep 28 with Farida Scriber — should be cancelled; watch for no-show fee"
     },
     {
       "time": "Mon 5",
       "title": "Check Urban Air: no charges after cancelled membership ends Oct 4"
+    },
+    {
+      "time": "open",
+      "title": "Nuthatch — Proof login mail still pending (last file was 361-f12628-26)"
+    },
+    {
+      "time": "open",
+      "title": "Smoke Ranch water — KeyPM said Fri or Mon 28, tenant being notified"
+    },
+    {
+      "time": "open",
+      "title": "Project Insight — peek at the assessment, see how coding-heavy it is"
     }
   ],
   "done": [
