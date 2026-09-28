@@ -1,14 +1,26 @@
 {
-  "updated": "2026-09-28T07:55:00-04:00",
-  "message": "Today's push: finish the Micro1 robot calibration courses, then line up the Upwork bids and the other freelance sites.",
-  "kicker": "Monday · project week",
+  "updated": "2026-09-28T08:14:11-04:00",
+  "message": "LWR juvenile holds expire today. AllCare maybe today. No new Nuthatch/septic/Micro1 mail.",
+  "kicker": "Monday · school window",
   "heading": "Mon, Sep 28",
   "quote": "Well begun is half done.",
   "cite": "Aristotle",
   "agenda": [
     {
+      "time": "today",
+      "title": "LWR Library — juvenile holds expire today"
+    },
+    {
       "time": "due",
       "title": "Micro1 — finish robot calibration courses (training two due today)"
+    },
+    {
+      "time": "today",
+      "title": "AllCare with Farida Scriber — may still be on the books"
+    },
+    {
+      "time": "today",
+      "title": "Smoke Ranch water — KeyPM said Fri or Mon 28"
     },
     {
       "time": "today",
@@ -31,12 +43,48 @@
       "title": "Toilet maintenance check — cancel reminder if they already came"
     },
     {
+      "time": "now",
+      "title": "School window ~9–2:15 — kids with David through Fri Oct 2"
+    },
+    {
+      "time": "now",
+      "title": "Kids: no screens trial until Nov 10"
+    },
+    {
+      "time": "watch",
+      "title": "Nuthatch F12638 — still no Proof login mail (Fri “all done” was file 361-f12628-26)"
+    },
+    {
       "time": "Wed 30",
       "title": "Nuthatch cabin closing (docs signed, 1031 language added)"
     },
     {
-      "time": "Mon",
-      "title": "Project Week — kids with David through Fri Oct 2, 8:00 AM"
+      "time": "open",
+      "title": "Fidelity title commitment — review only, not a bill (buyer: 420 Nuthatch LLC)"
+    },
+    {
+      "time": "open",
+      "title": "SchoolCafé meal reapply — Fiona & Leo (no mail yet)"
+    },
+    {
+      "time": "open",
+      "title": "Micro1 — still no Hubstaff invite; emailed onboarding Friday; Zara is the bot"
+    },
+    {
+      "time": "watch",
+      "title": "KeyPM — 80 refund requested, waiting on Stephanie"
+    },
+    {
+      "time": "watch",
+      "title": "SearchSeptic — report + paid invoice in Gmail; do not pay"
+    },
+    {
+      "time": "watch",
+      "title": "Unique Accounting — you told Liz David pays invoice #43189"
+    },
+    {
+      "time": "Mon 5",
+      "title": "Check Urban Air: no charges after cancelled membership ends Oct 4"
     }
   ],
   "done": [
