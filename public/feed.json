@@ -1,1 +1,88 @@
-{"agenda":[{"time":"due","title":"Micro1 — finish robot calibration courses (training two due today)"},{"time":"today","title":"Smoke Ranch water — KeyPM said Fri or Mon 28"},{"time":"today","title":"Upwork — get GPT to review the scouted gigs, decide which to bid on"},{"time":"today","title":"Freelancer + other sites — push Grok to finish scouting"},{"time":"today","title":"Handshake — give one project a go, finally try the prework"},{"time":"watch","title":"Nuthatch F12638 — still no Proof login mail (Fri “all done” was file 361-f12628-26)"},{"time":"Wed 30","title":"Nuthatch cabin closing (docs signed, 1031 language added)"},{"time":"open","title":"Fidelity title commitment — review only, not a bill (buyer: 420 Nuthatch LLC)"},{"time":"open","title":"Micro1 — still no Hubstaff invite; emailed onboarding Friday; Zara is the bot"},{"time":"watch","title":"KeyPM — 80 refund requested, waiting on Stephanie"},{"time":"watch","title":"SearchSeptic — report + paid invoice in Gmail; do not pay"},{"time":"watch","title":"Unique Accounting — you told Liz David pays invoice #43189"},{"time":"Mon 5","title":"Check Urban Air: no charges after cancelled membership ends Oct 4"}],"cite":"Aristotle","done":["b-clear","b-filter","b-plan","b-own","mon-pickup","b-mcleod","b-septic","b-pipes"],"heading":"Mon, Sep 28","kicker":"Monday · school window","message":"No new Nuthatch/septic/Micro1 mail.","quote":"Well begun is half done.","updated":"2026-09-28T19:42:30-04:00"}
+{
+  "updated": "2026-09-28T20:43:00-04:00",
+  "message": "Liz received the tax payment — e-filing next. Tomorrow 1pm: AI Creator’s Collective in LWR.",
+  "kicker": "Monday evening · tax payment landed",
+  "heading": "Mon, Sep 28",
+  "quote": "Well begun is half done.",
+  "cite": "Aristotle",
+  "agenda": [
+    {
+      "time": "Tue 1pm",
+      "title": "AI Creator’s Collective — 5391 Lakewood Ranch Blvd N"
+    },
+    {
+      "time": "Wed 30",
+      "title": "Nuthatch cabin closing (docs signed, 1031 language added)"
+    },
+    {
+      "time": "now",
+      "title": "School window ~9–2:15 — kids with David through Fri Oct 2"
+    },
+    {
+      "time": "now",
+      "title": "Kids: no screens trial until Nov 10"
+    },
+    {
+      "time": "today",
+      "title": "Unique Accounting — Liz received payment; e-filing 2023-24; returns attached (passworded)"
+    },
+    {
+      "time": "due",
+      "title": "Micro1 — robot calibration courses were due today (no mail)"
+    },
+    {
+      "time": "open",
+      "title": "Upwork — get GPT to review the scouted gigs, decide which to bid on"
+    },
+    {
+      "time": "open",
+      "title": "Freelancer + other sites — push Grok to finish scouting"
+    },
+    {
+      "time": "open",
+      "title": "Handshake — give one project a go, finally try the prework"
+    },
+    {
+      "time": "watch",
+      "title": "Nuthatch F12638 — still no Proof login mail (Fri “all done” was file 361-f12628-26)"
+    },
+    {
+      "time": "open",
+      "title": "Fidelity title commitment — review only, not a bill (buyer: 420 Nuthatch LLC)"
+    },
+    {
+      "time": "open",
+      "title": "SchoolCafé meal reapply — Fiona & Leo (no mail yet)"
+    },
+    {
+      "time": "open",
+      "title": "Micro1 — still no Hubstaff invite; emailed onboarding Friday; Zara is the bot"
+    },
+    {
+      "time": "watch",
+      "title": "KeyPM — 80 refund requested, waiting on Stephanie"
+    },
+    {
+      "time": "watch",
+      "title": "Smoke Ranch water — KeyPM said Fri or Mon 28 (no new mail)"
+    },
+    {
+      "time": "watch",
+      "title": "SearchSeptic — report + paid invoice in Gmail; do not pay"
+    },
+    {
+      "time": "Mon 5",
+      "title": "Check Urban Air: no charges after cancelled membership ends Oct 4"
+    }
+  ],
+  "done": [
+    "b-clear",
+    "b-filter",
+    "b-plan",
+    "b-own",
+    "mon-pickup",
+    "b-mcleod",
+    "b-septic",
+    "b-pipes"
+  ]
+}
