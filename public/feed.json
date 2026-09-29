@@ -1,34 +1,34 @@
 {
-  "updated": "2026-09-28T20:43:00-04:00",
-  "message": "Liz received the tax payment — e-filing next. Tomorrow 1pm: AI Creator’s Collective in LWR.",
-  "kicker": "Monday evening · tax payment landed",
-  "heading": "Mon, Sep 28",
-  "quote": "Well begun is half done.",
-  "cite": "Aristotle",
+  "updated": "2026-09-29T07:20:30-04:00",
+  "message": "AI Creator's Collective at 1pm today, and the cabin closing is tomorrow. Tonight: call the kids.",
+  "kicker": "Tuesday · project week",
+  "heading": "Tue, Sep 29",
+  "quote": "The best way to predict the future is to create it.",
+  "cite": "Peter Drucker",
   "agenda": [
     {
       "time": "Tue 1pm",
-      "title": "AI Creator’s Collective — 5391 Lakewood Ranch Blvd N"
+      "title": "AI Creator\u2019s Collective — 5391 Lakewood Ranch Blvd N"
     },
     {
       "time": "Wed 30",
-      "title": "Nuthatch cabin closing (docs signed, 1031 language added)"
+      "title": "Cabin closing TOMORROW (docs signed, 1031 language added)"
+    },
+    {
+      "time": "Tue 7:15",
+      "title": "Call kids (text David first)"
     },
     {
       "time": "now",
-      "title": "School window ~9–2:15 — kids with David through Fri Oct 2"
+      "title": "Kids with David through Fri Oct 2 — project-week hours"
     },
     {
       "time": "now",
       "title": "Kids: no screens trial until Nov 10"
     },
     {
-      "time": "today",
-      "title": "Unique Accounting — Liz received payment; e-filing 2023-24; returns attached (passworded)"
-    },
-    {
-      "time": "due",
-      "title": "Micro1 — robot calibration courses were due today (no mail)"
+      "time": "watch",
+      "title": "Micro1 — first annotation submitted 9/28, awaiting result; still no Hubstaff invite"
     },
     {
       "time": "open",
@@ -36,43 +36,7 @@
     },
     {
       "time": "open",
-      "title": "Freelancer + other sites — push Grok to finish scouting"
-    },
-    {
-      "time": "open",
-      "title": "Handshake — give one project a go, finally try the prework"
-    },
-    {
-      "time": "watch",
-      "title": "Nuthatch F12638 — still no Proof login mail (Fri “all done” was file 361-f12628-26)"
-    },
-    {
-      "time": "open",
-      "title": "Fidelity title commitment — review only, not a bill (buyer: 420 Nuthatch LLC)"
-    },
-    {
-      "time": "open",
-      "title": "SchoolCafé meal reapply — Fiona & Leo (no mail yet)"
-    },
-    {
-      "time": "open",
-      "title": "Micro1 — still no Hubstaff invite; emailed onboarding Friday; Zara is the bot"
-    },
-    {
-      "time": "watch",
-      "title": "KeyPM — 80 refund requested, waiting on Stephanie"
-    },
-    {
-      "time": "watch",
-      "title": "Smoke Ranch water — KeyPM said Fri or Mon 28 (no new mail)"
-    },
-    {
-      "time": "watch",
-      "title": "SearchSeptic — report + paid invoice in Gmail; do not pay"
-    },
-    {
-      "time": "Mon 5",
-      "title": "Check Urban Air: no charges after cancelled membership ends Oct 4"
+      "title": "Handshake — try the prework, give one project a go"
     }
   ],
   "done": [
