@@ -1,14 +1,14 @@
 {
-  "updated": "2026-09-29T07:20:30-04:00",
-  "message": "AI Creator's Collective at 1pm today, and the cabin closing is tomorrow. Tonight: call the kids.",
-  "kicker": "Tuesday · project week",
+  "updated": "2026-09-29T08:03:19-04:00",
+  "message": "AI Creator’s Collective at 1pm today. Cabin closing tomorrow. Tonight: call the kids.",
+  "kicker": "Tuesday · 1pm LWR meetup",
   "heading": "Tue, Sep 29",
   "quote": "The best way to predict the future is to create it.",
   "cite": "Peter Drucker",
   "agenda": [
     {
-      "time": "Tue 1pm",
-      "title": "AI Creator\u2019s Collective — 5391 Lakewood Ranch Blvd N"
+      "time": "1pm",
+      "title": "AI Creator’s Collective — 5391 Lakewood Ranch Blvd N"
     },
     {
       "time": "Wed 30",
@@ -27,6 +27,10 @@
       "title": "Kids: no screens trial until Nov 10"
     },
     {
+      "time": "open",
+      "title": "Unique Accounting — Liz received payment; e-filing 2023-24"
+    },
+    {
       "time": "watch",
       "title": "Micro1 — first annotation submitted 9/28, awaiting result; still no Hubstaff invite"
     },
@@ -36,7 +40,39 @@
     },
     {
       "time": "open",
+      "title": "Freelancer + other sites — push Grok to finish scouting"
+    },
+    {
+      "time": "open",
       "title": "Handshake — try the prework, give one project a go"
+    },
+    {
+      "time": "watch",
+      "title": "Nuthatch F12638 — still no Proof login mail (Fri “all done” was file 361-f12628-26)"
+    },
+    {
+      "time": "open",
+      "title": "Fidelity title commitment — review only, not a bill (buyer: 420 Nuthatch LLC)"
+    },
+    {
+      "time": "open",
+      "title": "SchoolCafé meal reapply — Fiona & Leo (no mail yet)"
+    },
+    {
+      "time": "watch",
+      "title": "KeyPM — 80 refund requested, waiting on Stephanie"
+    },
+    {
+      "time": "stale",
+      "title": "Smoke Ranch water — KeyPM said Fri or Mon 28 (still no mail)"
+    },
+    {
+      "time": "watch",
+      "title": "SearchSeptic — report + paid invoice in Gmail; do not pay"
+    },
+    {
+      "time": "Mon 5",
+      "title": "Check Urban Air: no charges after cancelled membership ends Oct 4"
     }
   ],
   "done": [
