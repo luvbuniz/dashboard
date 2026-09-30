@@ -1,13 +1,13 @@
 {
-  "updated": "2026-09-30T07:20:00-04:00",
-  "message": "Cabin closing is today. Funds disburse and should land in a day or two.",
+  "updated": "2026-09-30T08:03:04-04:00",
+  "message": "Cabin closing today — funds should land in a day or two. Upwork ID verified. No new Nuthatch, septic, Micro1, or SchoolCafé mail.",
   "kicker": "Wednesday · cabin closing",
   "heading": "Wed, Sep 30",
   "quote": "What you do today can improve all your tomorrows.",
   "cite": "Ralph Marston",
   "agenda": [
     {
-      "time": "Wed 30",
+      "time": "today",
       "title": "Cabin closing TODAY — funds disburse, landing in a day or two"
     },
     {
@@ -19,6 +19,10 @@
       "title": "Kids: no screens trial until Nov 10"
     },
     {
+      "time": "Thu 1",
+      "title": "David child support $1,800 — 1st of the month"
+    },
+    {
       "time": "open",
       "title": "Unique Accounting — Liz received payment; e-filing 2023-24"
     },
@@ -27,8 +31,8 @@
       "title": "Micro1 — first annotation submitted 9/28, awaiting result; still no Hubstaff invite"
     },
     {
-      "time": "open",
-      "title": "Upwork — get GPT to review the scouted gigs, decide which to bid on"
+      "time": "new",
+      "title": "Upwork — identity verified; review scouted gigs and bid"
     },
     {
       "time": "open",
@@ -37,16 +41,44 @@
     {
       "time": "open",
       "title": "Handshake — try the prework, give one project a go"
+    },
+    {
+      "time": "watch",
+      "title": "Nuthatch F12638 — still no Proof login mail (Fri “all done” was file 361-f12628-26)"
+    },
+    {
+      "time": "open",
+      "title": "Fidelity title commitment — review only, not a bill (buyer: 420 Nuthatch LLC)"
+    },
+    {
+      "time": "open",
+      "title": "SchoolCafé meal reapply — Fiona & Leo (no mail yet)"
+    },
+    {
+      "time": "watch",
+      "title": "KeyPM — 80 refund requested, waiting on Stephanie"
+    },
+    {
+      "time": "stale",
+      "title": "Smoke Ranch water — KeyPM said Fri or Mon 28 (still no mail)"
+    },
+    {
+      "time": "watch",
+      "title": "SearchSeptic — report + paid invoice in Gmail; do not pay"
+    },
+    {
+      "time": "Mon 5",
+      "title": "Check Urban Air: no charges after cancelled membership ends Oct 4"
+    },
+    {
+      "time": "Wed 7",
+      "title": "Ask Cribbett & French for the $285 trust refund check"
     }
   ],
   "done": [
     "b-clear",
     "b-filter",
     "b-plan",
-    "b-own",
-    "mon-pickup",
-    "b-mcleod",
-    "b-septic",
-    "b-pipes"
+    "b-own"
   ]
 }
