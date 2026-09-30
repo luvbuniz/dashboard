@@ -1,14 +1,14 @@
 {
-  "updated": "2026-09-29T20:01:28-04:00",
-  "message": "Cabin closing tomorrow. No new Nuthatch, septic, Micro1, or SchoolCafé mail.",
+  "updated": "2026-09-30T07:20:00-04:00",
+  "message": "Cabin closing is today. Funds disburse and should land in a day or two.",
   "kicker": "Wednesday · cabin closing",
-  "heading": "Tue, Sep 29",
-  "quote": "The best way to predict the future is to create it.",
-  "cite": "Peter Drucker",
+  "heading": "Wed, Sep 30",
+  "quote": "What you do today can improve all your tomorrows.",
+  "cite": "Ralph Marston",
   "agenda": [
     {
       "time": "Wed 30",
-      "title": "Cabin closing TOMORROW (docs signed, 1031 language added)"
+      "title": "Cabin closing TODAY — funds disburse, landing in a day or two"
     },
     {
       "time": "now",
@@ -37,34 +37,6 @@
     {
       "time": "open",
       "title": "Handshake — try the prework, give one project a go"
-    },
-    {
-      "time": "watch",
-      "title": "Nuthatch F12638 — still no Proof login mail (Fri “all done” was file 361-f12628-26)"
-    },
-    {
-      "time": "open",
-      "title": "Fidelity title commitment — review only, not a bill (buyer: 420 Nuthatch LLC)"
-    },
-    {
-      "time": "open",
-      "title": "SchoolCafé meal reapply — Fiona & Leo (no mail yet)"
-    },
-    {
-      "time": "watch",
-      "title": "KeyPM — 80 refund requested, waiting on Stephanie"
-    },
-    {
-      "time": "stale",
-      "title": "Smoke Ranch water — KeyPM said Fri or Mon 28 (still no mail)"
-    },
-    {
-      "time": "watch",
-      "title": "SearchSeptic — report + paid invoice in Gmail; do not pay"
-    },
-    {
-      "time": "Mon 5",
-      "title": "Check Urban Air: no charges after cancelled membership ends Oct 4"
     }
   ],
   "done": [
