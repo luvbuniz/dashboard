@@ -1,1 +1,96 @@
-{"agenda":[{"time":"3:00 PM","title":"Kids come home; custody flips to you through Oct 9"},{"time":"1:00 PM","title":"School early release, Gene Witt Elementary"},{"time":"today","title":"Fall conference forms due at school"},{"time":"watch","title":"Clark County 2nd installment ~Oct 5; verify the declined payment"},{"time":"open","title":"2025 tax docs for Richard: address, filing status, 1099-INT, two K-1s"},{"time":"Mon 5","title":"Check Urban Air card after membership ends Oct 4"},{"time":"Mon 6","title":"Your birthday Monday"},{"time":"ongoing","title":"Kids: no screens trial until Nov 10"},{"time":"today","title":"LWR Library — juvenile holds expire today"},{"time":"now","title":"School window ~9–2:15 — kids with David through Fri Oct 2"},{"time":"open","title":"SchoolCafé meal reapply — Fiona & Leo (no mail yet)"}],"cite":"Robert Brault","done":["b-clear","b-filter","b-plan","b-own"],"heading":"Fri, Oct 2","kicker":"Friday · kids home","message":"Kids come home at 3 PM today. Verify the declined Clark County tax payment first; the 2nd installment is due ~Oct 5.","quote":"Enjoy the little things, for one day you may look back and realize they were the big things.","updated":"2026-10-02T07:45:16.930719-04:00"}
+{
+  "updated": "2026-10-02T08:04:00-04:00",
+  "message": "Witt early release 1:00 today. Chase/Alexa Webb calls Wed 11. McLeod tax still HOLD.",
+  "kicker": "Friday · early release",
+  "heading": "Fri, Oct 2",
+  "quote": "Start where you are. Use what you have. Do what you can.",
+  "cite": "Arthur Ashe",
+  "agenda": [
+    {
+      "time": "1:00",
+      "title": "Gene Witt early release — school mail: students out at 1:00pm today"
+    },
+    {
+      "time": "today",
+      "title": "Kids with David through today — project-week hours"
+    },
+    {
+      "time": "now",
+      "title": "Unique Accounting — Richard still needs 2025 docs: address, filing status, 1099-INT, K-1 Stipendium Passiva, K-1 Aibani LLC"
+    },
+    {
+      "time": "now",
+      "title": "Kids: no screens trial until Nov 10"
+    },
+    {
+      "time": "Mon 5",
+      "title": "McLeod tax — Clark Co 2nd $2,142.26 due; HOLD until you confirm live amount + GO (penalty-free ~through Oct 15)"
+    },
+    {
+      "time": "Mon 5 9am",
+      "title": "Smoke Ranch HVAC — roof maint starts Tue Oct 6; decide own HVAC pro vs owner-billed condensation-line work"
+    },
+    {
+      "time": "Mon 5",
+      "title": "Urban Air — cancelled membership ends Oct 4; confirm no charges"
+    },
+    {
+      "time": "Wed 7 11am",
+      "title": "Alexa Webb (Chase Home Lending) will call 828-803-4250"
+    },
+    {
+      "time": "Wed 7",
+      "title": "Ask Cribbett & French for the $285 trust refund check"
+    },
+    {
+      "time": "Thu 8 9am",
+      "title": "Ashford NF $780 check — nudge Stephanie if not received"
+    },
+    {
+      "time": "Thu 8",
+      "title": "Game On Sports Club 3:15–5:00 Gene Witt (David paid; Amy half via Zelle)"
+    },
+    {
+      "time": "open",
+      "title": "Call maintenance (941) 757-3352 — plumber still has not come; no new Appfolio mail"
+    },
+    {
+      "time": "watch",
+      "title": "Nuthatch funds — wait for disbursement; closing docs already in Gmail"
+    },
+    {
+      "time": "open",
+      "title": "SchoolCafé meal reapply — Fiona & Leo (no mail)"
+    },
+    {
+      "time": "watch",
+      "title": "Micro1 — no new Hubstaff/invite mail"
+    },
+    {
+      "time": "watch",
+      "title": "Vultr invoice $24 — Personal Org"
+    },
+    {
+      "time": "watch",
+      "title": "Nous Research subscription renewed — receipt #2764-3384"
+    },
+    {
+      "time": "watch",
+      "title": "McDermott Aug invoice — no additional payment due"
+    },
+    {
+      "time": "stale",
+      "title": "Smoke Ranch water — KeyPM said Fri or Mon 28 (still no mail)"
+    },
+    {
+      "time": "watch",
+      "title": "SearchSeptic — report + paid invoice in Gmail; do not pay"
+    }
+  ],
+  "done": [
+    "b-clear",
+    "b-filter",
+    "b-plan",
+    "b-own"
+  ]
+}
