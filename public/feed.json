@@ -1,34 +1,26 @@
 {
-  "updated": "2026-10-01T09:55:41-04:00",
-  "message": "Taxes first: Clark County 2nd installment. David $1,800 due — no mail. New: Vultr $24; McDermott Aug, no pay due.",
-  "kicker": "Thursday · taxes + support",
+  "updated": "2026-10-01T20:03:01-04:00",
+  "message": "Richard needs 2025 tax docs (address, filing status, 1099-INT, two K-1s). Clark County 2nd installment still first. Kids with David through tomorrow.",
+  "kicker": "Thursday · tax docs",
   "heading": "Thu, Oct 1",
   "quote": "Start where you are. Use what you have. Do what you can.",
   "cite": "Arthur Ashe",
   "agenda": [
     {
-      "time": "Thu 9:30 AM",
+      "time": "now",
+      "title": "Unique Accounting — Richard asked tonight for 2025 docs: confirm address + filing status, 1099-INT, K-1 Stipendium Passiva, K-1 Aibani LLC"
+    },
+    {
+      "time": "Mon 5",
       "title": "Clark County property taxes — 2nd installment due ~Oct 5; pay first, penalties accruing"
     },
     {
       "time": "today",
-      "title": "David child support $1,800 — 1st of the month; no mail yet"
+      "title": "David child support $1,800 — 1st of the month; no new mail in this check"
     },
     {
-      "time": "morning",
-      "title": "Call maintenance (941) 757-3352 — plumber still hasn't come; app tickets don't reach anyone"
-    },
-    {
-      "time": "Thu 6:00 PM",
-      "title": "SAC / PTO Meeting — Gene Witt Elementary"
-    },
-    {
-      "time": "Thu 7:15 PM",
-      "title": "Call kids, text David first"
-    },
-    {
-      "time": "all day",
-      "title": "School Birthday Celebration Day — Gene Witt Elementary"
+      "time": "open",
+      "title": "Call maintenance (941) 757-3352 — plumber still hasn’t come; app tickets don’t reach anyone"
     },
     {
       "time": "now",
@@ -40,15 +32,15 @@
     },
     {
       "time": "new",
-      "title": "Vultr invoice $24 (unread) — Personal Org"
+      "title": "Nous Research subscription renewed — receipt #2764-3384 (unread; amount not in text)"
     },
     {
-      "time": "new",
+      "time": "watch",
+      "title": "Vultr invoice $24 — Personal Org"
+    },
+    {
+      "time": "watch",
       "title": "McDermott Aug invoice — no additional payment due"
-    },
-    {
-      "time": "open",
-      "title": "Unique Accounting — Amy sent Richard acquisition dates; still waiting 2025 status"
     },
     {
       "time": "watch",
