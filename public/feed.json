@@ -1,86 +1,42 @@
 {
-  "updated": "2026-10-02T23:22:00-04:00",
-  "message": "Kids back this weekend. McLeod tax still HOLD. Smoke Ranch HVAC decision Mon.",
-  "kicker": "Friday evening",
-  "heading": "Fri, Oct 2",
-  "quote": "Start where you are. Use what you have. Do what you can.",
-  "cite": "Arthur Ashe",
+  "updated": "2026-10-03T07:21:00-04:00",
+  "message": "Kids week starts today. Big Asian buffet in Sarasota for lunch, keep it under $60.",
+  "kicker": "Saturday · kids week",
+  "heading": "Sat, Oct 3",
+  "quote": "How we spend our days is, of course, how we spend our lives.",
+  "cite": "Annie Dillard",
   "agenda": [
     {
-      "time": "now",
-      "title": "Unique Accounting — Richard still needs 2025 docs: address, filing status, 1099-INT, K-1 Stipendium Passiva, K-1 Aibani LLC"
+      "time": "today",
+      "title": "Mommy with Kids — kids week runs through Fri Oct 9"
     },
     {
-      "time": "now",
-      "title": "Kids back this weekend — David week ended today"
+      "time": "lunch",
+      "title": "Big Asian buffet in Sarasota with the kids (~$60 max, lunch is cheaper)"
     },
     {
-      "time": "now",
-      "title": "Kids: no screens trial until Nov 10"
+      "time": "Sun",
+      "title": "Relaxing stay-at-home day; chicken dinner as usual"
     },
     {
-      "time": "Mon 5",
-      "title": "McLeod tax — Clark Co 2nd $2,142.26 due; HOLD until you confirm live amount + GO (penalty-free ~through Oct 15)"
-    },
-    {
-      "time": "Mon 5 9am",
-      "title": "Smoke Ranch HVAC — roof maint starts Tue Oct 6; decide own HVAC pro vs owner-billed condensation-line work"
+      "time": "Sun 4",
+      "title": "Urban Air cancelled membership fully ends; confirm no charges Mon Oct 5"
     },
     {
       "time": "Mon 5",
-      "title": "Urban Air — cancelled membership ends Oct 4; confirm no charges"
+      "title": "McLeod tax — Clark Co 2nd $2,142.26 due; HOLD until you confirm live amount + GO"
     },
     {
       "time": "Wed 7 11am",
       "title": "Alexa Webb (Chase Home Lending) will call 828-803-4250"
     },
     {
-      "time": "Wed 7",
+      "time": "Thu 8",
       "title": "Ask Cribbett & French for the $285 trust refund check"
     },
     {
       "time": "Thu 8 9am",
       "title": "Ashford NF $780 check — nudge Stephanie if not received"
-    },
-    {
-      "time": "Thu 8",
-      "title": "Game On Sports Club 3:15–5:00 Gene Witt (David paid; Amy half via Zelle)"
-    },
-    {
-      "time": "open",
-      "title": "Call maintenance (941) 757-3352 — plumber still has not come; no new Appfolio mail"
-    },
-    {
-      "time": "watch",
-      "title": "Nuthatch funds — wait for disbursement; closing docs already in Gmail"
-    },
-    {
-      "time": "open",
-      "title": "SchoolCafé meal reapply — Fiona & Leo (no mail)"
-    },
-    {
-      "time": "watch",
-      "title": "Micro1 — no new Hubstaff/invite mail"
-    },
-    {
-      "time": "watch",
-      "title": "Vultr invoice $24 — Personal Org"
-    },
-    {
-      "time": "watch",
-      "title": "Nous Research subscription renewed — receipt #2764-3384"
-    },
-    {
-      "time": "watch",
-      "title": "McDermott Aug invoice — no additional payment due"
-    },
-    {
-      "time": "stale",
-      "title": "Smoke Ranch water — KeyPM said Fri or Mon 28 (still no mail)"
-    },
-    {
-      "time": "watch",
-      "title": "SearchSeptic — report + paid invoice in Gmail; do not pay"
     }
   ],
   "done": [
