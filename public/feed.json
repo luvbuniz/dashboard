@@ -1,30 +1,32 @@
 {
-  "updated": "2026-10-03T20:01:37-04:00",
-  "message": "Kids with you this weekend. Urban Air ends tomorrow. McLeod tax still HOLD.",
-  "kicker": "Saturday evening",
+  "updated": "2026-10-03T20:00:17-04:00",
+  "message": "Porkbun $2.57 wizlings.fun. No plumber/Nuthatch/SchoolCafe mail. Urban Air ends tomorrow.",
+  "kicker": "Saturday · kids week",
   "heading": "Sat, Oct 3",
-  "quote": "Start where you are. Use what you have. Do what you can.",
-  "cite": "Arthur Ashe",
   "agenda": [
     {
       "time": "now",
-      "title": "Kids with you this weekend \u2014 no screens trial until Nov 10"
+      "title": "Mommy with Kids — kids week runs through Fri Oct 9; no screens trial until Nov 10"
     },
     {
       "time": "now",
-      "title": "Unique Accounting \u2014 Richard still needs 2025 docs: address, filing status, 1099-INT, K-1 Stipendium Passiva, K-1 Aibani LLC"
+      "title": "Unique Accounting — Richard still needs 2025 docs: address, filing status, 1099-INT, K-1 Stipendium Passiva, K-1 Aibani LLC"
+    },
+    {
+      "time": "Sun",
+      "title": "Relaxing stay-at-home day; chicken dinner as usual"
     },
     {
       "time": "Sun 4",
-      "title": "Urban Air \u2014 cancelled membership ends tomorrow; confirm no charges"
+      "title": "Urban Air — cancelled membership ends; confirm no charges Mon Oct 5"
     },
     {
       "time": "Mon 5",
-      "title": "McLeod tax \u2014 Clark Co 2nd $2,142.26 due; HOLD until you confirm live amount + GO (penalty-free ~through Oct 15)"
+      "title": "McLeod tax — Clark Co 2nd $2,142.26 due; HOLD until you confirm live amount + GO (penalty-free ~through Oct 15)"
     },
     {
       "time": "Mon 5 9am",
-      "title": "Smoke Ranch HVAC \u2014 roof maint starts Tue Oct 6; decide own HVAC pro vs owner-billed condensation-line work"
+      "title": "Smoke Ranch HVAC — roof maint starts Tue Oct 6; decide own HVAC pro vs owner-billed condensation-line work"
     },
     {
       "time": "Wed 7 11am",
@@ -36,51 +38,51 @@
     },
     {
       "time": "Thu 8 9am",
-      "title": "Ashford NF $780 check \u2014 nudge Stephanie if not received"
+      "title": "Ashford NF $780 check — nudge Stephanie if not received"
     },
     {
       "time": "Thu 8",
-      "title": "Game On Sports Club 3:15\u20135:00 Gene Witt (David paid; Amy half via Zelle)"
+      "title": "Game On Sports Club 3:15-5:00 Gene Witt (David paid; Amy half via Zelle)"
+    },
+    {
+      "time": "Sat 10",
+      "title": "Library books due — Eggs (Roux), Superfood Snacks (Morris)"
+    },
+    {
+      "time": "Sat 10",
+      "title": "Buy Charlotte 8th birthday present (tea party Sat Oct 17, EuroCrave)"
     },
     {
       "time": "open",
-      "title": "Call maintenance (941) 757-3352 \u2014 plumber still has not come; no new Appfolio mail"
+      "title": "Call maintenance (941) 757-3352 — plumber still has not come; no new Appfolio mail"
     },
     {
       "time": "watch",
-      "title": "Nuthatch funds \u2014 wait for disbursement; no new mail"
+      "title": "Nuthatch funds — wait for disbursement; closing docs already in Gmail"
     },
     {
       "time": "open",
-      "title": "SchoolCaf\u00e9 meal reapply \u2014 Fiona & Leo (no mail)"
+      "title": "SchoolCafe meal reapply — Fiona & Leo (no mail)"
     },
     {
       "time": "watch",
-      "title": "Micro1 \u2014 no new Hubstaff/invite mail"
-    },
-    {
-      "time": "new",
-      "title": "Porkbun \u2014 wizlings.fun $2.57 charged today; paid through 2027-10-03"
+      "title": "Micro1 — no new Hubstaff/invite mail"
     },
     {
       "time": "watch",
-      "title": "Vultr invoice $24 \u2014 Personal Org"
+      "title": "Porkbun — wizlings.fun $2.57 paid through 2027-10-03"
     },
     {
       "time": "watch",
-      "title": "Nous Research subscription renewed \u2014 receipt #2764-3384"
-    },
-    {
-      "time": "watch",
-      "title": "McDermott Aug invoice \u2014 no additional payment due"
+      "title": "Vultr invoice $24 — Personal Org"
     },
     {
       "time": "stale",
-      "title": "Smoke Ranch water \u2014 KeyPM said Fri or Mon 28 (still no mail)"
+      "title": "Smoke Ranch water — KeyPM said Fri or Mon 28 (still no mail)"
     },
     {
       "time": "watch",
-      "title": "SearchSeptic \u2014 report + paid invoice in Gmail; do not pay"
+      "title": "SearchSeptic — report + paid invoice in Gmail; do not pay"
     }
   ],
   "done": [
