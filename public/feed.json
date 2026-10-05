@@ -1,24 +1,26 @@
 {
-  "updated": "2026-10-04T22:30:50-04:00",
-  "message": "You sent Richard 2025 tax docs this morning. McLeod still HOLD tomorrow. Urban Air ended today.",
-  "kicker": "Sunday · kids week through Fri",
+  "updated": "2026-10-04T22:32:00-04:00",
+  "message": "Sent Richard tax packet. McLeod HOLD tomorrow. HVAC 9am. Urban Air — confirm no charge Mon.",
+  "kicker": "Sunday evening",
   "heading": "Sun, Oct 4",
+  "quote": "Almost everything will work again if you unplug it for a few minutes, including you.",
+  "cite": "Anne Lamott",
   "agenda": [
     {
       "time": "now",
-      "title": "Mommy with Kids — kids week through Fri Oct 9; no screens trial until Nov 10"
+      "title": "Mommy with Kids — kids week runs through Fri Oct 9; no screens trial until Nov 10"
     },
     {
-      "time": "new",
-      "title": "Unique Accounting — you sent Richard address, MFS, Bridge 1099-NEC, Thrive W-2 (Sun 10:29). No reply yet. Watch 1099-INT / K-1 Stipendium / K-1 Aibani if those were not in the packet"
+      "time": "now",
+      "title": "Unique Accounting — sent address, MFS, 1099-NEC, W-2, Stipendium K-1; still 1099-INT + PMI Henderson 1099; asked Richard if he prepares Aibani K-1"
+    },
+    {
+      "time": "Mon 5",
+      "title": "Urban Air — cancelled membership ended today; confirm no charges"
     },
     {
       "time": "Mon 5",
       "title": "McLeod tax — Clark Co 2nd $2,142.26 due; HOLD until you confirm live amount + GO (penalty-free ~through Oct 15)"
-    },
-    {
-      "time": "Mon 5",
-      "title": "Urban Air — membership ended Sun Oct 4; confirm no charges"
     },
     {
       "time": "Mon 5 9am",
@@ -66,7 +68,11 @@
     },
     {
       "time": "watch",
-      "title": "GitHub PAT expired — luvbuniz enterprise-portfolio-cron-tracker"
+      "title": "Porkbun — wizlings.fun $2.57 paid through 2027-10-03"
+    },
+    {
+      "time": "watch",
+      "title": "Vultr invoice $24 — Personal Org"
     },
     {
       "time": "stale",
