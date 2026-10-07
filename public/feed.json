@@ -1,24 +1,24 @@
 {
-  "updated": "2026-10-07T11:34:00-04:00",
-  "message": "Florida Center 4pm Sarasota. Unique Accounting still needs Aibani P&L — draft unsent.",
-  "kicker": "Wednesday · Florida Center 4pm",
+  "updated": "2026-10-07T11:35:00-04:00",
+  "message": "Alexa Webb 11am. Natalie $285 refund today. Florida Center 4pm Sarasota. Tomorrow: Ashford nudge + Game On.",
+  "kicker": "Wednesday · Alexa Webb + Florida Center",
   "heading": "Wed, Oct 7",
   "agenda": [
     {
       "time": "today 11am",
-      "title": "Alexa Webb (Chase Home Lending) call 828-803-4250 — window is now"
-    },
-    {
-      "time": "today 4pm",
-      "title": "Florida Center for Early Childhood 4–5pm, 4620 17th St, Sarasota (not Bradenton)"
+      "title": "Alexa Webb (Chase Home Lending) will call 828-803-4250"
     },
     {
       "time": "today",
-      "title": "Ask Cribbett & French for the $285 trust refund check (natalie@cribbetfrench.com)"
+      "title": "Ask Cribbett & French for the $285 trust refund check — natalie@cribbetfrench.com"
+    },
+    {
+      "time": "today 4pm",
+      "title": "Florida Center for Early Childhood — 4620 17th St, Sarasota (not Bradenton)"
     },
     {
       "time": "now",
-      "title": "Kids week through Fri Oct 9; no screens trial until Nov 10"
+      "title": "Mommy with Kids — kids week through Fri Oct 9; no screens trial until Nov 10"
     },
     {
       "time": "Thu 8 9am",
@@ -29,8 +29,8 @@
       "title": "Game On Sports Club 3:15-5:00 Gene Witt (David paid; Amy half via Zelle)"
     },
     {
-      "time": "Fri 9 6:30",
-      "title": "Jennifer Jade birthday — Yard House UTC East; gift Lavazza Dolcevita Classico K-cups 88ct"
+      "time": "Fri 9 6:30pm",
+      "title": "Jennifer Jades birthday — Yard House UTC, Lavazza Dolcevita Classico K-cups"
     },
     {
       "time": "Sat 10",
@@ -42,19 +42,15 @@
     },
     {
       "time": "Sat 10 6pm",
-      "title": "Your birthday party — Bar Italia, 6568 University Pkwy"
+      "title": "Amy birthday party — Bar Italia, 6568 University Pkwy, Lakewood Ranch"
     },
     {
       "time": "open",
-      "title": "Unique Accounting — unlocked Bridge 1099-NEC sent; still owe what it was for + Aibani 2025 income/expenses (draft unsent); still 1099-INT + PMI Henderson 1099"
+      "title": "McLeod tax — Clark Co 2nd $2,142.26; HOLD until live amount + GO (penalty-free ~through Oct 15)"
     },
     {
       "time": "open",
-      "title": "McLeod tax — Clark Co 2nd installment HOLD until live amount + GO (penalty-free ~through Oct 15)"
-    },
-    {
-      "time": "open",
-      "title": "Smoke Ranch HVAC — roof maint started Tue Oct 6; no new mail on own pro vs owner-billed condensation-line work"
+      "title": "Unique Accounting — sent address, MFS, 1099-NEC, W-2, Stipendium K-1; still 1099-INT + PMI Henderson 1099; asked Richard if he prepares Aibani K-1"
     },
     {
       "time": "open",
@@ -74,7 +70,11 @@
     },
     {
       "time": "watch",
-      "title": "Urban Air — cancelled membership ended Mon Oct 5; no charge mail"
+      "title": "Porkbun — wizlings.fun $2.57 paid through 2027-10-03"
+    },
+    {
+      "time": "watch",
+      "title": "Vultr invoice $24 — Personal Org"
     },
     {
       "time": "stale",
