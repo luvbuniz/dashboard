@@ -1,84 +1,88 @@
 {
-  "updated": "2026-10-05T10:16:00-04:00",
-  "message": "McLeod due today \u2014 HOLD. HVAC before roof starts tomorrow. No new mail.",
-  "kicker": "Monday \u00b7 McLeod tax due (HOLD)",
-  "heading": "Mon, Oct 5",
+  "updated": "2026-10-07T11:34:00-04:00",
+  "message": "Florida Center 4pm Sarasota. Unique Accounting still needs Aibani P&L — draft unsent.",
+  "kicker": "Wednesday · Florida Center 4pm",
+  "heading": "Wed, Oct 7",
   "agenda": [
     {
-      "time": "today",
-      "title": "McLeod tax \u2014 Clark Co 2nd ,142.26 due; HOLD until you confirm live amount + GO (penalty-free ~through Oct 15)"
+      "time": "today 11am",
+      "title": "Alexa Webb (Chase Home Lending) call 828-803-4250 — window is now"
+    },
+    {
+      "time": "today 4pm",
+      "title": "Florida Center for Early Childhood 4–5pm, 4620 17th St, Sarasota (not Bradenton)"
     },
     {
       "time": "today",
-      "title": "Smoke Ranch HVAC \u2014 roof maint starts Tue Oct 6; decide own HVAC pro vs owner-billed condensation-line work"
-    },
-    {
-      "time": "today",
-      "title": "Urban Air \u2014 cancelled membership ended today; confirm no charges"
+      "title": "Ask Cribbett & French for the $285 trust refund check (natalie@cribbetfrench.com)"
     },
     {
       "time": "now",
-      "title": "Mommy with Kids \u2014 kids week through Fri Oct 9; no screens trial until Nov 10"
-    },
-    {
-      "time": "Wed 7 11am",
-      "title": "Alexa Webb (Chase Home Lending) will call 828-803-4250"
-    },
-    {
-      "time": "Wed 7",
-      "title": "Ask Cribbett & French for the 85 trust refund check"
+      "title": "Kids week through Fri Oct 9; no screens trial until Nov 10"
     },
     {
       "time": "Thu 8 9am",
-      "title": "Ashford NF 80 check \u2014 nudge Stephanie if not received"
+      "title": "Ashford NF $780 check — nudge Stephanie if not received"
     },
     {
       "time": "Thu 8",
       "title": "Game On Sports Club 3:15-5:00 Gene Witt (David paid; Amy half via Zelle)"
     },
     {
+      "time": "Fri 9 6:30",
+      "title": "Jennifer Jade birthday — Yard House UTC East; gift Lavazza Dolcevita Classico K-cups 88ct"
+    },
+    {
       "time": "Sat 10",
-      "title": "Library books due \u2014 Eggs (Roux), Superfood Snacks (Morris)"
+      "title": "Library books due — Eggs (Roux), Superfood Snacks (Morris)"
     },
     {
       "time": "Sat 10",
       "title": "Buy Charlotte 8th birthday present (tea party Sat Oct 17, EuroCrave)"
     },
     {
-      "time": "open",
-      "title": "Unique Accounting \u2014 sent address, MFS, 1099-NEC, W-2, Stipendium K-1; still 1099-INT + PMI Henderson 1099; asked Richard if he prepares Aibani K-1"
+      "time": "Sat 10 6pm",
+      "title": "Your birthday party — Bar Italia, 6568 University Pkwy"
     },
     {
       "time": "open",
-      "title": "Call maintenance (941) 757-3352 \u2014 plumber still has not come; no new Appfolio mail"
+      "title": "Unique Accounting — unlocked Bridge 1099-NEC sent; still owe what it was for + Aibani 2025 income/expenses (draft unsent); still 1099-INT + PMI Henderson 1099"
     },
     {
       "time": "open",
-      "title": "SchoolCafe meal reapply \u2014 Fiona & Leo (no mail)"
+      "title": "McLeod tax — Clark Co 2nd installment HOLD until live amount + GO (penalty-free ~through Oct 15)"
+    },
+    {
+      "time": "open",
+      "title": "Smoke Ranch HVAC — roof maint started Tue Oct 6; no new mail on own pro vs owner-billed condensation-line work"
+    },
+    {
+      "time": "open",
+      "title": "Call maintenance (941) 757-3352 — plumber still has not come; no new Appfolio mail"
+    },
+    {
+      "time": "open",
+      "title": "SchoolCafe meal reapply — Fiona & Leo (no mail)"
     },
     {
       "time": "watch",
-      "title": "Nuthatch funds \u2014 wait for disbursement; closing docs already in Gmail"
+      "title": "Nuthatch funds — wait for disbursement; closing docs already in Gmail"
     },
     {
       "time": "watch",
-      "title": "Micro1 \u2014 no new Hubstaff/invite mail"
+      "title": "Micro1 — no new Hubstaff/invite mail"
     },
     {
       "time": "watch",
-      "title": "Porkbun \u2014 wizlings.fun .57 paid through 2027-10-03"
-    },
-    {
-      "time": "watch",
-      "title": "Vultr invoice 4 \u2014 Personal Org"
+      "title": "Urban Air — cancelled membership ended Mon Oct 5; no charge mail"
     },
     {
       "time": "stale",
-      "title": "Smoke Ranch water \u2014 KeyPM said Fri or Mon 28 (still no mail)"
+      "title": "Smoke Ranch water — KeyPM said Fri or Mon 28 (still no mail)"
     },
     {
       "time": "watch",
-      "title": "SearchSeptic \u2014 report + paid invoice in Gmail; do not pay"
+      "title": "SearchSeptic — report + paid invoice in Gmail; do not pay"
     }
   ],
   "done": [
