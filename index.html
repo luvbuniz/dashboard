@@ -263,6 +263,15 @@
         <h2>Boards</h2>
         <div class="boards-grid">
           <article class="board">
+            <div class="board-h"><span class="name">Buni · AI automations</span><span class="src">Hark · Oct 12</span></div>
+            <button class="item now" data-id="b-buni-offer" type="button"><span class="box"></span><span><span class="label">Pick a starter offer + price floor</span><div class="why">Hark needs it before drafting packages. Free tiers only until you say otherwise.</div></span><span class="lane">now</span></button>
+            <button class="item now" data-id="b-buni-gsbn" type="button"><span class="box"></span><span><span class="label">GSBN lunch — recon</span><div class="why">Tue 11:45, Inner Compass Brewing. Grab cards; Hark drafts follow-ups within 48h for your OK.</div></span><span class="lane">next</span></button>
+            <button class="item" data-id="b-buni-sbx" type="button"><span class="box"></span><span><span class="label">Sarasota Business Exchange — recon</span><div class="why">Wed 5:30, Brio, UTC. Same drill: cards in, drafts out.</div></span><span class="lane">next</span></button>
+            <button class="item" data-id="b-buni-riley" type="button"><span class="box"></span><span><span class="label">Status note to Riley</span><div class="why">Draft ready from hark.buni@agentmail.to — waiting on your OK.</div></span><span class="lane">waiting</span></button>
+            <button class="item" data-id="b-buni-site" type="button"><span class="box"></span><span><span class="label">bunillc.com refresh</span><div class="why">Less hokey: lead with outcomes, local hook, fixed-price starters. Nothing changes without your OK.</div></span><span class="lane">later</span></button>
+            <button class="item" data-id="b-buni-kit" type="button"><span class="box"></span><span><span class="label">Plumber discovery kit</span><div class="why">Questions for leads, booking, quotes, invoicing, reviews. Ready for your first fit call.</div></span><span class="lane">ref</span></button>
+          </article>
+          <article class="board">
             <div class="board-h"><span class="name">Stackadoo</span><span class="src">now</span></div>
             <button class="item now" data-id="b-credits" type="button"><span class="box"></span><span><span class="label">Usage credits running</span></span><span class="lane">now</span></button>
           </article>
@@ -306,7 +315,7 @@
     const DAY_KEY = "amy-board-day";
     const ARCH_KEY = "amy-board-archive-v1";
     const PRE = ["b-clear", "b-filter", "b-plan", "b-own", "b-schoolcafe"];
-    const STANDING = new Set(["b-clear", "b-filter", "b-plan", "b-own", "b-cs", "b-ins", "b-mcleod", "b-septic", "b-pipes", "b-asg", "b-titan", "b-schoolcafe", "b-law"]);
+    const STANDING = new Set(["b-clear", "b-filter", "b-plan", "b-own", "b-cs", "b-ins", "b-mcleod", "b-septic", "b-pipes", "b-asg", "b-titan", "b-schoolcafe", "b-law", "b-buni-site", "b-buni-kit"]);
     const ALIAS = { stack: "b-credits", agent: "b-agent" };
     const canon = (id) => ALIAS[id] || id;
     const localDay = () => {
