@@ -212,7 +212,10 @@
           <div class="tasks">
             <button class="task" data-id="mon-micro1" type="button"><span class="box"></span><span><span class="label">Micro1 training — 4 modules</span><div class="why">Progress saved. Started 9:46 AM. Log every session with the timer below.</div></span><span class="chip">main</span></button>
             <button class="task" data-id="mon-pickup" type="button"><span class="box"></span><span><span class="label">Pick up the kids</span><div class="why">Van call at 2:30.</div></span><span class="chip">2:30</span></button>
-            <button class="task" data-id="tue-acer" type="button"><span class="box"></span><span><span class="label">Call Acer about the laptop warranty</span><div class="why">1-866-695-2237. Have the serial, SNID, and Costco receipt ready.</div></span><span class="chip">9:15</span></button>
+            <button class="task done" data-id="tue-acer" type="button"><span class="box"></span><span><span class="label">Acer case 1839767US opened</span><div class="why">Warranty case opened. Serial NXJK5AA001523034DD3400 · SNID 52301353334. FedEx label within 1 business day.</div></span><span class="chip">done</span></button>
+            <button class="task" data-id="acer-backup" type="button"><span class="box"></span><span><span class="label">Back up the laptop</span><div class="why">Documents, Desktop, Downloads, project files to Drive or USB. Remove Windows password/PIN. Sign out.</div></span><span class="chip">Acer</span></button>
+            <button class="task" data-id="acer-supplies" type="button"><span class="box"></span><span><span class="label">Buy packing supplies for Acer ship</span><div class="why">Box with 3–5 inches of padding room, bubble wrap and tape — or have FedEx Office pack it.</div></span><span class="chip">Acer</span></button>
+            <button class="task" data-id="acer-ship" type="button"><span class="box"></span><span><span class="label">Ship Acer with FedEx label</span><div class="why">Print label from Acer email (within 1 business day). Ship without the charger. Keep the receipt. Case 1839767US. Status: https://service.acer.com/status/en/US</div></span><span class="chip">Acer</span></button>
             <button class="task" data-id="tue-aaa" type="button"><span class="box"></span><span><span class="label">Call AAA: are Moonmist + McLeod still insured?</span><div class="why">Confirm both policies are still active.</div></span><span class="chip">9:30</span></button>
             <button class="task" data-id="tue-gsbn" type="button"><span class="box"></span><span><span class="label">GSBN lunch: arrive by 11:45</span><div class="why">Inner Compass Brewing, 10316 Technology Terrace. Cards + 30-second intro (say automations).</div></span><span class="chip">11:45</span></button>
             <button class="task" data-id="tue-upwork-pw" type="button"><span class="box"></span><span><span class="label">Add Upwork password</span><div class="why">Upwork Settings &gt; Password &amp; Security, so Quinn can send a secure login and update your profile + Bid 1 ($700). Do it at the cafe.</div></span><span class="chip">cafe</span></button>
@@ -324,7 +327,7 @@
     const LOG_KEY = "amy-board-log-v3";
     const DAY_KEY = "amy-board-day";
     const ARCH_KEY = "amy-board-archive-v1";
-    const PRE = ["b-clear", "b-filter", "b-plan", "b-own", "b-schoolcafe"];
+    const PRE = ["b-clear", "b-filter", "b-plan", "b-own", "b-schoolcafe", "tue-acer"];
     const STANDING = new Set(["b-clear", "b-filter", "b-plan", "b-own", "b-cs", "b-ins", "b-mcleod", "b-septic", "b-pipes", "b-asg", "b-titan", "b-schoolcafe", "b-law", "b-buni-site", "b-buni-kit"]);
     const ALIAS = { stack: "b-credits", agent: "b-agent" };
     const canon = (id) => ALIAS[id] || id;
