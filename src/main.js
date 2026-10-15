@@ -645,9 +645,9 @@ function renderAgenda() {
           )}</span></h3>
           <ul class="agenda-list">${a.items
             .map(
-              (e) => `<li><span class="agenda-time">${esc(e.time)}</span>${esc(
+              (e, i) => `<li><span class="agenda-time">${esc(e.time)}</span>${esc(
                 e.title
-              )}</li>`
+              )}<button class="icon-btn agenda-del" data-action="del-agenda" data-idx="${i}" title="Delete">✕</button></li>`
             )
             .join("")}</ul>
         </div>`
@@ -1636,6 +1636,20 @@ document.addEventListener("click", (e) => {
       state.events = state.events.filter((ev) => ev.id !== btn.dataset.event);
       commit();
       break;
+    case "del-agenda": {
+      const idx = parseInt(btn.dataset.idx, 10);
+      if (state.agenda?.items && !isNaN(idx)) {
+        state.agenda.items.splice(idx, 1);
+        // Persist dismissed agenda items so they stay hidden across reloads
+        try {
+          const dismissed = JSON.parse(localStorage.getItem("dismissedAgenda") || "[]");
+          dismissed.push({ time: btn.dataset.time || "", title: btn.dataset.title || "", at: Date.now() });
+          localStorage.setItem("dismissedAgenda", JSON.stringify(dismissed.slice(-50)));
+        } catch {}
+        renderAgenda();
+      }
+      break;
+    }
     case "del-app":
       state.applications = state.applications.filter((a) => a.id !== btn.dataset.app);
       commit();
