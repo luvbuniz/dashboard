@@ -515,6 +515,24 @@ button:focus-visible {
   font-size: 12.5px;
 }
 
+.agenda-list li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.agenda-del {
+  margin-left: auto;
+  opacity: 0.4;
+  font-size: 12px;
+  padding: 2px 6px;
+}
+
+.agenda-del:hover {
+  opacity: 1;
+  color: #ff6b6b;
+}
+
 /* ── Today summary (green wins banner) ───────────────────────────────── */
 .summary-card {
   background: var(--card-dark);
