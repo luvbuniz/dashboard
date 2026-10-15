@@ -95,6 +95,7 @@
       justify-self: start; background: var(--elev); border: 1px solid var(--line);
       border-radius: 6px; color: var(--ink); padding: 8px 14px; font: inherit; cursor: pointer;
     }
+    .add-box { margin: 10px 0 0; }
     .agent-status { font-size: 12px; color: var(--copper); }
     .agent-hint { font-size: 12px; color: var(--faint); margin: 0; }
     .alex { margin: 12px 0 20px; color: var(--muted); max-width: 58ch; }
@@ -159,6 +160,20 @@
     .item.done .label { color: var(--faint); text-decoration: line-through; }
     .lane { font-size: 11px; letter-spacing: .04em; text-transform: uppercase; color: var(--faint); padding-top: 2px; }
     .item.now .lane { color: var(--copper); }
+    /* Delete button beside each task card (added at load by the script below) */
+    .card-row { display: flex; align-items: stretch; gap: 6px; }
+    .card-row > .task, .card-row > .item { flex: 1 1 auto; min-width: 0; }
+    .card-row.is-item { border-top: 1px solid var(--line); }
+    .card-row.is-item > .item { border-top: 0; }
+    .card-del {
+      flex: 0 0 44px; min-height: 44px; display: grid; place-items: center; padding: 0;
+      background: none; border: 1px solid transparent; border-radius: var(--radius);
+      color: var(--faint); font: inherit; cursor: pointer; touch-action: manipulation;
+    }
+    .card-row > .task + .card-del { background: var(--panel); border-color: var(--line); }
+    .card-del:hover, .card-del:active, .card-del:focus-visible { color: #f2a0a0; background: rgba(196,74,74,.16); }
+    .card-del:focus-visible { outline: 2px solid var(--copper); outline-offset: 2px; }
+    .card-del svg { width: 18px; height: 18px; pointer-events: none; }
     .tabbar {
       position: fixed; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: 1fr 1fr;
       background: #141312; border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom); z-index: 20;
@@ -210,6 +225,8 @@
         <section>
           <h2>Today</h2>
           <div class="tasks">
+            <button class="task" data-id="peak-bank-register" type="button"><span class="box"></span><span><span class="label">Register for Peak Bank account</span><div class="why">Open/register the Peak Bank account online.</div></span><span class="chip">bank</span></button>
+            <button class="task" data-id="etrade-register" type="button"><span class="box"></span><span><span class="label">Register for E-Trade account (if verification allows)</span><div class="why">Try signing up; stop if identity verification blocks it.</div></span><span class="chip">bank</span></button>
             <button class="task" data-id="synchrony-check-posted" type="button"><span class="box"></span><span><span class="label">Check Synchrony / City Home</span><div class="why">Log in yourself today, Oct 15. Confirm the mailed furniture-card check posted and check the current amount due before making another payment.</div></span><span class="chip" style="color: #f2a0a0; background: rgba(196,74,74,.16)">Today · Oct 15</span></button>
             <button class="task" data-id="mon-micro1" type="button"><span class="box"></span><span><span class="label">Micro1 training — 4 modules</span><div class="why">Progress saved. Started 9:46 AM. Log every session with the timer below.</div></span><span class="chip">main</span></button>
             <button class="task" data-id="mon-pickup" type="button"><span class="box"></span><span><span class="label">Pick up the kids</span><div class="why">Van call at 2:30.</div></span><span class="chip">2:30</span></button>
@@ -233,6 +250,15 @@
             <button class="task" data-id="fri-gameon" type="button"><span class="box"></span><span><span class="label">Game On's last day: pickup at 5</span><div class="why">Last day of camp.</div></span><span class="chip">Fri 5:00</span></button>
             <button class="task" data-id="sat-charlotte" type="button"><span class="box"></span><span><span class="label">Charlotte's tea party</span><div class="why">11am. Present already bought: Glaceon.</div></span><span class="chip">Sat 11:00</span></button>
           </div>
+          <details class="agent-box add-box" id="add-box">
+            <summary>＋ Add task</summary>
+            <form class="agent-form" id="add-form" autocomplete="off">
+              <label>Title <input id="add-title" name="title" required maxlength="140" placeholder="What needs doing?"></label>
+              <label>Notes (optional) <input id="add-notes" name="notes" maxlength="400"></label>
+              <label>Due date (optional) <input id="add-due" name="due" type="date"></label>
+              <div><button type="submit">Add task</button></div>
+            </form>
+          </details>
           <details class="parked" id="archive-box" style="margin-top:10px">
             <summary>Archived checks</summary>
             <ul id="archive-list"></ul>
@@ -337,6 +363,33 @@
       return n.getFullYear() + "-" + String(n.getMonth() + 1).padStart(2, "0") + "-" + String(n.getDate()).padStart(2, "0");
     };
     const day = localDay();
+
+    // ── Tasks Amy adds herself (＋ Add task) ────────────────────────────
+    // Stored in localStorage and rendered as normal .task cards before any
+    // other code reads [data-id], so check-off, archive and delete all apply.
+    const CUSTOM_KEY = "amy-board-custom-v1";
+    let customTasks = [];
+    try { const c = JSON.parse(localStorage.getItem(CUSTOM_KEY) || "[]"); if (Array.isArray(c)) customTasks = c; } catch {}
+    const saveCustom = () => { try { localStorage.setItem(CUSTOM_KEY, JSON.stringify(customTasks)); } catch {} };
+    function fmtDue(iso) {
+      const [y, m, d] = String(iso).split("-").map(Number);
+      if (!y || !m || !d) return "";
+      return "Due " + new Date(y, m - 1, d).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    }
+    function customCardEl(t) {
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "task"; b.dataset.id = t.id;
+      const box = document.createElement("span"); box.className = "box";
+      const body = document.createElement("span");
+      const lab = document.createElement("span"); lab.className = "label"; lab.textContent = t.label;
+      body.appendChild(lab);
+      if (t.why) { const w = document.createElement("div"); w.className = "why"; w.textContent = t.why; body.appendChild(w); }
+      const chip = document.createElement("span"); chip.className = "chip"; chip.textContent = t.due ? fmtDue(t.due) : "added";
+      b.append(box, body, chip);
+      return b;
+    }
+    const todayTasks = document.querySelector("#today .tasks");
+    customTasks.forEach((t) => todayTasks.appendChild(customCardEl(t)));
     const rawDone = JSON.parse(localStorage.getItem(DONE_KEY) || "null") || PRE;
     const done = new Set((Array.isArray(rawDone) ? rawDone : PRE).map(canon));
     let archive = JSON.parse(localStorage.getItem(ARCH_KEY) || "[]");
@@ -531,7 +584,7 @@
       document.querySelectorAll("[data-id]").forEach((el) => el.classList.toggle("done", done.has(canon(el.dataset.id))));
       localStorage.setItem(DONE_KEY, JSON.stringify([...done]));
     }
-    document.querySelectorAll("[data-id]").forEach((el) => {
+    function wireCheck(el) {
       el.addEventListener("click", () => {
         const id = canon(el.dataset.id);
         const lab = el.querySelector(".label");
@@ -540,9 +593,79 @@
         paintDone();
         notifyAgent({ event: "task_checked", id, label: lab ? lab.textContent.trim() : id, done: nowDone, day });
       });
-    });
+    }
+    document.querySelectorAll("[data-id]").forEach(wireCheck);
     paintDone();
     paintArchive();
+
+    // ── Delete a task card ──────────────────────────────────────────────
+    // Cards are hand-written in this file, so a delete is remembered as a
+    // tombstone {id, label} in localStorage and the card is dropped on every
+    // load. Matching on id AND label means a reused id (e.g. next week's
+    // "thu-bni" with new text) still shows up.
+    const DEL_KEY = "amy-board-deleted-v1";
+    let deleted = [];
+    try { const d = JSON.parse(localStorage.getItem(DEL_KEY) || "[]"); if (Array.isArray(d)) deleted = d; } catch {}
+    const cardLabel = (el) => { const l = el.querySelector(".label"); return l ? l.textContent.trim() : ""; };
+    const isDeleted = (id, label) => deleted.some((x) => canon(x.id) === id && (x.label || "") === label);
+    const TRASH_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg>';
+    function deleteCard(id, label) {
+      if (!confirm("Delete this task?\n\n" + (label || id))) return;
+      if (customTasks.some((t) => t.id === id)) {
+        customTasks = customTasks.filter((t) => t.id !== id);
+        saveCustom();
+      } else {
+        if (!isDeleted(id, label)) deleted.push({ id, label, at: new Date().toISOString() });
+        deleted = deleted.slice(-300);
+        try { localStorage.setItem(DEL_KEY, JSON.stringify(deleted)); } catch {}
+      }
+      document.querySelectorAll(".task[data-id], .item[data-id]").forEach((el) => {
+        if (canon(el.dataset.id) === id && cardLabel(el) === label) (el.closest(".card-row") || el).remove();
+      });
+      if (done.delete(id)) paintDone();
+      notifyAgent({ event: "task_deleted", id, label: label || id, day });
+    }
+    function addDeleteButton(el) {
+      const id = canon(el.dataset.id);
+      const label = cardLabel(el);
+      if (isDeleted(id, label)) { el.remove(); return; }
+      const row = document.createElement("div");
+      row.className = "card-row" + (el.classList.contains("item") ? " is-item" : "");
+      el.replaceWith(row);
+      row.appendChild(el);
+      const del = document.createElement("button");
+      del.type = "button";
+      del.className = "card-del";
+      del.title = "Delete task";
+      del.setAttribute("aria-label", "Delete task: " + (label || id));
+      del.innerHTML = TRASH_SVG;
+      del.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation(); // never toggles the card's check-off
+        deleteCard(id, label);
+      });
+      row.appendChild(del);
+    }
+    document.querySelectorAll(".task[data-id], .item[data-id]").forEach(addDeleteButton);
+
+    document.getElementById("add-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const titleEl = document.getElementById("add-title");
+      const label = titleEl.value.trim().slice(0, 140);
+      if (!label) { titleEl.focus(); return; }
+      const why = document.getElementById("add-notes").value.trim().slice(0, 400);
+      const due = document.getElementById("add-due").value || "";
+      const t = { id: "u-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), label, why, due, at: new Date().toISOString() };
+      customTasks.push(t);
+      saveCustom();
+      const el = customCardEl(t);
+      todayTasks.appendChild(el);
+      wireCheck(el);
+      addDeleteButton(el);
+      e.target.reset();
+      titleEl.focus();
+      notifyAgent({ event: "task_added", id: t.id, label, due, day });
+    });
 
     const LANE_KEY = "amy-board-lanes-v3";
     const DEFAULT_LANES = ["Micro1 training", "ASG interview prep", "Stackadoo", "Titan Proton", "AI Agent"];
