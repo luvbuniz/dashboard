@@ -1,1 +1,106 @@
-{"agenda":[{"time":"Tue 13 9:00am","title":"Plumber check — did he come Monday? Call if not. Master toilet must be fixed before kids come Fri"},{"time":"Tue 13 9:20am","title":"Job applications — 5/day (Elodie covers Easy Apply until Cody is back)"},{"time":"Tue 13 11:45am-1pm","title":"GSBN Bradenton networking lunch (guest) — Inner Compass Brewing, 10316 Technology Terrace. Leave ~11:15. Business casual, buy your own lunch"},{"time":"Tue 13 7:15pm","title":"Call kids — text David first"},{"time":"Wed 14 10:20am","title":"Oil change appointment"},{"time":"Wed 14 11am","title":"Bronco short posts (scheduled)"},{"time":"Wed 14 5:30pm","title":"Sarasota Business Exchange happy hour — Brio Tuscan Grille, UTC"},{"time":"Thu 15 6am","title":"Chick-fil-A Heritage Harbour opens"},{"time":"Thu 15 9:00am","title":"Plumber follow-up — is the master toilet fixed? Kids come tomorrow"},{"time":"Thu 15 5:00-5:30pm","title":"Fiona fall conference (CONFIRMED)"},{"time":"Fri 16 8am","title":"Kids home"},{"time":"Fri 16 2pm","title":"WPromote phone screen"},{"time":"Fri 16 ~10:20am","title":"Ep3 vertical — YouTube + X"},{"time":"Sat 17","title":"Ep3 horizontal — YouTube + X"},{"time":"open","title":"Stackadoo Google Play announcements — Stackadoo FB, Stackadoo X, Amy X, personal FB, personal site"},{"time":"open","title":"Wizlings: follow back indie creators on X (@wizlingstv)"},{"time":"open","title":"Call maintenance (941) 757-3352 — master toilet blocked"},{"time":"open","title":"Unique Accounting — still needs 1099-INT + PMI Henderson 1099"},{"time":"open","title":"SchoolCafe meal reapply — Fiona & Leo"},{"time":"watch","title":"Micro1 — no new Hubstaff/invite mail (leaning done)"},{"time":"watch","title":"Porkbun — wizlings.fun paid through 2027-10-03"}],"done":[],"heading":"Mon, Oct 12","kicker":"Monday · dashboard refresh","message":"GSBN lunch Tue 11:45am. Plumber check Tue 9am. Stackadoo is live on Google Play.","updated":"2026-10-12T22:30:00-04:00"}
+{
+  "heading": "Thu, Oct 15",
+  "kicker": "Thursday \u00b7 kids come home tomorrow",
+  "message": "Fiona's conference 5pm. Kids home Fri 8am. WPromote screen Fri 2pm. Order Charlotte's gift today.",
+  "updated": "2026-10-15T09:45:00-04:00",
+  "agenda": [
+    {
+      "time": "Thu 15 5:00-5:30pm",
+      "title": "Fiona fall conference (CONFIRMED) \u2014 Witt Elementary"
+    },
+    {
+      "time": "Thu 15 7:15pm",
+      "title": "Call kids \u2014 text David first"
+    },
+    {
+      "time": "Fri 16 8am",
+      "title": "Kids home"
+    },
+    {
+      "time": "Fri 16 ~10:20am",
+      "title": "Ep3 vertical \u2014 YouTube + X"
+    },
+    {
+      "time": "Fri 16 2pm",
+      "title": "WPromote phone screen (Content Engineer)"
+    },
+    {
+      "time": "Sat 17 11am-1pm",
+      "title": "Charlotte's 8th birthday tea party \u2014 EuroCrave Bakery"
+    },
+    {
+      "time": "Sat 17",
+      "title": "Ep3 horizontal \u2014 YouTube + X"
+    },
+    {
+      "time": "open",
+      "title": "Kids' shopping (Thursday)"
+    },
+    {
+      "time": "open",
+      "title": "Prepare for WPromote interview screening (Fri 2pm)"
+    },
+    {
+      "time": "open",
+      "title": "Bank transaction \u2014 do after breakfast"
+    },
+    {
+      "time": "open",
+      "title": "AAA follow-up \u2014 agent in Vegas, call back this afternoon (Moonmist + McLeod missing policy)"
+    },
+    {
+      "time": "open",
+      "title": "Order Charlotte's birthday gift \u2014 must ship by today for Sat party"
+    },
+    {
+      "time": "open",
+      "title": "Unique Accounting \u2014 still needs 1099-INT + PMI Henderson 1099"
+    },
+    {
+      "time": "open",
+      "title": "SchoolCafe meal reapply \u2014 Fiona & Leo"
+    },
+    {
+      "time": "open",
+      "title": "Wizlings: follow back indie creators on X (@wizlingstv)"
+    },
+    {
+      "time": "open",
+      "title": "Stackadoo personal site update \u2014 pending Amy's decision"
+    },
+    {
+      "time": "open",
+      "title": "AI data broker business \u2014 explore as side business (Micro1 paying $50-75k for bankrupt co data)"
+    },
+    {
+      "time": "watch",
+      "title": "Micro1 \u2014 failed test, they'll notify on Slack"
+    },
+    {
+      "time": "watch",
+      "title": "Porkbun \u2014 wizlings.fun paid through 2027-10-03"
+    }
+  ],
+  "done": [
+    {
+      "time": "Wed 14",
+      "title": "Plumber fixed master-bathroom toilet"
+    },
+    {
+      "time": "Wed 14",
+      "title": "Chromium Phase 1 \u2014 hit 15 app uploads ahead of 8pm deadline"
+    },
+    {
+      "time": "Wed 14",
+      "title": "Sarasota Business Exchange happy hour \u2014 attended (one-time, not returning)"
+    },
+    {
+      "time": "Wed 14",
+      "title": "Acer laptop shipped to repair (FedEx)"
+    },
+    {
+      "time": "Wed 14",
+      "title": "Kilo $1,000 credits post published on @EmergentContent"
+    }
+  ]
+}
