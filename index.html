@@ -97,7 +97,9 @@
     .cnote { display:flex; gap:6px; margin-top:8px; }
     .cnote textarea { flex:1; min-height:44px; resize:vertical; background:var(--bg); color:var(--ink); border:1px solid var(--line); border-radius:8px; font:inherit; font-size:15px; padding:8px 10px; }
     .cnote button { background:var(--elev); color:var(--ink); border:1px solid var(--line); border-radius:8px; font:inherit; font-size:14px; padding:0 12px; cursor:pointer; }
+    .cnote input { flex:1; min-height:44px; background:var(--bg); color:var(--ink); border:1px solid var(--line); border-radius:8px; font:inherit; font-size:16px; padding:8px 10px; }
     .nstat { font-size:12px; color:var(--faint); margin-top:3px; min-height:1em; }
+    .nstat.err { color:var(--copper); font-size:14px; }
     details.scripts { margin-top:12px; } details.scripts > summary { cursor:pointer; font-weight:600; padding:10px 0; font-size:16px; }
     details.sblk { border-top:1px solid var(--line); } details.sblk > summary { cursor:pointer; padding:12px 0; font-weight:600; font-size:16px; }
     .stext { font-size:18px; line-height:1.55; padding-bottom:12px; } .stext p { margin:0 0 12px; } .stext ul { margin:0 0 12px; padding-left:20px; } .stext li { margin:0 0 8px; }
@@ -216,7 +218,8 @@
   }
 
 
-  // ── Call leads (data.calls + data.callScripts). Outcomes reuse the tick sync: id "call:<callId>:<outcome>".
+  // ── Call leads (encrypted calls.enc.json: calls + callScripts). Outcomes reuse the tick sync: id "call:<callId>:<outcome>".
+  // Calls are NOT in data.json; they come encrypted from calls.enc.json (see loadCalls).
   // Notes ride the same /tick endpoint: id "call:<callId>:note", label = note text (≤200 chars, worker clips).
   const NOTES_KEY = "amy-day-v2-callnotes";
   let notes = load(NOTES_KEY, {});
@@ -263,12 +266,50 @@
       '<div class="nstat" id="nstat-' + esc(c.id) + '">' + esc(nstat) + '</div>' +
       '</div>';
   }
+  // Encrypted payload: ./calls.enc.json = AES-GCM(PBKDF2-SHA256(passcode)) of {calls, callScripts, updated}.
+  const PASS_KEY = "amy-day-v2-callpass", ENC_KEY = "amy-day-v2-callsenc";
+  let secret = null, lockState = "loading", lockErr = "";
+  const unb64 = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
+  async function decryptCalls(enc, pass) {
+    const base = await crypto.subtle.importKey("raw", new TextEncoder().encode(pass), "PBKDF2", false, ["deriveKey"]);
+    const key = await crypto.subtle.deriveKey({ name: "PBKDF2", salt: unb64(enc.salt), iterations: enc.iter, hash: "SHA-256" },
+      base, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
+    const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv: unb64(enc.iv) }, key, unb64(enc.ct));
+    return JSON.parse(new TextDecoder().decode(pt));
+  }
+  let lastCt = null;
+  async function loadCalls(passTry) {
+    let enc = null;
+    try { const r = await fetch("./calls.enc.json?t=" + Date.now(), { cache: "no-store" }); if (r.ok) { enc = await r.json(); save(ENC_KEY, enc); } } catch {}
+    if (!enc) enc = load(ENC_KEY, null);
+    if (!enc || !enc.ct) { secret = null; lockState = "none"; renderCalls(); return; }
+    const pass = passTry ?? localStorage.getItem(PASS_KEY);
+    if (!pass) { lockState = "locked"; lockErr = ""; renderCalls(); return; }
+    if (!passTry && secret && lastCt === enc.ct) return; // unchanged, already unlocked
+    try {
+      secret = await decryptCalls(enc, pass); lastCt = enc.ct;
+      localStorage.setItem(PASS_KEY, pass); lockState = "ok"; lockErr = "";
+    } catch {
+      secret = null; lockState = "locked";
+      lockErr = passTry ? "That passcode didn't work. Check the spelling and try again (dashes included)." : "The saved passcode no longer works. Please enter the new one.";
+      if (!passTry) localStorage.removeItem(PASS_KEY);
+    }
+    renderCalls();
+  }
   function renderCalls() {
     const box = document.getElementById("calls");
     if (!box || !data) return;
-    const calls = Array.isArray(data.calls) ? data.calls.filter((c) => c && c.id) : [];
+    if (lockState === "loading") { box.innerHTML = '<div class="empty">Loading calls…</div>'; return; }
+    if (lockState === "locked") {
+      box.innerHTML = '<form class="unlock" id="unlock"><div class="cline">🔒 Your call list is private. Enter your passcode once on this device.</div>' +
+        '<div class="cnote"><input id="callpass" type="password" autocomplete="current-password" autocapitalize="none" spellcheck="false" placeholder="Passcode" />' +
+        '<button type="submit">Unlock</button></div><div class="nstat err">' + esc(lockErr) + '</div></form>';
+      return;
+    }
+    const sd = secret || {};
+    const calls = Array.isArray(sd.calls) ? sd.calls.filter((c) => c && c.id) : [];
     calls.forEach((c) => { labels["call:" + c.id] = { label: [c.name, c.company].filter(Boolean).join(" · "), lane: "calls" }; });
-    const sc = data.callScripts && typeof data.callScripts === "object" ? Object.entries(data.callScripts) : [];
+    const sc = sd.callScripts && typeof sd.callScripts === "object" ? Object.entries(sd.callScripts) : [];
     const openScripts = document.querySelector("details.scripts")?.open;
     const openBlocks = [...document.querySelectorAll("details.sblk[open]")].map((d) => d.dataset.k);
     let h = "";
@@ -284,8 +325,21 @@
     }
     if (sc.length) h += '<details class="scripts"' + (openScripts ? " open" : "") + '><summary>📜 Scripts</summary>' +
       sc.map(([k, b]) => '<details class="sblk" data-k="' + esc(k) + '"' + (openBlocks.includes(k) ? " open" : "") + '><summary>' + esc((b && b.title) || k) + '</summary><div class="stext">' + md(b && (b.text ?? b.body)) + "</div></details>").join("") + "</details>";
+    if (lockState === "ok") h += '<button type="button" class="linkbtn" id="calllock">🔒 Lock call list on this device</button>';
     box.innerHTML = h;
   }
+  document.addEventListener("submit", (e) => {
+    if (e.target.id !== "unlock") return;
+    e.preventDefault();
+    const v = document.getElementById("callpass").value.trim();
+    if (!v) return;
+    lockErr = ""; const st = e.target.querySelector(".nstat"); if (st) st.textContent = "Unlocking…";
+    loadCalls(v);
+  });
+  document.addEventListener("click", (e) => {
+    if (e.target.id !== "calllock") return;
+    localStorage.removeItem(PASS_KEY); secret = null; lastCt = null; lockState = "locked"; lockErr = ""; renderCalls();
+  });
   function pushTick(id, label, now) {
     outbox.push({ id, label, lane: "calls", done: now, device });
     save(OUT_KEY, outbox); flush();
@@ -363,7 +417,7 @@
       const r = await fetch("./data.json?t=" + Date.now(), { cache: "no-store" });
       data = await r.json(); save("amy-day-v2-data", data);
     } catch { data = load("amy-day-v2-data", null); }
-    render(); pullState();
+    render(); pullState(); loadCalls();
   }
   boot();
   document.addEventListener("visibilitychange", () => { if (!document.hidden) { boot(); } });
