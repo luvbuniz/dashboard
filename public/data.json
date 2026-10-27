@@ -1,0 +1,74 @@
+{
+  "updated": "2026-10-27T09:30:00-04:00",
+  "heading": "Tuesday, Oct 27",
+  "kicker": "Project week · no kids",
+  "message": "Three things matter today. Everything else can wait in its lane.",
+  "frog": { "id": "d1027-facebook", "text": "Unlock Facebook and change the password", "note": "Unlock link is in Meta's email from yesterday. About 10 minutes, then treat yourself 🎂" },
+  "today": [
+    { "id": "d1027-calls", "text": "Lead calls from the printed list, 9 AM–2 PM", "note": "First call 9:00 · Robert Greenbaum, Karalis PC (Pottstown Medical)" },
+    { "id": "d1027-send-marc-matt", "text": "Send Marc's draft, then Matt's (Buni Gmail drafts)", "note": "Marc first (CDX questionnaire), then Matt at Techcyte" },
+    { "id": "d1027-facebook", "text": "Unlock Facebook and change the password", "note": "Today's frog 🐸" }
+  ],
+  "quick": [
+    "Strip the bed, sheets in the washer (10 min)",
+    "Clear the kitchen counters (15 min)",
+    "Open the WillSub+ timesheet and check it (10 min)",
+    "Text Heidi which day works, confirm $50/hr (5 min)",
+    "Bathroom sink and mirror (10 min)",
+    "Look over the Google and DocuSign sign-in alerts (10 min)",
+    "Pick up the floor in one room (15 min)",
+    "Sheets to the dryer, remake the bed (10 min)",
+    "Call A&B about the oil leak and thermostat (5 min)"
+  ],
+  "lanes": [
+    { "id": "data", "emoji": "💼", "name": "AI data business", "tag": "TOP PRIORITY", "tasks": [
+      { "id": "d1027-calls", "text": "Lead calls, 9 AM–2 PM", "note": "First 60 have times; the rest roll to tomorrow" },
+      { "id": "d1027-send-marc", "text": "Send Marc's draft (CDX questionnaire PDF)" },
+      { "id": "d1027-send-matt", "text": "Send Matt's draft (Techcyte)" },
+      { "id": "mercor-link", "text": "Send Riley your Mercor referral link", "note": "Two emails are waiting for it" },
+      { "id": "d1027-lead-emails", "text": "OK today's 40 lead emails with Riley" }
+    ], "waiting": ["Lawyer cost replies: Peal, Moore, Lapointe, Silberstein"] },
+    { "id": "admin", "emoji": "🗂️", "name": "Admin", "tasks": [
+      { "id": "d1027-facebook", "text": "Unlock Facebook and change the password" },
+      { "id": "signin-alerts", "text": "Confirm the Google and DocuSign sign-in alerts were you" },
+      { "id": "van-oil-thermo", "text": "Van: check in with A&B on the oil leak and thermostat", "note": "AC is fixed ✓ · leak and thermostat still in progress" },
+      { "id": "heidi-tutoring", "text": "Answer Heidi about tutoring", "note": "Which day, and confirm $50/hr" },
+      { "id": "aaa-assuresign", "text": "Sign the AAA AssureSign documents" },
+      { "id": "csaa-mypolicy", "text": "Set up CSAA MyPolicy" }
+    ], "facts": [
+      "Trash: out after 5 PM, Sun–Thu, 2 bags max. Fines start this week.",
+      "Dentist: Thu 10/29, 11 AM, Family Smile Dentistry (stays as booked)"
+    ] },
+    { "id": "sub", "emoji": "🍎", "name": "Sub-teaching", "tasks": [
+      { "id": "willsub-timesheet", "text": "Check the WillSub+ / ESS timesheet", "note": "About 10 minutes" }
+    ] },
+    { "id": "training", "emoji": "🧠", "name": "AI training", "tasks": [
+      { "id": "micro1-assessment", "text": "Finish the micro1 assessment steps", "note": "Interview is done; application still shows incomplete" }
+    ] },
+    { "id": "home", "emoji": "🏡", "name": "Home", "tag": "10–15 MIN CHUNKS", "tasks": [
+      { "id": "home-strip-bed", "text": "Strip the bed, sheets in the washer", "note": "10 min" },
+      { "id": "home-counters", "text": "Clear the kitchen counters", "note": "15 min" },
+      { "id": "home-dishes", "text": "Dishes, one load", "note": "15 min" },
+      { "id": "home-dryer-bed", "text": "Sheets to the dryer, remake the bed", "note": "10 min" },
+      { "id": "home-bathroom", "text": "Bathroom sink and mirror", "note": "10 min" },
+      { "id": "home-floor", "text": "Pick up the floor in one room", "note": "15 min" },
+      { "id": "home-vacuum", "text": "Vacuum the living room", "note": "15 min" },
+      { "id": "d1027-trash", "text": "Trash out after 5 PM, 2 bags max", "note": "10 min" }
+    ] },
+    { "id": "kids", "emoji": "👧", "name": "Kids & calendar", "tasks": [], "facts": [
+      "Wed 10/28 · Witt early release, pickup 1:50 PM",
+      "Thu 10/29 · Picture retakes",
+      "Fri 10/30 · Fall Parade",
+      "Thu 11/19 · Fiona's school meeting, 10 AM (on the calendar)"
+    ] }
+  ],
+  "week": [
+    { "day": "Tue", "date": "10/27", "items": ["Lead calls 9–2", "Van check-in with A&B"], "trash": true, "today": true },
+    { "day": "Wed", "date": "10/28", "items": ["Witt early release 1:50"], "trash": true },
+    { "day": "Thu", "date": "10/29", "items": ["Dentist 11 AM", "Picture retakes"], "trash": true },
+    { "day": "Fri", "date": "10/30", "items": ["Fall Parade"] },
+    { "day": "Sat", "date": "10/31", "items": ["Halloween 🎃"] },
+    { "day": "Sun", "date": "11/1", "items": ["Pick up at Wawa's 10 AM"], "trash": true }
+  ],
+  "elodie": []
+}

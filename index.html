@@ -6,873 +6,226 @@
   <meta name="theme-color" content="#0c0b0a" />
   <title>Amy — today</title>
   <link rel="icon" href="./favicon.ico" sizes="any" />
-  <link rel="icon" href="./favicon.svg?v=7" type="image/svg+xml" />
-  <link rel="icon" href="./icons/crescent-192.png?v=7" type="image/png" sizes="192x192" />
-  <link rel="apple-touch-icon" href="./icons/crescent-180.png?v=7" />
-  <link rel="manifest" href="./manifest.webmanifest?v=7" />
+  <link rel="icon" href="./favicon.svg?v=8" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="./icons/crescent-180.png?v=8" />
+  <link rel="manifest" href="./manifest.webmanifest?v=8" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,500&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg: #0c0b0a;
-      --panel: #141312;
-      --elev: #1b1a18;
-      --ink: #f3efe8;
-      --muted: #9a948a;
-      --faint: #6d675e;
-      --line: rgba(243, 239, 232, 0.08);
-      --copper: #c4784a;
-      --copper-dim: rgba(196, 120, 74, 0.16);
-      --ok: #7ea36b;
-      --radius: 10px;
-      --tabh: calc(56px + env(safe-area-inset-bottom));
+      --bg:#0c0b0a; --panel:#151413; --elev:#1d1b19; --ink:#f3efe8; --muted:#a39c91; --faint:#756e64;
+      --line:rgba(243,239,232,.09); --copper:#d0834f; --copper-dim:rgba(208,131,79,.16); --ok:#86ad72; --r:12px;
     }
-    * { box-sizing: border-box; }
-    html, body { margin: 0; background: var(--bg); color: var(--ink); }
-    body {
-      font-family: "IBM Plex Sans", system-ui, sans-serif;
-      font-size: 16px;
-      line-height: 1.45;
-      min-height: 100dvh;
+    @media (prefers-color-scheme: light) {
+      :root { --bg:#faf7f2; --panel:#ffffff; --elev:#f3eee6; --ink:#24201c; --muted:#6c645a; --faint:#958c80;
+        --line:rgba(36,32,28,.1); --copper:#b5652f; --copper-dim:rgba(181,101,47,.12); --ok:#4f8a3c; }
     }
-    .wrap { max-width: 1080px; margin: 0 auto; padding: 20px 16px var(--tabh); }
-    header { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
-    .kicker { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--faint); font-weight: 500; }
-    h1 { font-family: Newsreader, Georgia, serif; font-size: clamp(26px, 4vw, 34px); font-weight: 500; letter-spacing: -0.03em; margin: 4px 0 0; line-height: 1.05; }
-    .clock { font-variant-numeric: tabular-nums; color: var(--muted); font-size: 13px; }
-    .sync {
-      display: block; margin-left: auto; margin-top: 6px;
-      background: var(--elev); color: var(--ink); border: 1px solid var(--line);
-      border-radius: 6px; font: inherit; font-size: 12px; padding: 6px 10px; min-height: 36px; cursor: pointer;
-    }
-    .sync-note { margin-top: 6px; font-size: 11px; color: var(--copper); text-align: right; min-height: 1.2em; }
-    .quote {
-      font-family: Newsreader, Georgia, serif;
-      font-size: 18px;
-      line-height: 1.35;
-      margin: 18px 0 6px;
-      color: var(--ink);
-      max-width: 28em;
-    }
-    .quote cite {
-      display: block;
-      font-family: "IBM Plex Sans", system-ui, sans-serif;
-      font-size: 12px;
-      font-style: normal;
-      color: var(--faint);
-      margin-top: 6px;
-      letter-spacing: 0.04em;
-    }
-    /* AGENT-SYNC: revolving quote fade + archive + agent link */
-    #quote { transition: opacity .45s ease; }
-    #quote.quote-fade { opacity: 0; }
-    .quote-next {
-      background: none; border: 1px solid var(--line); border-radius: 6px;
-      color: var(--faint); font-size: 12px; padding: 3px 10px; margin: 2px 0 0 2px;
-      cursor: pointer;
-    }
-    .quote-next:hover { color: var(--ink); border-color: var(--faint); }
-    #archive-list { list-style: none; margin: 8px 0 0; padding: 0; font-size: 13px; color: var(--muted); }
-    #archive-list li { padding: 7px 0; border-top: 1px solid var(--line); line-height: 1.7; }
-    #archive-list strong { color: var(--ink); font-weight: 600; }
-    .arch-btn {
-      background: none; border: 1px solid var(--line); border-radius: 5px;
-      color: var(--muted); font-size: 11px; padding: 1px 7px; margin-left: 6px; cursor: pointer;
-    }
-    .arch-btn:hover { color: var(--ink); border-color: var(--faint); }
-    .agent-box {
-      margin: 0 0 20px; border: 1px dashed var(--line);
-      border-radius: var(--radius); padding: 10px 14px;
-    }
-    .agent-box summary { cursor: pointer; font-size: 13px; color: var(--muted); }
-    .agent-form { display: grid; gap: 8px; margin-top: 10px; font-size: 13px; color: var(--muted); }
-    .agent-form input {
-      background: var(--elev); border: 1px solid var(--line); border-radius: 6px;
-      color: var(--ink); padding: 8px 10px; font: inherit; width: 100%;
-    }
-    .agent-form button {
-      justify-self: start; background: var(--elev); border: 1px solid var(--line);
-      border-radius: 6px; color: var(--ink); padding: 8px 14px; font: inherit; cursor: pointer;
-    }
-    .add-box { margin: 10px 0 0; }
-    .agent-status { font-size: 12px; color: var(--copper); }
-    .agent-hint { font-size: 12px; color: var(--faint); margin: 0; }
-    .alex { margin: 12px 0 20px; color: var(--muted); max-width: 58ch; }
-    .alex strong { color: var(--ink); font-weight: 500; }
-    h2 { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--faint); font-weight: 600; margin: 0 0 10px; }
-    section { margin-bottom: 22px; }
-    .panel, .board { border: 1px solid var(--line); background: var(--panel); border-radius: var(--radius); overflow: hidden; }
-    .head { padding: 12px 16px 8px; display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
-    .when { font-family: Newsreader, Georgia, serif; font-size: 20px; font-weight: 500; }
-    .meta { color: var(--faint); font-size: 13px; }
-    .appt, .log-row { display: grid; grid-template-columns: 76px 1fr; gap: 4px 12px; padding: 10px 16px; border-top: 1px solid var(--line); font-size: 14px; }
-    .appt time, .log-row time { font-variant-numeric: tabular-nums; color: var(--muted); font-size: 13px; }
-    .tasks { display: flex; flex-direction: column; gap: 8px; }
-    .task {
-      display: grid; grid-template-columns: 28px 1fr auto; gap: 10px; align-items: start;
-      min-height: 48px; padding: 12px; width: 100%;
-      background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
-      color: inherit; font: inherit; text-align: left; cursor: pointer;
-    }
-    .task:hover, .task:active { background: var(--elev); }
-    .task.done .label { color: var(--faint); text-decoration: line-through; }
-    .box { width: 22px; height: 22px; margin-top: 1px; border: 1.5px solid var(--muted); border-radius: 5px; flex-shrink: 0; }
-    .task.done .box, .item.done .box { background: var(--ok); border-color: var(--ok); }
-    .label { font-weight: 500; }
-    .why { color: var(--faint); font-size: 13px; margin-top: 3px; font-weight: 400; }
-    .chip { font-size: 11px; color: var(--copper); background: var(--copper-dim); border-radius: 999px; padding: 5px 8px; white-space: nowrap; }
-    .timer {
-      display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
-      padding: 10px 12px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
-    }
-    .timer .t { font-variant-numeric: tabular-nums; font-size: 22px; letter-spacing: -0.03em; min-width: 4.2ch; }
-    .timer select, .timer button, .timer input {
-      background: var(--elev); color: var(--ink); border: 1px solid var(--line);
-      border-radius: 6px; font: inherit; font-size: 13px; padding: 8px 10px; min-height: 40px;
-    }
-    .timer input { min-width: 0; }
-    .timer input.mins { width: 72px; }
-    .timer input.name { flex: 1 1 140px; }
-    .timer button.kind { color: var(--faint); }
-    .timer button.kind.on { color: var(--ink); background: var(--copper-dim); }
-    .timer button.primary { background: var(--copper-dim); color: var(--copper); border-color: transparent; }
-    .log-row { grid-template-columns: 76px 1fr auto; align-items: center; }
-    .log-row .x { background: none; border: 0; color: var(--faint); font: inherit; cursor: pointer; padding: 4px 6px; min-height: 32px; }
-    .log { color: var(--muted); font-size: 13px; }
-    .log.empty { padding: 10px 16px; color: var(--faint); }
-    .week { display: flex; gap: 8px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    .day { flex: 0 0 96px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 10px; min-height: 88px; }
-    .day.on { border-color: rgba(196,120,74,.45); background: var(--copper-dim); }
-    .day .d { font-size: 11px; color: var(--faint); text-transform: uppercase; letter-spacing: .06em; }
-    .day .n { font-family: Newsreader, Georgia, serif; font-size: 18px; margin: 2px 0 6px; }
-    .day .m { font-size: 12px; color: var(--muted); line-height: 1.35; }
-    .boards-grid { display: grid; gap: 12px; }
-    .board-h { padding: 12px 16px 6px; display: flex; justify-content: space-between; gap: 8px; }
-    .board-h .name { font-weight: 600; font-size: 15px; }
-    .board-h .src { color: var(--faint); font-size: 12px; }
-    .item {
-      display: grid; grid-template-columns: 22px 1fr auto; gap: 10px; align-items: start;
-      width: 100%; padding: 11px 16px; border-top: 1px solid var(--line);
-      background: none; border-left: 0; border-right: 0; border-bottom: 0;
-      color: inherit; font: inherit; text-align: left; cursor: pointer;
-    }
-    .item.done .label { color: var(--faint); text-decoration: line-through; }
-    .lane { font-size: 11px; letter-spacing: .04em; text-transform: uppercase; color: var(--faint); padding-top: 2px; }
-    .item.now .lane { color: var(--copper); }
-    /* Delete button beside each task card (added at load by the script below) */
-    .card-row { display: flex; align-items: stretch; gap: 6px; }
-    .card-row > .task, .card-row > .item { flex: 1 1 auto; min-width: 0; }
-    .card-row.is-item { border-top: 1px solid var(--line); }
-    .card-row.is-item > .item { border-top: 0; }
-    .card-del {
-      flex: 0 0 44px; min-height: 44px; display: grid; place-items: center; padding: 0;
-      background: none; border: 1px solid transparent; border-radius: var(--radius);
-      color: var(--faint); font: inherit; cursor: pointer; touch-action: manipulation;
-    }
-    .card-row > .task + .card-del { background: var(--panel); border-color: var(--line); }
-    .card-del:hover, .card-del:active, .card-del:focus-visible { color: #f2a0a0; background: rgba(196,74,74,.16); }
-    .card-del:focus-visible { outline: 2px solid var(--copper); outline-offset: 2px; }
-    .card-del svg { width: 18px; height: 18px; pointer-events: none; }
-    .tabbar {
-      position: fixed; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: 1fr 1fr;
-      background: #141312; border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom); z-index: 20;
-    }
-    .tabbar button { background: none; border: 0; color: var(--faint); font: inherit; font-weight: 500; min-height: 48px; cursor: pointer; }
-    .tabbar button.on { color: var(--ink); }
-    [data-tab="today"] #boards, [data-tab="boards"] #today { display: none; }
-    footer { margin-top: 24px; color: var(--faint); font-size: 12px; }
-    @media (min-width: 900px) {
-      .wrap { padding: 28px 24px 40px; }
-      .layout { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: 32px; align-items: start; }
-      [data-tab] #today, [data-tab] #boards { display: block !important; }
-      .tabbar { display: none; }
-      .week { display: grid; grid-template-columns: repeat(7, 1fr); overflow: visible; }
-      .day { flex: none; min-width: 0; }
+    * { box-sizing:border-box; }
+    html,body { margin:0; background:var(--bg); color:var(--ink); }
+    body { font-family:"IBM Plex Sans",system-ui,-apple-system,sans-serif; font-size:16px; line-height:1.45; -webkit-text-size-adjust:100%; }
+    .wrap { max-width:1080px; margin:0 auto; padding:20px 16px calc(40px + env(safe-area-inset-bottom)); }
+    header { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:flex-end; gap:8px 16px; }
+    .kicker { font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--faint); font-weight:500; }
+    h1 { font-family:Newsreader,Georgia,serif; font-weight:500; font-size:clamp(28px,5vw,38px); letter-spacing:-.02em; margin:2px 0 0; line-height:1.05; }
+    .sync { font-size:12px; color:var(--muted); display:flex; align-items:center; gap:6px; }
+    .dot { width:8px; height:8px; border-radius:50%; background:var(--faint); flex:none; }
+    .dot.ok { background:var(--ok); } .dot.wait { background:var(--copper); }
+    .msg { color:var(--muted); margin:10px 0 0; }
+    .quote { font-family:Newsreader,Georgia,serif; font-size:19px; line-height:1.35; margin:20px 0 4px; max-width:34em; transition:opacity .4s; }
+    .quote cite { display:block; font-family:"IBM Plex Sans",sans-serif; font-style:normal; font-size:12px; color:var(--faint); margin-top:4px; }
+    .linkbtn { background:none; border:0; color:var(--faint); font:inherit; font-size:12px; padding:6px 0; cursor:pointer; }
+    h2 { font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); font-weight:600; margin:28px 0 10px; }
+    .card { background:var(--panel); border:1px solid var(--line); border-radius:var(--r); padding:14px 16px; }
+    .frog { border-color:var(--copper); background:linear-gradient(0deg,var(--copper-dim),var(--copper-dim)),var(--panel); margin-top:18px; }
+    .frog .kicker { color:var(--copper); }
+    .task { display:flex; gap:12px; align-items:flex-start; width:100%; text-align:left; background:none; border:0; color:inherit; font:inherit; padding:9px 0; cursor:pointer; -webkit-tap-highlight-color:transparent; min-height:44px; }
+    .task + .task { border-top:1px solid var(--line); }
+    .box { flex:none; width:24px; height:24px; border-radius:7px; border:2px solid var(--faint); margin-top:1px; display:grid; place-items:center; transition:all .15s; }
+    .task.done .box { background:var(--ok); border-color:var(--ok); }
+    .task.done .box::after { content:""; width:6px; height:11px; border:solid #fff; border-width:0 2.5px 2.5px 0; transform:rotate(45deg) translate(-1px,-1px); }
+    .task.done .label { text-decoration:line-through; color:var(--faint); }
+    .label { display:block; }
+    .note { display:block; font-size:13px; color:var(--muted); margin-top:2px; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:12px; }
+    .lane-h { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:6px; margin-bottom:4px; }
+    .lane-h b { font-weight:600; }
+    .tag { font-size:10px; letter-spacing:.08em; font-weight:600; color:var(--copper); background:var(--copper-dim); padding:3px 7px; border-radius:99px; }
+    .count { font-size:12px; color:var(--faint); }
+    .facts { margin:8px 0 0; padding:0; list-style:none; font-size:14px; color:var(--muted); }
+    .facts li { padding:5px 0; border-top:1px dashed var(--line); }
+    .facts li.wait::before { content:"⏳ "; }
+    .stuck { display:flex; flex-wrap:wrap; gap:10px 14px; align-items:center; }
+    .btn { background:var(--copper); color:#fff; border:0; border-radius:999px; font:inherit; font-weight:500; padding:10px 18px; min-height:44px; cursor:pointer; }
+    .pick { flex:1 1 240px; }
+    .week { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:8px; }
+    .day { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:10px 12px; font-size:14px; }
+    .day.today { border-color:var(--copper); }
+    .day .d { font-weight:600; } .day .dt { color:var(--faint); font-size:12px; margin-left:4px; }
+    .day ul { margin:6px 0 0; padding-left:16px; } .day .trash { color:var(--faint); font-size:12px; margin-top:6px; }
+    .empty { color:var(--muted); font-size:14px; }
+    footer { margin-top:32px; font-size:11px; color:var(--faint); }
+    @media print {
+      :root { --bg:#fff; --panel:#fff; --ink:#000; --muted:#333; --faint:#555; --line:#ccc; --copper:#000; --copper-dim:transparent; }
+      .linkbtn,.stuck-sec,.sync,footer { display:none !important; }
+      .wrap { padding:0; max-width:none; } .card,.day { break-inside:avoid; } .task { min-height:0; padding:5px 0; }
+      .box { border-color:#000; } .grid { grid-template-columns:1fr 1fr; }
     }
   </style>
 </head>
-<body data-tab="today">
-  <div class="wrap">
-    <header>
-      <div>
-        <div class="kicker" id="kicker">Sunday · sleep in, then workspace</div>
-        <h1 id="heading">Sep 13</h1>
-      </div>
-      <div>
-        <div class="clock" id="clock"></div>
-        <button type="button" class="sync" id="sync">Sync</button>
-        <div class="sync-note" id="sync-status"></div>
-      </div>
-    </header>
-    <blockquote class="quote" id="quote">Fortune favors the prepared mind.<cite>Louis Pasteur</cite></blockquote>
-    <button id="quote-next" class="quote-next" type="button" title="Another quote">↻ another quote</button>
-    <p class="alex" id="alex">Alex: Micro1 training day. Four modules, progress saved, started 9:46. Van call at 2:30, then kids.</p>
-    <!-- AGENT-SYNC: per-device agent link. Token lives only in this browser's localStorage. -->
-    <details class="agent-box" id="agent-box">
-      <summary>⚙️ Agent link <span id="agent-status" class="agent-status"></span></summary>
-      <div class="agent-form">
-        <label>GitHub token (fine-grained PAT, Contents: read &amp; write on the events repo)
-          <input type="password" id="agent-token" autocomplete="off" placeholder="github_pat_…"></label>
-        <label>Events repo <input id="agent-repo" value="luvbuniz/buni" autocomplete="off"></label>
-        <div><button id="agent-save" type="button">Save link</button></div>
-        <p class="agent-hint">When linked, every check-off is sent to your agent's event log within seconds, and the agent can check things off for you from its side. Stored only in this browser, never in the page.</p>
-      </div>
-    </details>
+<body>
+<div class="wrap">
+  <header>
+    <div><div class="kicker" id="kicker"></div><h1 id="heading">Amy — today</h1></div>
+    <div class="sync" title="Where your ticks are saved"><span class="dot" id="sdot"></span><span id="stext">Loading…</span></div>
+  </header>
+  <p class="msg" id="msg"></p>
+  <blockquote class="quote" id="quote"></blockquote>
+  <button class="linkbtn" id="quote-next" type="button">↻ another quote</button>
 
-    <div class="layout">
-      <div id="today">
-        <section>
-          <h2>Today</h2>
-          <div class="tasks">
-            <button class="task" data-id="peak-bank-register" type="button"><span class="box"></span><span><span class="label">Register for Peak Bank account</span><div class="why">Open/register the Peak Bank account online.</div></span><span class="chip">bank</span></button>
-            <button class="task" data-id="etrade-register" type="button"><span class="box"></span><span><span class="label">Register for E-Trade account (if verification allows)</span><div class="why">Try signing up; stop if identity verification blocks it.</div></span><span class="chip">bank</span></button>
-            <button class="task" data-id="synchrony-check-posted" type="button"><span class="box"></span><span><span class="label">Check Synchrony / City Home</span><div class="why">Log in yourself today, Oct 15. Confirm the mailed furniture-card check posted and check the current amount due before making another payment.</div></span><span class="chip" style="color: #f2a0a0; background: rgba(196,74,74,.16)">Today · Oct 15</span></button>
-            <button class="task" data-id="mon-micro1" type="button"><span class="box"></span><span><span class="label">Micro1 training — 4 modules</span><div class="why">Progress saved. Started 9:46 AM. Log every session with the timer below.</div></span><span class="chip">main</span></button>
-            <button class="task" data-id="mon-pickup" type="button"><span class="box"></span><span><span class="label">Pick up the kids</span><div class="why">Van call at 2:30.</div></span><span class="chip">2:30</span></button>
-            <button class="task done" data-id="tue-acer" type="button"><span class="box"></span><span><span class="label">Acer case 1839767US opened</span><div class="why">Warranty case opened. Serial NXJK5AA001523034DD3400 · SNID 52301353334. FedEx label within 1 business day.</div></span><span class="chip">done</span></button>
-            <button class="task" data-id="acer-backup" type="button"><span class="box"></span><span><span class="label">Back up the laptop</span><div class="why">Documents, Desktop, Downloads, project files to Drive or USB. Remove Windows password/PIN. Sign out.</div></span><span class="chip">Acer</span></button>
-            <button class="task" data-id="acer-supplies" type="button"><span class="box"></span><span><span class="label">Buy packing supplies for Acer ship</span><div class="why">Box with 3–5 inches of padding room, bubble wrap and tape — or have FedEx Office pack it.</div></span><span class="chip">Acer</span></button>
-            <button class="task" data-id="acer-ship" type="button"><span class="box"></span><span><span class="label">Ship Acer with FedEx label</span><div class="why">Print label from Acer email (within 1 business day). Ship without the charger. Keep the receipt. Case 1839767US. Status: https://service.acer.com/status/en/US</div></span><span class="chip">Acer</span></button>
-            <button class="task" data-id="tue-aaa" type="button"><span class="box"></span><span><span class="label">Call AAA: are Moonmist + McLeod still insured?</span><div class="why">Confirm both policies are still active.</div></span><span class="chip">9:30</span></button>
-            <button class="task" data-id="tue-gsbn" type="button"><span class="box"></span><span><span class="label">GSBN lunch: arrive by 11:45</span><div class="why">Inner Compass Brewing, 10316 Technology Terrace. Cards + 30-second intro (say automations).</div></span><span class="chip">11:45</span></button>
-            <button class="task" data-id="tue-upwork-pw" type="button"><span class="box"></span><span><span class="label">Add Upwork password</span><div class="why">Upwork Settings &gt; Password &amp; Security, so Quinn can send a secure login and update your profile + Bid 1 ($700). Do it at the cafe.</div></span><span class="chip">cafe</span></button>
-            <button class="task" data-id="tue-profitsolv" type="button"><span class="box"></span><span><span class="label">Finish ProfitSolv on the laptop</span><div class="why">Use the Paycom email link from Oct 11.</div></span><span class="chip">Tue</span></button>
-            <button class="task" data-id="tue-jonathan-checkin" type="button"><span class="box"></span><span><span class="label">Decide: check in with Jonathan (Pontoon/Sanofi)?</span><div class="why">If yes, Riley drafts it.</div></span><span class="chip">Tue</span></button>
-            <button class="task" data-id="tue-reed-ashford" type="button"><span class="box"></span><span><span class="label">Decide: Reed resends Ashford roof notice to Key PM?</span><div class="why">Yes or no for Reed.</div></span><span class="chip">Tue</span></button>
-            <button class="task" data-id="tue-donna-1099" type="button"><span class="box"></span><span><span class="label">Note: Donna (PMI 1099) hasn't replied</span><div class="why">No action needed yet.</div></span><span class="chip">Tue</span></button>
-            <button class="task" data-id="wed-bni-register" type="button"><span class="box"></span><span><span class="label">Register for BNI</span><div class="why">Meeting is Thu at 8:15am.</div></span><span class="chip">Wed</span></button>
-            <button class="task" data-id="wed-handshake" type="button"><span class="box"></span><span><span class="label">Handshake Chromium: upload 15+ apps</span><div class="why">Due by 8pm ET. 15–19 apps pays $1,500. You can add more through Oct 18.</div></span><span class="chip">Wed 8pm</span></button>
-            <button class="task" data-id="thu-bni" type="button"><span class="box"></span><span><span class="label">BNI meeting</span><div class="why">8:15am.</div></span><span class="chip">Thu 8:15</span></button>
-            <button class="task" data-id="thu-flex-rent" type="button"><span class="box"></span><span><span class="label">Flex rent $824 comes out</span><div class="why">Check the balance covers it.</div></span><span class="chip">Thu</span></button>
-            <button class="task" data-id="thu-fiona-conf" type="button"><span class="box"></span><span><span class="label">Fiona's conference</span><div class="why">5pm.</div></span><span class="chip">Thu 5:00</span></button>
-            <button class="task" data-id="fri-wpromote" type="button"><span class="box"></span><span><span class="label">Wpromote screen</span><div class="why">2pm with Cindy Zhang.</div></span><span class="chip">Fri 2:00</span></button>
-            <button class="task" data-id="fri-gameon" type="button"><span class="box"></span><span><span class="label">Game On's last day: pickup at 5</span><div class="why">Last day of camp.</div></span><span class="chip">Fri 5:00</span></button>
-            <button class="task" data-id="sat-charlotte" type="button"><span class="box"></span><span><span class="label">Charlotte's tea party</span><div class="why">11am. Present already bought: Glaceon.</div></span><span class="chip">Sat 11:00</span></button>
-          </div>
-          <details class="agent-box add-box" id="add-box">
-            <summary>＋ Add task</summary>
-            <form class="agent-form" id="add-form" autocomplete="off">
-              <label>Title <input id="add-title" name="title" required maxlength="140" placeholder="What needs doing?"></label>
-              <label>Notes (optional) <input id="add-notes" name="notes" maxlength="400"></label>
-              <label>Due date (optional) <input id="add-due" name="due" type="date"></label>
-              <div><button type="submit">Add task</button></div>
-            </form>
-          </details>
-          <details class="parked" id="archive-box" style="margin-top:10px">
-            <summary>Archived checks</summary>
-            <ul id="archive-list"></ul>
-          </details>
-        </section>
+  <div class="card frog" id="frog"></div>
 
-        <section>
-          <h2>Remote timer</h2>
-          <div class="timer">
-            <button type="button" class="kind on" id="kind-free">Free</button>
-            <button type="button" class="kind" id="kind-pomo">Pomodoro</button>
-            <select id="lane" aria-label="What you’re on"></select>
-            <input class="name" id="newname" type="text" placeholder="Add a name" maxlength="40" />
-            <button type="button" id="addname">Add</button>
-            <span class="t" id="tleft">0:00</span>
-            <button type="button" class="primary" id="tog">Start</button>
-            <button type="button" id="mode">25 / 5</button>
-            <input class="mins" id="manual" type="number" min="1" max="600" inputmode="numeric" placeholder="min" aria-label="Minutes" />
-            <button type="button" id="logbtn">Log</button>
-          </div>
-          <div class="panel" style="margin-top:8px">
-            <div class="head"><span class="meta">Time log — today</span><span class="meta" id="tot">0m</span></div>
-            <div class="log" id="log"></div>
-          </div>
-        </section>
+  <h2>Today's top 3</h2>
+  <div class="card" id="today"></div>
 
-        <section>
-          <h2>Coming up</h2>
-          <div class="panel">
-            <div class="head"><span class="when">Mon–Fri</span><span class="meta" id="agenda-note">Micro1 week · Kids Week</span></div>
-            <div id="agenda">
-            <div class="appt"><time>Mon</time><div>Micro1 training day 1 · 4 modules · van call 2:30</div></div>
-            <div class="appt"><time>Tue</time><div>Micro1 work block 8:20–2:30 · GSBN lunch 11:45–1:00</div></div>
-            <div class="appt"><time>Wed</time><div>Micro1 work block · kids observation 4:00–5:00</div></div>
-            <div class="appt"><time>Thu</time><div>Micro1 to 4:30 · noon Fresh Market sushi · Game On pickup 5:00</div></div>
-            <div class="appt"><time>Fri</time><div>Free after 8:15 drop-off</div></div>
-            </div>
-          </div>
-        </section>
+  <section class="stuck-sec">
+    <h2>Stuck? Do one small thing</h2>
+    <div class="card stuck"><button class="btn" id="pickbtn" type="button">Pick one for me</button><span class="pick" id="pick">Just one 10-minute thing. You can stop after.</span></div>
+  </section>
 
-        <section>
-          <h2>Week</h2>
-          <div class="week" id="weekstrip"></div>
-        </section>
-      </div>
+  <h2>Lanes</h2>
+  <div class="grid" id="lanes"></div>
 
-      <div id="boards">
-        <h2>Boards</h2>
-        <div class="boards-grid">
-          <article class="board">
-            <div class="board-h"><span class="name">Buni · AI automations</span><span class="src">Hark · Oct 12</span></div>
-            <button class="item now" data-id="b-buni-offer" type="button"><span class="box"></span><span><span class="label">Pick a starter offer + price floor</span><div class="why">Hark needs it before drafting packages. Free tiers only until you say otherwise.</div></span><span class="lane">now</span></button>
-            <button class="item now" data-id="b-buni-gsbn" type="button"><span class="box"></span><span><span class="label">GSBN lunch — recon</span><div class="why">Tue 11:45, Inner Compass Brewing. Grab cards; Hark drafts follow-ups within 48h for your OK.</div></span><span class="lane">next</span></button>
-            <button class="item" data-id="b-buni-sbx" type="button"><span class="box"></span><span><span class="label">Sarasota Business Exchange — recon</span><div class="why">Wed 5:30, Brio, UTC. Same drill: cards in, drafts out.</div></span><span class="lane">next</span></button>
-            <button class="item" data-id="b-buni-riley" type="button"><span class="box"></span><span><span class="label">Status note to Riley</span><div class="why">Draft ready from hark.buni@agentmail.to — waiting on your OK.</div></span><span class="lane">waiting</span></button>
-            <button class="item" data-id="b-buni-site" type="button"><span class="box"></span><span><span class="label">bunillc.com refresh</span><div class="why">Less hokey: lead with outcomes, local hook, fixed-price starters. Nothing changes without your OK.</div></span><span class="lane">later</span></button>
-            <button class="item" data-id="b-buni-kit" type="button"><span class="box"></span><span><span class="label">Plumber discovery kit</span><div class="why">Questions for leads, booking, quotes, invoicing, reviews. Ready for your first fit call.</div></span><span class="lane">ref</span></button>
-          </article>
-          <article class="board">
-            <div class="board-h"><span class="name">Stackadoo</span><span class="src">now</span></div>
-            <button class="item now" data-id="b-credits" type="button"><span class="box"></span><span><span class="label">Usage credits running</span></span><span class="lane">now</span></button>
-          </article>
-          <article class="board">
-            <div class="board-h"><span class="name">Income</span><span class="src">gigs + support</span></div>
-            <button class="item" data-id="b-agent" type="button"><span class="box"></span><span><span class="label">AI Agent Power User</span><div class="why">Mariana starred. Not Sunday — after workspace if leftover energy.</div></span><span class="lane">waiting</span></button>
-            <button class="item now" data-id="b-titan" type="button"><span class="box"></span><span><span class="label">Titan Proton — contract is live</span><div class="why">Mail Sat night. Next: 2FA on expert Gmail + Slack. Weekday block, not Sunday sleep-in.</div></span><span class="lane">next</span></button>
-            <button class="item" data-id="b-cs" type="button"><span class="box"></span><span><span class="label">David child support $1,800</span><div class="why">1st of the month. Not today.</div></span><span class="lane">1st</span></button>
-          </article>
-          <article class="board">
-            <div class="board-h"><span class="name">Rentals</span><span class="src">AppFolio · Sep 10</span></div>
-            <button class="item" data-id="b-own" type="button"><span class="box"></span><span><span class="label">Sep owner pay $5,367.76 sent</span><div class="why">La Sombra $604 · McLeod $2,248 · Smoke Ranch $922 · Moonmist $1,593</div></span><span class="lane">ref</span></button>
-            <button class="item" data-id="b-mcleod" type="button"><span class="box"></span><span><span class="label">McLeod water tank estimate</span><div class="why">$386 — not the cabin filter. Separate property.</div></span><span class="lane">watch</span></button>
-          </article>
-          
-          <article class="board">
-            <div class="board-h"><span class="name">Personal</span><span class="src">home</span></div>
-            <button class="item done" data-id="b-plan" type="button"><span class="box"></span><span><span class="label">Parenting agreement signed</span><div class="why">Decree not in yet. Not the same thing.</div></span><span class="lane">done</span></button>
-            <button class="item done" data-id="b-schoolcafe" type="button"><span class="box"></span><span><span class="label">SchoolCafé loaded</span><div class="why">$57.25 Sat 8:42pm. Fiona $20 · Leo $35. Allow 24h to post.</div></span><span class="lane">done</span></button>
-            <button class="item" data-id="b-law" type="button"><span class="box"></span><span><span class="label">McDermott July invoice</span><div class="why">Clio: no additional payment due.</div></span><span class="lane">ref</span></button>
-            <button class="item" data-id="b-ins" type="button"><span class="box"></span><span><span class="label">Own car insurance</span><div class="why">After the decree. Not now.</div></span><span class="lane">later</span></button>
-          </article>
-        </div>
-      </div>
-    </div>
-    <footer>https://luvbuniz.github.io/dashboard/feed.json</footer>
-  </div>
-  <nav class="tabbar">
-    <button type="button" data-go="today" class="on">Today</button>
-    <button type="button" data-go="boards">Boards</button>
-  </nav>
-  <script>
-    const DONE_KEY = "amy-board-done-v3";
-    const LOG_KEY = "amy-board-log-v3";
-    const DAY_KEY = "amy-board-day";
-    const ARCH_KEY = "amy-board-archive-v1";
-    const PRE = ["b-clear", "b-filter", "b-plan", "b-own", "b-schoolcafe", "tue-acer"];
-    const STANDING = new Set(["b-clear", "b-filter", "b-plan", "b-own", "b-cs", "b-ins", "b-mcleod", "b-septic", "b-pipes", "b-asg", "b-titan", "b-schoolcafe", "b-law", "b-buni-site", "b-buni-kit"]);
-    const ALIAS = { stack: "b-credits", agent: "b-agent" };
-    const canon = (id) => ALIAS[id] || id;
-    const localDay = () => {
-      const n = new Date();
-      return n.getFullYear() + "-" + String(n.getMonth() + 1).padStart(2, "0") + "-" + String(n.getDate()).padStart(2, "0");
-    };
-    const day = localDay();
+  <h2>This week</h2>
+  <div class="week" id="week"></div>
 
-    // ── Tasks Amy adds herself (＋ Add task) ────────────────────────────
-    // Stored in localStorage and rendered as normal .task cards before any
-    // other code reads [data-id], so check-off, archive and delete all apply.
-    const CUSTOM_KEY = "amy-board-custom-v1";
-    let customTasks = [];
-    try { const c = JSON.parse(localStorage.getItem(CUSTOM_KEY) || "[]"); if (Array.isArray(c)) customTasks = c; } catch {}
-    const saveCustom = () => { try { localStorage.setItem(CUSTOM_KEY, JSON.stringify(customTasks)); } catch {} };
-    function fmtDue(iso) {
-      const [y, m, d] = String(iso).split("-").map(Number);
-      if (!y || !m || !d) return "";
-      return "Due " + new Date(y, m - 1, d).toLocaleDateString("en-US", { month: "short", day: "numeric" });
-    }
-    function customCardEl(t) {
-      const b = document.createElement("button");
-      b.type = "button"; b.className = "task"; b.dataset.id = t.id;
-      const box = document.createElement("span"); box.className = "box";
-      const body = document.createElement("span");
-      const lab = document.createElement("span"); lab.className = "label"; lab.textContent = t.label;
-      body.appendChild(lab);
-      if (t.why) { const w = document.createElement("div"); w.className = "why"; w.textContent = t.why; body.appendChild(w); }
-      const chip = document.createElement("span"); chip.className = "chip"; chip.textContent = t.due ? fmtDue(t.due) : "added";
-      b.append(box, body, chip);
-      return b;
-    }
-    const todayTasks = document.querySelector("#today .tasks");
-    customTasks.forEach((t) => todayTasks.appendChild(customCardEl(t)));
-    const rawDone = JSON.parse(localStorage.getItem(DONE_KEY) || "null") || PRE;
-    const done = new Set((Array.isArray(rawDone) ? rawDone : PRE).map(canon));
-    let archive = JSON.parse(localStorage.getItem(ARCH_KEY) || "[]");
-    // AGENT-SYNC: archived checks auto-delete after 30 days
-    {
-      const ago = new Date(); ago.setDate(ago.getDate() - 30);
-      const agoKey = ago.getFullYear() + "-" + String(ago.getMonth() + 1).padStart(2, "0") + "-" + String(ago.getDate()).padStart(2, "0");
-      const kept = archive.filter((a) => a.day >= agoKey);
-      if (kept.length !== archive.length) {
-        archive = kept;
-        localStorage.setItem(ARCH_KEY, JSON.stringify(archive));
-      }
-    }
-    const lastDay = localStorage.getItem(DAY_KEY);
-    if (lastDay && lastDay !== day) {
-      const labels = {};
-      document.querySelectorAll("[data-id]").forEach((el) => {
-        const lab = el.querySelector(".label");
-        if (lab) labels[canon(el.dataset.id)] = lab.textContent.trim();
-      });
-      const snap = [...done].filter((id) => !STANDING.has(id));
-      if (snap.length) {
-        archive.push({ day: lastDay, done: snap.map((id) => ({ id, text: labels[id] || id })) });
-        archive = archive.slice(-60);
-      }
-      snap.forEach((id) => done.delete(id));
-      localStorage.setItem(ARCH_KEY, JSON.stringify(archive));
-      localStorage.setItem(DONE_KEY, JSON.stringify([...done]));
-    }
-    localStorage.setItem(DAY_KEY, day);
-    let logs = JSON.parse(localStorage.getItem(LOG_KEY) || "[]").filter((x) => x.day === day);
+  <h2>Inbox from Elodie</h2>
+  <div class="card" id="elodie"></div>
 
-    // ── AGENT-SYNC: two-way check-off sync ──────────────────────────────
-    // Outbound: every tap appends {event:"task_checked", id, label, done} to
-    // elodie/events/YYYY-MM-DD.jsonl in the events repo via the GitHub API,
-    // so the agent sees check-offs within minutes. Inbound: the agent's
-    // feed.json "done" array marks tasks done remotely (see pullFeed).
-    const escHtml = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-    const AGENT_CONN_KEY = "amy-agent-conn-v1";
-    const agentConn = (() => {
-      try { return JSON.parse(localStorage.getItem(AGENT_CONN_KEY)) || {}; }
-      catch { return {}; }
-    })();
-    function paintAgentStatus(extra) {
-      const el = document.getElementById("agent-status");
-      if (!el) return;
-      const where = agentConn.token ? `linked → ${agentConn.repo || "luvbuniz/buni"}` : "not linked — check-offs stay on this device";
-      el.textContent = extra && agentConn.token ? `${where} · ${extra}` : where;
-    }
-    const b64e = (s) => btoa(String.fromCharCode(...new TextEncoder().encode(s)));
-    const b64d = (b) => new TextDecoder().decode(Uint8Array.from(atob(String(b).replace(/\s/g, "")), (c) => c.charCodeAt(0)));
-    let agentQueue = Promise.resolve();
-    function notifyAgent(evt) {
-      if (!agentConn.token) return;
-      agentQueue = agentQueue.then(() => sendAgentEvent(evt)).catch(() => {});
-    }
-    async function sendAgentEvent(evt) {
-      const repo = agentConn.repo || "luvbuniz/buni";
-      const url = `https://api.github.com/repos/${repo}/contents/elodie/events/${localDay()}.jsonl`;
-      const headers = { Authorization: `Bearer ${agentConn.token}`, Accept: "application/vnd.github+json" };
-      const line = JSON.stringify({ ...evt, at: new Date().toISOString() }) + "\n";
-      let sha, existing = "";
-      try {
-        const r = await fetch(url, { headers });
-        if (r.ok) { const m = await r.json(); sha = m.sha; existing = b64d(m.content || ""); }
-        else if (r.status !== 404) { paintAgentStatus("send failed (" + r.status + ")"); return; }
-      } catch { paintAgentStatus("send failed (network)"); return; }
-      try {
-        const r = await fetch(url, {
-          method: "PUT",
-          headers: { ...headers, "Content-Type": "application/json" },
-          body: JSON.stringify({ message: "dashboard check-off events", content: b64e(existing + line), ...(sha ? { sha } : {}) }),
-        });
-        paintAgentStatus(r.ok ? "sent ✓ " + new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) : "send failed (" + r.status + ")");
-      } catch { paintAgentStatus("send failed (network)"); }
-    }
+  <footer id="foot"></footer>
+</div>
+<script>
+(() => {
+  const API = "https://amy-dashboard-ticks.sullivanamy75.workers.dev";
+  const DONE_KEY = "amy-day-v2-done", OUT_KEY = "amy-day-v2-outbox";
+  const QUOTES = [ { t: "How we spend our days is, of course, how we spend our lives.", by: "Annie Dillard" },{ t: "Start where you are. Use what you have. Do what you can.", by: "Arthur Ashe" },{ t: "You do not rise to the level of your goals. You fall to the level of your systems.", by: "James Clear" },{ t: "It always seems impossible until it's done.", by: "Nelson Mandela" },{ t: "The best way out is always through.", by: "Robert Frost" },{ t: "You can do anything, but not everything.", by: "David Allen" },{ t: "Focus on being productive instead of busy.", by: "Tim Ferriss" },{ t: "Action isn't just the effect of motivation; it's also the cause of it.", by: "Mark Manson" },{ t: "Nothing is so fatiguing as the eternal hanging on of an uncompleted task.", by: "William James" },{ t: "Just five minutes. You're allowed to quit after five minutes. (You won't.)", by: "the Frog" },{ t: "Well done is better than well said.", by: "Benjamin Franklin" },{ t: "Success is the sum of small efforts, repeated day in and day out.", by: "Robert Collier" },{ t: "Finish each day and be done with it. You have done what you could.", by: "Ralph Waldo Emerson" },{ t: "Tomorrow is always fresh, with no mistakes in it.", by: "L. M. Montgomery" },{ t: "Don't count the days; make the days count.", by: "Muhammad Ali" },{ t: "Momentum or it dies. Small daily touches count.", by: "house rule" },{ t: "Receipts beat vibes.", by: "house motto" } ];
+  const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+  const load = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } };
+  const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
+  const device = /iPhone|iPad/.test(navigator.userAgent) ? "iPhone" : /Android/.test(navigator.userAgent) ? "Android" : /Mac/.test(navigator.userAgent) ? "Mac" : "browser";
 
-    function paintArchive() {
-      const ul = document.getElementById("archive-list");
-      if (!ul) return;
-      if (!archive.length) { ul.innerHTML = "<li>Nothing archived yet.</li>"; return; }
-      ul.innerHTML = archive.slice().reverse().slice(0, 31).map((a) =>
-        `<li><strong>${escHtml(a.day)}</strong> — ${(a.done || []).map((x) =>
-          `<span>${escHtml(x.text || x.id)}<button type="button" class="arch-btn" data-arch="restore" data-day="${escHtml(a.day)}" data-id="${escHtml(x.id)}" title="Put back on today's board">↩</button><button type="button" class="arch-btn" data-arch="del" data-day="${escHtml(a.day)}" data-id="${escHtml(x.id)}" title="Delete forever">×</button></span>`
-        ).join("; ")}</li>`
-      ).join("");
-    }
-    document.getElementById("archive-list").addEventListener("click", (e) => {
-      const b = e.target.closest("[data-arch]");
-      if (!b) return;
-      const entry = archive.find((a) => a.day === b.dataset.day);
-      if (!entry) return;
-      entry.done = (entry.done || []).filter((x) => x.id !== b.dataset.id);
-      if (!entry.done.length) archive = archive.filter((a) => a !== entry);
-      if (b.dataset.arch === "restore") { done.delete(canon(b.dataset.id)); paintDone(); }
-      localStorage.setItem(ARCH_KEY, JSON.stringify(archive));
-      paintArchive();
-    });
+  let data = null;
+  let done = load(DONE_KEY, {});
+  let outbox = load(OUT_KEY, []);
+  const labels = {};
 
-    // ── AGENT-SYNC: revolving quotes ────────────────────────────────────
-    // A new quote every 20 minutes (fade transition); the ↻ button deals
-    // another on demand. A quote set by the agent in feed.json always wins.
-    const QUOTES = [
-      { t: "How we spend our days is, of course, how we spend our lives.", by: "Annie Dillard" },
-      { t: "Start where you are. Use what you have. Do what you can.", by: "Arthur Ashe" },
-      { t: "You do not rise to the level of your goals. You fall to the level of your systems.", by: "James Clear" },
-      { t: "Done is better than perfect.", by: "" },
-      { t: "It always seems impossible until it's done.", by: "Nelson Mandela" },
-      { t: "The best way out is always through.", by: "Robert Frost" },
-      { t: "You can do anything, but not everything.", by: "David Allen" },
-      { t: "Focus on being productive instead of busy.", by: "Tim Ferriss" },
-      { t: "Action isn't just the effect of motivation; it's also the cause of it.", by: "Mark Manson" },
-      { t: "Nothing is so fatiguing as the eternal hanging on of an uncompleted task.", by: "William James" },
-      { t: "Just five minutes. You're allowed to quit after five minutes. (You won't.)", by: "the Frog" },
-      { t: "Well done is better than well said.", by: "Benjamin Franklin" },
-      { t: "Success is the sum of small efforts, repeated day in and day out.", by: "Robert Collier" },
-      { t: "Finish each day and be done with it. You have done what you could.", by: "Ralph Waldo Emerson" },
-      { t: "Tomorrow is always fresh, with no mistakes in it.", by: "L. M. Montgomery" },
-      { t: "Don't count the days; make the days count.", by: "Muhammad Ali" },
-      { t: "Momentum or it dies. Small daily touches count.", by: "house rule" },
-      { t: "Receipts beat vibes.", by: "house motto" },
-    ];
-    let quoteIdx = Math.floor(Date.now() / 1200000) % QUOTES.length;
-    let feedQuote = null;
-    function paintQuote() {
-      const q = document.getElementById("quote");
-      if (!q) return;
-      const item = feedQuote || QUOTES[quoteIdx % QUOTES.length];
-      q.classList.add("quote-fade");
-      setTimeout(() => {
-        q.innerHTML = `\u201C${escHtml(item.t)}\u201D` + (item.by ? `<cite>\u2014 ${escHtml(item.by)}</cite>` : "");
-        q.classList.remove("quote-fade");
-      }, 480);
-    }
-    setInterval(() => { if (!feedQuote) { quoteIdx++; paintQuote(); } }, 1200000);
-    document.getElementById("quote-next").addEventListener("click", () => {
-      feedQuote = null; quoteIdx++; paintQuote();
-    });
-    paintQuote();
+  function setSync(state, text) {
+    document.getElementById("sdot").className = "dot " + (state || "");
+    document.getElementById("stext").textContent = text;
+  }
 
-    // agent settings wiring
-    document.getElementById("agent-repo").value = agentConn.repo || "luvbuniz/buni";
-    document.getElementById("agent-save").addEventListener("click", () => {
-      agentConn.token = document.getElementById("agent-token").value.trim();
-      agentConn.repo = document.getElementById("agent-repo").value.trim() || "luvbuniz/buni";
-      document.getElementById("agent-token").value = "";
-      try { localStorage.setItem(AGENT_CONN_KEY, JSON.stringify(agentConn)); } catch {}
-      paintAgentStatus(agentConn.token ? "link saved" : "link cleared");
-    });
-    paintAgentStatus();
+  // quotes
+  let qi = Math.floor(Date.now() / 1200000) % QUOTES.length;
+  function paintQuote() {
+    const q = document.getElementById("quote"), it = QUOTES[qi % QUOTES.length];
+    q.style.opacity = 0;
+    setTimeout(() => { q.innerHTML = esc(it.t) + "<cite>" + esc(it.by) + "</cite>"; q.style.opacity = 1; }, 200);
+  }
+  document.getElementById("quote-next").onclick = () => { qi++; paintQuote(); };
+  setInterval(() => { qi++; paintQuote(); }, 1200000);
+  paintQuote();
 
-    const TZ = "America/New_York";
-    const clockOpts = { timeZone: TZ, hour: "numeric", minute: "2-digit" };
-    const fmtClock = (iso) => iso ? new Date(iso).toLocaleTimeString("en-US", clockOpts) : "";
-    const clock = document.getElementById("clock");
-    const tick = () => { clock.textContent = new Date().toLocaleTimeString("en-US", clockOpts); };
-    tick(); setInterval(tick, 15000);
+  const taskHtml = (t, lane) => {
+    labels[t.id] = { label: t.text, lane };
+    return '<button type="button" class="task' + (done[t.id] ? " done" : "") + '" data-id="' + esc(t.id) + '">' +
+      '<span class="box"></span><span><span class="label">' + esc(t.text) + '</span>' +
+      (t.note ? '<span class="note">' + esc(t.note) + '</span>' : "") + '</span></button>';
+  };
 
-    // Week strip: always the real current week (Mon-Sun, Eastern), never stale.
-    (function paintWeek() {
-      const el = document.getElementById("weekstrip");
-      if (!el) return;
-      const memos = {
-        "2026-09-21": "Micro1 day 1 \u00b7 4 modules",
-        "2026-09-22": "Micro1 8:20\u20132:30",
-        "2026-09-23": "kids observation 4:00 (Julie Smith)",
-        "2026-09-24": "Micro1 to 4:30 \u00b7 sushi noon",
-        "2026-09-25": "Free after 8:15 drop-off"
-      };
-      const pad = (n) => String(n).padStart(2, "0");
-      const nowNY = new Date(new Date().toLocaleString("en-US", { timeZone: TZ }));
-      const isoOf = (d) => d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
-      const todayIso = isoOf(nowNY);
-      const monday = new Date(nowNY);
-      monday.setDate(nowNY.getDate() - ((nowNY.getDay() + 6) % 7));
-      const names = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-      let html = "";
-      for (let i = 0; i < 7; i++) {
-        const d = new Date(monday);
-        d.setDate(monday.getDate() + i);
-        const iso = isoOf(d);
-        const isToday = iso === todayIso;
-        const memo = (memos[iso] || "").replace(/</g, "");
-        html += '<div class="day' + (isToday ? " on" : "") + '"><div class="d">' + names[i] +
-          (isToday ? " \u00b7 today" : "") + '</div><div class="n">' + d.getDate() +
-          '</div><div class="m">' + memo + "</div></div>";
-      }
-      el.innerHTML = html;
-    })();
+  function render() {
+    if (!data) return;
+    document.getElementById("kicker").textContent = data.kicker || "";
+    document.getElementById("heading").textContent = data.heading || "Amy — today";
+    document.getElementById("msg").textContent = data.message || "";
+    const f = data.frog;
+    document.getElementById("frog").innerHTML = f ? '<div class="kicker">🐸 Today\'s frog · eat it first</div>' + taskHtml(f, "frog") : "";
+    document.getElementById("frog").style.display = f ? "" : "none";
+    document.getElementById("today").innerHTML = (data.today || []).map((t) => taskHtml(t, "today")).join("");
+    document.getElementById("lanes").innerHTML = (data.lanes || []).map((l) => {
+      const n = l.tasks.length, d = l.tasks.filter((t) => done[t.id]).length;
+      return '<div class="card"><div class="lane-h"><b>' + esc(l.emoji + " " + l.name) + '</b>' +
+        (l.tag ? '<span class="tag">' + esc(l.tag) + '</span>' : "") +
+        (n ? '<span class="count">' + d + " of " + n + " done</span>" : "") + '</div>' +
+        l.tasks.map((t) => taskHtml(t, l.id)).join("") +
+        (((l.waiting || []).length + (l.facts || []).length) ? '<ul class="facts">' +
+          (l.waiting || []).map((w) => '<li class="wait">' + esc(w) + "</li>").join("") +
+          (l.facts || []).map((w) => "<li>" + esc(w) + "</li>").join("") + "</ul>" : "") + "</div>";
+    }).join("");
+    document.getElementById("week").innerHTML = (data.week || []).map((d) =>
+      '<div class="day' + (d.today ? " today" : "") + '"><span class="d">' + esc(d.day) + '</span><span class="dt">' + esc(d.date) + "</span>" +
+      "<ul>" + d.items.map((i) => "<li>" + esc(i) + "</li>").join("") + "</ul>" +
+      (d.trash ? '<div class="trash">🗑️ trash night, after 5</div>' : "") + "</div>").join("");
+    const el = data.elodie || [];
+    document.getElementById("elodie").innerHTML = el.length ? el.map((t) => taskHtml(t, "elodie")).join("")
+      : '<div class="empty">Nothing from Elodie yet. When she emails her task list, Riley adds the tasks here and you can tick them like the rest.</div>';
+    document.getElementById("foot").textContent = "Updated " + new Date(data.updated).toLocaleString([], { weekday: "short", hour: "numeric", minute: "2-digit" }) + " · ticks save on this device and sync to Riley";
+  }
 
-    function paintDone() {
-      document.querySelectorAll("[data-id]").forEach((el) => el.classList.toggle("done", done.has(canon(el.dataset.id))));
-      localStorage.setItem(DONE_KEY, JSON.stringify([...done]));
-    }
-    function wireCheck(el) {
-      el.addEventListener("click", () => {
-        const id = canon(el.dataset.id);
-        const lab = el.querySelector(".label");
-        const nowDone = !done.has(id);
-        if (nowDone) done.add(id); else done.delete(id);
-        paintDone();
-        notifyAgent({ event: "task_checked", id, label: lab ? lab.textContent.trim() : id, done: nowDone, day });
-      });
-    }
-    document.querySelectorAll("[data-id]").forEach(wireCheck);
-    paintDone();
-    paintArchive();
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest(".task"); if (!b) return;
+    const id = b.dataset.id, now = !done[id];
+    if (now) done[id] = new Date().toISOString(); else delete done[id];
+    save(DONE_KEY, done);
+    const meta = labels[id] || {};
+    outbox.push({ id, label: meta.label || id, lane: meta.lane || "", done: now, device });
+    save(OUT_KEY, outbox);
+    render(); flush();
+  });
 
-    // ── Delete a task card ──────────────────────────────────────────────
-    // Cards are hand-written in this file, so a delete is remembered as a
-    // tombstone {id, label} in localStorage and the card is dropped on every
-    // load. Matching on id AND label means a reused id (e.g. next week's
-    // "thu-bni" with new text) still shows up.
-    const DEL_KEY = "amy-board-deleted-v1";
-    let deleted = [];
-    try { const d = JSON.parse(localStorage.getItem(DEL_KEY) || "[]"); if (Array.isArray(d)) deleted = d; } catch {}
-    const cardLabel = (el) => { const l = el.querySelector(".label"); return l ? l.textContent.trim() : ""; };
-    const isDeleted = (id, label) => deleted.some((x) => canon(x.id) === id && (x.label || "") === label);
-    const TRASH_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg>';
-    function deleteCard(id, label) {
-      if (!confirm("Delete this task?\n\n" + (label || id))) return;
-      if (customTasks.some((t) => t.id === id)) {
-        customTasks = customTasks.filter((t) => t.id !== id);
-        saveCustom();
-      } else {
-        if (!isDeleted(id, label)) deleted.push({ id, label, at: new Date().toISOString() });
-        deleted = deleted.slice(-300);
-        try { localStorage.setItem(DEL_KEY, JSON.stringify(deleted)); } catch {}
-      }
-      document.querySelectorAll(".task[data-id], .item[data-id]").forEach((el) => {
-        if (canon(el.dataset.id) === id && cardLabel(el) === label) (el.closest(".card-row") || el).remove();
-      });
-      if (done.delete(id)) paintDone();
-      notifyAgent({ event: "task_deleted", id, label: label || id, day });
-    }
-    function addDeleteButton(el) {
-      const id = canon(el.dataset.id);
-      const label = cardLabel(el);
-      if (isDeleted(id, label)) { el.remove(); return; }
-      const row = document.createElement("div");
-      row.className = "card-row" + (el.classList.contains("item") ? " is-item" : "");
-      el.replaceWith(row);
-      row.appendChild(el);
-      const del = document.createElement("button");
-      del.type = "button";
-      del.className = "card-del";
-      del.title = "Delete task";
-      del.setAttribute("aria-label", "Delete task: " + (label || id));
-      del.innerHTML = TRASH_SVG;
-      del.addEventListener("click", (e) => {
-        e.preventDefault();
-        e.stopPropagation(); // never toggles the card's check-off
-        deleteCard(id, label);
-      });
-      row.appendChild(del);
-    }
-    document.querySelectorAll(".task[data-id], .item[data-id]").forEach(addDeleteButton);
-
-    document.getElementById("add-form").addEventListener("submit", (e) => {
-      e.preventDefault();
-      const titleEl = document.getElementById("add-title");
-      const label = titleEl.value.trim().slice(0, 140);
-      if (!label) { titleEl.focus(); return; }
-      const why = document.getElementById("add-notes").value.trim().slice(0, 400);
-      const due = document.getElementById("add-due").value || "";
-      const t = { id: "u-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), label, why, due, at: new Date().toISOString() };
-      customTasks.push(t);
-      saveCustom();
-      const el = customCardEl(t);
-      todayTasks.appendChild(el);
-      wireCheck(el);
-      addDeleteButton(el);
-      e.target.reset();
-      titleEl.focus();
-      notifyAgent({ event: "task_added", id: t.id, label, due, day });
-    });
-
-    const LANE_KEY = "amy-board-lanes-v3";
-    const DEFAULT_LANES = ["Micro1 training", "ASG interview prep", "Stackadoo", "Titan Proton", "AI Agent"];
-    let lanes = JSON.parse(localStorage.getItem(LANE_KEY) || "null") || DEFAULT_LANES.slice();
-    if (!lanes.includes("ASG interview prep")) lanes.unshift("ASG interview prep");
-    if (!lanes.includes("Micro1 training")) lanes.unshift("Micro1 training");
-    const sel = document.getElementById("lane");
-    function paintLanes(pick) {
-      const cur = pick || sel.value || lanes[0];
-      sel.innerHTML = lanes.map((n) => `<option>${n.replace(/</g, "")}</option>`).join("");
-      if (lanes.includes(cur)) sel.value = cur;
-      localStorage.setItem(LANE_KEY, JSON.stringify(lanes));
-    }
-    paintLanes("Micro1 training");
-    function addLane() {
-      const n = document.getElementById("newname").value.trim().slice(0, 40);
-      if (!n) return;
-      if (!lanes.includes(n)) lanes.push(n);
-      document.getElementById("newname").value = "";
-      paintLanes(n);
-    }
-    document.getElementById("addname").addEventListener("click", addLane);
-    document.getElementById("newname").addEventListener("keydown", (e) => { if (e.key === "Enter") addLane(); });
-
-    function addLog(min, lane, startedMs) {
-      const m = Math.round(Number(min));
-      if (!m || m < 1) return;
-      const end = Date.now();
-      const start = startedMs != null ? startedMs : end - m * 60 * 1000;
-      logs.push({
-        day,
-        lane: lane || sel.value,
-        min: m,
-        at: new Date(end).toISOString(),
-        start: new Date(start).toISOString()
-      });
-      localStorage.setItem(LOG_KEY, JSON.stringify(logs));
-      paintLog();
-    }
-    function paintLog() {
-      const el = document.getElementById("log");
-      const tot = logs.reduce((s, x) => s + x.min, 0);
-      document.getElementById("tot").textContent = tot ? tot + "m" : "0m";
-      if (!logs.length) { el.innerHTML = '<div class="log empty">Nothing logged yet.</div>'; return; }
-      el.innerHTML = logs.map((x, i) => {
-        const doneAt = fmtClock(x.at);
-        const when = doneAt || (x.min + "m");
-        const body = doneAt
-          ? (x.min + "m · " + String(x.lane).replace(/</g, ""))
-          : String(x.lane).replace(/</g, "");
-        return `<div class="log-row"><time>${when}</time><div>${body}</div><button type="button" class="x" data-i="${i}" aria-label="Remove">×</button></div>`;
-      }).join("");
-      el.querySelectorAll(".x").forEach((b) => b.addEventListener("click", () => {
-        logs.splice(Number(b.dataset.i), 1);
-        localStorage.setItem(LOG_KEY, JSON.stringify(logs));
-        paintLog();
-      }));
-    }
-    paintLog();
-    document.getElementById("logbtn").addEventListener("click", () => {
-      addLog(document.getElementById("manual").value);
-      document.getElementById("manual").value = "";
-    });
-    document.getElementById("manual").addEventListener("keydown", (e) => {
-      if (e.key === "Enter") { addLog(e.target.value); e.target.value = ""; }
-    });
-
-    const WORK = 25 * 60, BRK = 5 * 60;
-    let kind = localStorage.getItem("amy-timer-kind") || "free";
-    let remain = WORK, elapsed = 0, running = false, endAt = 0, startedAt = 0, onBreak = false, timerId = null;
-    const RUN_KEY = "amy-timer-running-v1";
-    function tickFree() { elapsed = Math.floor((Date.now() - startedAt) / 1000); show(); }
-    function saveRun() {
-      try { localStorage.setItem(RUN_KEY, JSON.stringify({ startedAt, lane: sel.value, at: Date.now() })); } catch {}
-    }
-    function clearRun() { try { localStorage.removeItem(RUN_KEY); } catch {} }
-    const tleft = document.getElementById("tleft");
-    const tog = document.getElementById("tog");
-    const modeBtn = document.getElementById("mode");
-    const fmt = (s) => {
-      s = Math.max(0, s);
-      const h = Math.floor(s / 3600);
-      const m = Math.floor((s % 3600) / 60);
-      const sec = s % 60;
-      return (h ? h + ":" : "") + String(m).padStart(h ? 2 : 1, "0") + ":" + String(sec).padStart(2, "0");
-    };
-    function paintKind() {
-      document.getElementById("kind-free").classList.toggle("on", kind === "free");
-      document.getElementById("kind-pomo").classList.toggle("on", kind === "pomo");
-      modeBtn.style.display = kind === "pomo" ? "" : "none";
-      localStorage.setItem("amy-timer-kind", kind);
-      show();
-    }
-    function show() {
-      tleft.textContent = kind === "free" ? fmt(elapsed) : fmt(Math.max(0, remain));
-    }
-    function stopTimer(logIt) {
-      running = false; clearInterval(timerId); timerId = null; tog.textContent = "Start"; clearRun();
-      if (logIt) {
-        const used = kind === "free"
-          ? Math.max(1, Math.round(elapsed / 60))
-          : (!onBreak ? Math.max(1, Math.round((WORK - remain) / 60)) : 0);
-        if (used) addLog(used, sel.value, kind === "free" ? startedAt : Date.now() - used * 60 * 1000);
-      }
-    }
-    tog.addEventListener("click", () => {
-      if (running) {
-        stopTimer(true);
-        if (kind === "pomo") remain = onBreak ? BRK : WORK;
-        show();
-        return;
-      }
-      running = true; tog.textContent = "Stop";
-      if (kind === "free") {
-        startedAt = Date.now() - elapsed * 1000;
-        saveRun();
-        timerId = setInterval(tickFree, 250);
-      } else {
-        clearRun();
-        endAt = Date.now() + remain * 1000;
-        timerId = setInterval(() => {
-          remain = Math.ceil((endAt - Date.now()) / 1000);
-          if (remain <= 0) {
-            const finishingBreak = onBreak;
-            stopTimer(!finishingBreak);
-            onBreak = !finishingBreak;
-            remain = onBreak ? BRK : WORK;
-            elapsed = 0;
-            modeBtn.textContent = onBreak ? "break" : "25 / 5";
-            show();
-          } else show();
-        }, 250);
-      }
-    });
-    function setKind(next) {
-      if (kind === next) return;
-      if (running) stopTimer(true);
-      kind = next;
-      elapsed = 0; remain = WORK; onBreak = false;
-      modeBtn.textContent = "25 / 5";
-      paintKind();
-    }
-    document.getElementById("kind-free").addEventListener("click", () => setKind("free"));
-    document.getElementById("kind-pomo").addEventListener("click", () => setKind("pomo"));
-    modeBtn.addEventListener("click", () => {
-      if (running || kind !== "pomo") return;
-      onBreak = !onBreak;
-      remain = onBreak ? BRK : WORK;
-      modeBtn.textContent = onBreak ? "break" : "25 / 5";
-      show();
-    });
-    paintKind();
-    // Resume a free-mode run that was live across a reload.
+  let flushing = false;
+  async function flush() {
+    if (flushing) return; flushing = true;
     try {
-      const saved = JSON.parse(localStorage.getItem(RUN_KEY) || "null");
-      if (saved && saved.startedAt && kind === "free" && !running) {
-        startedAt = saved.startedAt;
-        if (saved.lane && lanes.includes(saved.lane)) sel.value = saved.lane;
-        running = true; tog.textContent = "Stop";
-        timerId = setInterval(tickFree, 250);
-        tickFree();
+      while (outbox.length) {
+        const r = await fetch(API + "/tick", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(outbox[0]) });
+        if (!r.ok) throw new Error("tick " + r.status);
+        outbox.shift(); save(OUT_KEY, outbox);
       }
-    } catch {}
+      setSync("ok", "Saved · Riley can see it");
+    } catch {
+      setSync("wait", "Saved on this device · will sync when online");
+    } finally { flushing = false; }
+  }
 
-    document.querySelectorAll(".tabbar button").forEach((b) => {
-      b.addEventListener("click", () => {
-        document.body.dataset.tab = b.dataset.go;
-        document.querySelectorAll(".tabbar button").forEach((x) => x.classList.toggle("on", x === b));
-      });
-    });
+  async function pullState() {
+    if (outbox.length) return flush();
+    try {
+      const r = await fetch(API + "/state", { cache: "no-store" });
+      const j = await r.json();
+      if (j && j.done && !outbox.length) { done = j.done; save(DONE_KEY, done); render(); }
+      setSync("ok", "Saved · Riley can see it");
+    } catch { setSync("wait", "Saved on this device · will sync when online"); }
+  }
 
-    const FEED = "./feed.json";
-    const esc = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
-    async function pullFeed() {
-      const status = document.getElementById("sync-status");
-      const btn = document.getElementById("sync");
-      btn.disabled = true;
-      try {
-        const res = await fetch(FEED + "?t=" + Date.now(), { cache: "no-store" });
-        if (!res.ok) throw new Error(res.status);
-        const data = await res.json();
-        if (data.quote) {
-          feedQuote = { t: data.quote, by: data.cite || "" };
-          paintQuote();
-        }
-        if (data.message) document.getElementById("alex").textContent = data.message;
-        if (data.kicker) document.getElementById("kicker").textContent = data.kicker;
-        if (data.heading) document.getElementById("heading").textContent = data.heading;
-        if (Array.isArray(data.agenda) && data.agenda.length) {
-          document.getElementById("agenda").innerHTML = data.agenda.map((a) =>
-            `<div class="appt"><time>${esc(a.time)}</time><div>${esc(a.title)}</div></div>`
-          ).join("");
-        }
-        if (Array.isArray(data.done)) {
-          for (const id of data.done) done.add(canon(id));
-          paintDone();
-        }
-        status.textContent = "Synced " + new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
-        btn.textContent = "Synced";
-        setTimeout(() => { btn.textContent = "Sync"; }, 2000);
-      } catch {
-        status.textContent = "Sync failed — feed.json not reachable yet.";
-      }
-      btn.disabled = false;
-    }
-    document.getElementById("sync").addEventListener("click", pullFeed);
-    pullFeed();
-  </script>
+  document.getElementById("pickbtn").onclick = () => {
+    const q = (data && data.quick) || [];
+    if (!q.length) return;
+    document.getElementById("pick").textContent = "Your 10-minute win: " + q[Math.floor(Math.random() * q.length)];
+    document.getElementById("pickbtn").textContent = "Pick another";
+  };
+
+  async function boot() {
+    try {
+      const r = await fetch("./data.json?t=" + Date.now(), { cache: "no-store" });
+      data = await r.json(); save("amy-day-v2-data", data);
+    } catch { data = load("amy-day-v2-data", null); }
+    render(); pullState();
+  }
+  boot();
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) { boot(); } });
+  window.addEventListener("online", flush);
+  if ("serviceWorker" in navigator) navigator.serviceWorker.register("./sw.js").catch(() => {});
+})();
+</script>
 </body>
 </html>
