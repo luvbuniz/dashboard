@@ -64,10 +64,48 @@
     .day .d { font-weight:600; } .day .dt { color:var(--faint); font-size:12px; margin-left:4px; }
     .day ul { margin:6px 0 0; padding-left:16px; } .day .trash { color:var(--faint); font-size:12px; margin-top:6px; }
     .empty { color:var(--muted); font-size:14px; }
+
+    /* Call leads */
+    .calls-top { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:6px 12px; }
+    .calls-prog { font-size:14px; color:var(--muted); } .calls-prog b { color:var(--ink); }
+    .pbar { height:6px; background:var(--elev); border-radius:99px; overflow:hidden; margin:8px 0 2px; }
+    .pbar i { display:block; height:100%; background:var(--ok); transition:width .3s; }
+    .csec { font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--copper); font-weight:600; margin:18px 0 6px; }
+    .call { border:1px solid var(--line); border-radius:10px; padding:12px; margin:8px 0; background:var(--panel); }
+    .call.urgent { border-left:4px solid var(--copper); }
+    .call.done { background:var(--elev); }
+    .call.done .cname { color:var(--muted); }
+    .call-h { display:flex; flex-wrap:wrap; gap:4px 8px; align-items:baseline; }
+    .ctime { font-weight:600; font-size:14px; color:var(--muted); }
+    .cname { font-weight:600; font-size:17px; }
+    .crole { font-size:14px; color:var(--muted); }
+    .ccomp { font-size:15px; margin-top:2px; }
+    .badges { display:flex; flex-wrap:wrap; gap:6px; margin:6px 0; }
+    .badge { font-size:11px; font-weight:600; letter-spacing:.04em; padding:3px 8px; border-radius:99px; background:var(--elev); color:var(--muted); border:1px solid var(--line); }
+    .badge.urg { background:var(--copper); color:#fff; border-color:var(--copper); }
+    .badge.ch { color:var(--copper); background:var(--copper-dim); border-color:transparent; }
+    .badge.ok { background:var(--ok); color:#fff; border-color:var(--ok); }
+    .phones { display:flex; flex-wrap:wrap; align-items:center; gap:6px 12px; margin:6px 0; }
+    .tel { display:inline-flex; align-items:center; gap:6px; background:var(--copper); color:#fff; text-decoration:none; font-weight:600; font-size:17px; padding:10px 16px; border-radius:999px; min-height:44px; }
+    .tel.sm { background:none; color:var(--copper); font-size:14px; font-weight:500; padding:6px 0; min-height:0; text-decoration:underline; }
+    .cmail { font-size:13px; color:var(--muted); word-break:break-all; }
+    .cline { font-size:14px; color:var(--muted); margin-top:4px; } .cline b { color:var(--ink); font-weight:600; }
+    .call details { font-size:14px; color:var(--muted); margin-top:4px; } .call summary { cursor:pointer; color:var(--ink); padding:4px 0; }
+    .outs { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
+    .out { background:var(--elev); color:var(--ink); border:1px solid var(--line); border-radius:999px; font:inherit; font-size:14px; padding:8px 12px; min-height:40px; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+    .out.on { background:var(--ok); border-color:var(--ok); color:#fff; font-weight:600; }
+    .cnote { display:flex; gap:6px; margin-top:8px; }
+    .cnote textarea { flex:1; min-height:44px; resize:vertical; background:var(--bg); color:var(--ink); border:1px solid var(--line); border-radius:8px; font:inherit; font-size:15px; padding:8px 10px; }
+    .cnote button { background:var(--elev); color:var(--ink); border:1px solid var(--line); border-radius:8px; font:inherit; font-size:14px; padding:0 12px; cursor:pointer; }
+    .nstat { font-size:12px; color:var(--faint); margin-top:3px; min-height:1em; }
+    details.scripts { margin-top:12px; } details.scripts > summary { cursor:pointer; font-weight:600; padding:10px 0; font-size:16px; }
+    details.sblk { border-top:1px solid var(--line); } details.sblk > summary { cursor:pointer; padding:12px 0; font-weight:600; font-size:16px; }
+    .stext { font-size:18px; line-height:1.55; padding-bottom:12px; } .stext p { margin:0 0 12px; } .stext ul { margin:0 0 12px; padding-left:20px; } .stext li { margin:0 0 8px; }
+    .stext h4 { font-size:13px; letter-spacing:.08em; text-transform:uppercase; color:var(--copper); margin:12px 0 6px; }
     footer { margin-top:32px; font-size:11px; color:var(--faint); }
     @media print {
       :root { --bg:#fff; --panel:#fff; --ink:#000; --muted:#333; --faint:#555; --line:#ccc; --copper:#000; --copper-dim:transparent; }
-      .linkbtn,.stuck-sec,.sync,footer { display:none !important; }
+      .linkbtn,.stuck-sec,.sync,footer,.outs,.cnote { display:none !important; }
       .wrap { padding:0; max-width:none; } .card,.day { break-inside:avoid; } .task { min-height:0; padding:5px 0; }
       .box { border-color:#000; } .grid { grid-template-columns:1fr 1fr; }
     }
@@ -87,6 +125,11 @@
 
   <h2>Today's top 3</h2>
   <div class="card" id="today"></div>
+
+  <section id="calls-sec">
+    <h2>Call leads</h2>
+    <div class="card" id="calls"></div>
+  </section>
 
   <section class="stuck-sec">
     <h2>Stuck? Do one small thing</h2>
@@ -151,6 +194,7 @@
     document.getElementById("frog").innerHTML = f ? '<div class="kicker">🐸 Today\'s frog · eat it first</div>' + taskHtml(f, "frog") : "";
     document.getElementById("frog").style.display = f ? "" : "none";
     document.getElementById("today").innerHTML = (data.today || []).map((t) => taskHtml(t, "today")).join("");
+    renderCalls();
     document.getElementById("lanes").innerHTML = (data.lanes || []).map((l) => {
       const n = l.tasks.length, d = l.tasks.filter((t) => done[t.id]).length;
       return '<div class="card"><div class="lane-h"><b>' + esc(l.emoji + " " + l.name) + '</b>' +
@@ -170,6 +214,106 @@
       : '<div class="empty">Nothing from Elodie yet. When she emails her task list, Riley adds the tasks here and you can tick them like the rest.</div>';
     document.getElementById("foot").textContent = "Updated " + new Date(data.updated).toLocaleString([], { weekday: "short", hour: "numeric", minute: "2-digit" }) + " · ticks save on this device and sync to Riley";
   }
+
+
+  // ── Call leads (data.calls + data.callScripts). Outcomes reuse the tick sync: id "call:<callId>:<outcome>".
+  // Notes ride the same /tick endpoint: id "call:<callId>:note", label = note text (≤200 chars, worker clips).
+  const NOTES_KEY = "amy-day-v2-callnotes";
+  let notes = load(NOTES_KEY, {});
+  const OUTCOMES = [["answered","Answered"],["voicemail","Voicemail"],["gatekeeper","Gatekeeper"],["no_answer","No answer"],["interested","Interested"],["not_interested","Not interested"],["call_back","Call back"]];
+  const telHref = (p) => "tel:" + String(p || "").replace(/[^\d+]/g, "");
+  const callDone = (c) => OUTCOMES.some(([k]) => done["call:" + c.id + ":" + k]);
+  function md(text) {
+    const inl = (t) => esc(t).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
+    let out = "", list = false;
+    for (const raw of String(text || "").split("\n")) {
+      const ln = raw.trimEnd();
+      const isLi = /^[-•] /.test(ln);
+      if (list && !isLi) { out += "</ul>"; list = false; }
+      if (!ln.trim()) continue;
+      if (/^#{1,4} /.test(ln)) out += "<h4>" + inl(ln.replace(/^#+ /, "")) + "</h4>";
+      else if (isLi) { if (!list) { out += "<ul>"; list = true; } out += "<li>" + inl(ln.slice(2)) + "</li>"; }
+      else out += "<p>" + inl(ln) + "</p>";
+    }
+    return out + (list ? "</ul>" : "");
+  }
+  function callHtml(c) {
+    const urgent = c.chapter === "Ch 7", isDone = callDone(c);
+    const who = [c.name, c.company].filter(Boolean).join(" · ");
+    const big = c.direct_phone || c.phone, small = c.direct_phone && c.phone && c.phone !== c.direct_phone ? c.phone : "";
+    const nk = "call:" + c.id + ":note";
+    const localNote = notes[c.id] || "";
+    const nstat = localNote ? "Note saved" : done[nk] ? "A note was saved on another device (Riley has it)" : "";
+    return '<div class="call' + (urgent ? " urgent" : "") + (isDone ? " done" : "") + '" data-call="' + esc(c.id) + '">' +
+      '<div class="call-h">' + (c.time ? '<span class="ctime">' + esc(c.time) + '</span>' : "") +
+        '<span class="cname">' + esc(c.name || c.company || "") + '</span>' + (c.role ? '<span class="crole">' + esc(c.role) + '</span>' : "") + '</div>' +
+      (c.company && c.name ? '<div class="ccomp">' + esc(c.company) + '</div>' : "") +
+      '<div class="badges">' + (urgent ? '<span class="badge urg">URGENT</span>' : "") +
+        (c.chapter ? '<span class="badge ch">' + esc(c.chapter) + '</span>' : "") +
+        (c.script_tag ? '<span class="badge">' + esc(c.script_tag) + '</span>' : "") +
+        (c.attempt ? '<span class="badge">' + esc(c.attempt) + '</span>' : "") +
+        (isDone ? '<span class="badge ok">✓ Called</span>' : "") + '</div>' +
+      '<div class="phones">' + (big ? '<a class="tel" href="' + esc(telHref(big)) + '">📞 ' + esc(big) + (c.direct_phone ? " · direct" : "") + '</a>' : '<span class="cline">No phone on file</span>') +
+        (small ? '<a class="tel sm" href="' + esc(telHref(small)) + '">main office ' + esc(small) + '</a>' : "") + '</div>' +
+      (c.email ? '<div class="cmail">✉ ' + esc(c.email) + '</div>' : "") +
+      (c.why ? '<div class="cline"><b>Why:</b> ' + esc(c.why) + '</div>' : "") +
+      (c.records ? '<details><summary>Records they could sell</summary>' + esc(c.records) + '</details>' : "") +
+      '<div class="outs">' + OUTCOMES.map(([k, l]) => '<button type="button" class="out' + (done["call:" + c.id + ":" + k] ? " on" : "") + '" data-call="' + esc(c.id) + '" data-out="' + k + '">' + l + '</button>').join("") + '</div>' +
+      '<div class="cnote"><textarea maxlength="200" rows="1" placeholder="Quick note (who answered, call back when…)" data-note="' + esc(c.id) + '">' + esc(localNote) + '</textarea><button type="button" data-savenote="' + esc(c.id) + '">Save</button></div>' +
+      '<div class="nstat" id="nstat-' + esc(c.id) + '">' + esc(nstat) + '</div>' +
+      '</div>';
+  }
+  function renderCalls() {
+    const box = document.getElementById("calls");
+    if (!box || !data) return;
+    const calls = Array.isArray(data.calls) ? data.calls.filter((c) => c && c.id) : [];
+    calls.forEach((c) => { labels["call:" + c.id] = { label: [c.name, c.company].filter(Boolean).join(" · "), lane: "calls" }; });
+    const sc = data.callScripts && typeof data.callScripts === "object" ? Object.entries(data.callScripts) : [];
+    const openScripts = document.querySelector("details.scripts")?.open;
+    const openBlocks = [...document.querySelectorAll("details.sblk[open]")].map((d) => d.dataset.k);
+    let h = "";
+    if (!calls.length) h += '<div class="empty">No calls today. 🎉 When there\'s a call list, Riley puts it here at 7am.</div>';
+    else {
+      const n = calls.length, d = calls.filter(callDone).length;
+      h += '<div class="calls-top"><span class="calls-prog"><b>' + d + " of " + n + "</b> called</span>" +
+        (calls.some((c) => c.chapter === "Ch 7") ? '<span class="tag">CHAPTER 7 FIRST</span>' : "") + '</div>' +
+        '<div class="pbar"><i style="width:' + Math.round((d / n) * 100) + '%"></i></div>';
+      const order = [], groups = {};
+      for (const c of calls) { const s = c.section || "Calls"; if (!groups[s]) { groups[s] = []; order.push(s); } groups[s].push(c); }
+      for (const s of order) h += '<div class="csec">' + esc(s) + "</div>" + groups[s].map(callHtml).join("");
+    }
+    if (sc.length) h += '<details class="scripts"' + (openScripts ? " open" : "") + '><summary>📜 Scripts</summary>' +
+      sc.map(([k, b]) => '<details class="sblk" data-k="' + esc(k) + '"' + (openBlocks.includes(k) ? " open" : "") + '><summary>' + esc((b && b.title) || k) + '</summary><div class="stext">' + md(b && (b.text ?? b.body)) + "</div></details>").join("") + "</details>";
+    box.innerHTML = h;
+  }
+  function pushTick(id, label, now) {
+    outbox.push({ id, label, lane: "calls", done: now, device });
+    save(OUT_KEY, outbox); flush();
+  }
+  function saveNote(cid) {
+    const ta = document.querySelector('textarea[data-note="' + CSS.escape(cid) + '"]'); if (!ta) return;
+    const text = ta.value.trim().slice(0, 200);
+    if ((notes[cid] || "") === text) return;
+    const id = "call:" + cid + ":note";
+    if (text) { notes[cid] = text; done[id] = new Date().toISOString(); } else { delete notes[cid]; delete done[id]; }
+    save(NOTES_KEY, notes); save(DONE_KEY, done);
+    pushTick(id, text, !!text);
+    const st = document.getElementById("nstat-" + cid); if (st) st.textContent = text ? "Note saved" : "Note cleared";
+  }
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest(".out");
+    if (b) {
+      const cid = b.dataset.call, id = "call:" + cid + ":" + b.dataset.out, now = !done[id];
+      if (now) done[id] = new Date().toISOString(); else delete done[id];
+      save(DONE_KEY, done);
+      const meta = labels["call:" + cid] || {};
+      pushTick(id, b.textContent + " · " + (meta.label || cid), now);
+      renderCalls(); return;
+    }
+    const sv = e.target.closest("[data-savenote]");
+    if (sv) saveNote(sv.dataset.savenote);
+  });
+  document.addEventListener("change", (e) => { if (e.target.matches && e.target.matches("textarea[data-note]")) saveNote(e.target.dataset.note); });
 
   document.addEventListener("click", (e) => {
     const b = e.target.closest(".task"); if (!b) return;
