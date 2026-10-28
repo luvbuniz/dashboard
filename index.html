@@ -90,6 +90,7 @@
     .tel.sm { background:none; color:var(--copper); font-size:14px; font-weight:500; padding:6px 0; min-height:0; text-decoration:underline; }
     .cmail { font-size:13px; color:var(--muted); word-break:break-all; }
     .cline { font-size:14px; color:var(--muted); margin-top:4px; } .cline b { color:var(--ink); font-weight:600; }
+    .crec { color:var(--ink); } .crec b { color:var(--copper); }
     .call details { font-size:14px; color:var(--muted); margin-top:4px; } .call summary { cursor:pointer; color:var(--ink); padding:4px 0; }
     .outs { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
     .out { background:var(--elev); color:var(--ink); border:1px solid var(--line); border-radius:999px; font:inherit; font-size:14px; padding:8px 12px; min-height:40px; cursor:pointer; -webkit-tap-highlight-color:transparent; }
@@ -284,6 +285,7 @@
         (small ? '<a class="tel sm" href="' + esc(telHref(small)) + '">main office ' + esc(small) + '</a>' : "") + '</div>' +
       (c.email ? '<div class="cmail">✉ ' + esc(c.email) + '</div>' : "") +
       (c.why ? '<div class="cline"><b>Why:</b> ' + esc(c.why) + '</div>' : "") +
+      '<div class="cline crec"><b>Records to mention:</b> ' + esc(recMention(c)) + '</div>' +
       (c.records ? '<details><summary>Records they could sell</summary>' + esc(c.records) + '</details>' : "") +
       '<div class="outs">' + OUTCOMES.map(([k, l]) => '<button type="button" class="out' + (done["call:" + c.id + ":" + k] ? " on" : "") + '" data-call="' + esc(c.id) + '" data-out="' + k + '">' + l + '</button>').join("") + '</div>' +
       '<div class="cnote"><textarea maxlength="200" rows="1" placeholder="Quick note (who answered, call back when…)" data-note="' + esc(c.id) + '">' + esc(localNote) + '</textarea><button type="button" data-savenote="' + esc(c.id) + '">Save</button></div>' +
@@ -355,10 +357,12 @@
     const skip = /^(mr|mrs|ms|dr|hon|the)\.?$/i;
     return parts.find((w) => !skip.test(w) && !/^[A-Z]\.$/.test(w)) || parts[0] || "";
   };
+  const REC_FALLBACK = "old support tickets, documents and code";
+  const recMention = (c) => String((c && c.records_mention) || "").trim() || REC_FALLBACK;
   const shortCo = (co) => String(co || "").split(/\s\+\s|\s\(/)[0].trim();
   function fillScript(html, c) {
     if (!c) return html;
-    const rep = { "[Name]": firstName(c.name), "[Company]": shortCo(c.company), "[email]": c.email || "" };
+    const rep = { "[Name]": firstName(c.name), "[Company]": shortCo(c.company), "[Records]": recMention(c), "[email]": c.email || "" };
     for (const [ph, v] of Object.entries(rep)) if (v) html = html.split(esc(ph)).join("<mark>" + esc(v) + "</mark>");
     return html;
   }
@@ -373,7 +377,7 @@
       '<button type="button" class="sp-toggle" id="sptoggle">' + (spCollapsed ? "Show script ▾" : "Hide script ▴") + '</button></div>' +
       '<div class="sp-body"><div class="stabs">' + tabs.map(([k, l]) => '<button type="button" class="stab' + (k === spTab ? " on" : "") + '" data-stab="' + esc(k) + '">' + esc(l) + '</button>').join("") + '</div>' +
       (c ? '<div class="sp-for">For: <b>' + esc(c.name || c.company || "") + '</b>' + (c.company && c.name ? " · " + esc(shortCo(c.company)) : "") + ' <button type="button" id="spclear">clear</button></div>'
-         : (calls.length ? '<div class="sp-for">Tap a lead to switch to its script and fill in the name.</div>' : "")) +
+         : (calls.length ? '<div class="sp-for">Tap a lead to switch to its script and fill in the name, company and records.</div>' : "")) +
       '<div class="sp-title">' + esc(t[2]) + '</div><div class="stext">' + fillScript(md(t[3]), c) + '</div></div></aside>';
   }
   function setTab(k) { spTab = k; try { localStorage.setItem(SP_TAB_KEY, k); } catch {} }
