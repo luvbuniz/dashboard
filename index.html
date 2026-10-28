@@ -104,10 +104,34 @@
     details.sblk { border-top:1px solid var(--line); } details.sblk > summary { cursor:pointer; padding:12px 0; font-weight:600; font-size:16px; }
     .stext { font-size:18px; line-height:1.55; padding-bottom:12px; } .stext p { margin:0 0 12px; } .stext ul { margin:0 0 12px; padding-left:20px; } .stext li { margin:0 0 8px; }
     .stext h4 { font-size:13px; letter-spacing:.08em; text-transform:uppercase; color:var(--copper); margin:12px 0 6px; }
+    /* Call list + script side panel (two panes on laptop widths, stacked on phones) */
+    .csplit { display:grid; grid-template-columns:minmax(0,1fr); gap:16px; }
+    .clist { min-width:0; }
+    .spanel { background:var(--elev); border:1px solid var(--line); border-radius:10px; padding:12px 14px; order:-1; }
+    .sp-h { display:flex; justify-content:space-between; align-items:center; gap:8px; }
+    .sp-h b { font-size:15px; }
+    .sp-toggle { background:none; border:1px solid var(--line); color:var(--ink); border-radius:999px; font:inherit; font-size:13px; padding:6px 12px; cursor:pointer; }
+    .stabs { display:flex; flex-wrap:wrap; gap:6px; margin:10px 0 8px; }
+    .stab { background:var(--panel); color:var(--ink); border:1px solid var(--line); border-radius:999px; font:inherit; font-size:13px; padding:6px 10px; min-height:34px; cursor:pointer; }
+    .stab.on { background:var(--copper); border-color:var(--copper); color:#fff; font-weight:600; }
+    .sp-for { font-size:13px; color:var(--muted); margin:2px 0 6px; } .sp-for b { color:var(--ink); }
+    .sp-for button { background:none; border:0; color:var(--faint); font:inherit; font-size:12px; cursor:pointer; text-decoration:underline; }
+    .sp-title { font-weight:600; font-size:15px; color:var(--copper); margin:6px 0 8px; }
+    .spanel .stext mark { background:var(--copper-dim); color:inherit; border-radius:3px; padding:0 2px; }
+    .spanel.collapsed .sp-body { display:none; }
+    .call { cursor:pointer; }
+    .call.active { outline:2px solid var(--copper); outline-offset:1px; }
+    @media (min-width:1000px) {
+      #calls-sec.split { width:min(1560px, calc(100vw - 32px)); margin-left:calc(50% - min(1560px, calc(100vw - 32px)) / 2); }
+      .csplit { grid-template-columns:minmax(0,1fr) minmax(380px,46%); align-items:start; }
+      .spanel { order:0; position:sticky; top:12px; max-height:calc(100vh - 24px); overflow:auto; overscroll-behavior:contain; }
+      .spanel.collapsed .sp-body { display:block; }
+      .sp-toggle { display:none; }
+    }
     footer { margin-top:32px; font-size:11px; color:var(--faint); }
     @media print {
       :root { --bg:#fff; --panel:#fff; --ink:#000; --muted:#333; --faint:#555; --line:#ccc; --copper:#000; --copper-dim:transparent; }
-      .linkbtn,.stuck-sec,.sync,footer,.outs,.cnote { display:none !important; }
+      .linkbtn,.stuck-sec,.sync,footer,.outs,.cnote,.stabs,.sp-toggle { display:none !important; }
       .wrap { padding:0; max-width:none; } .card,.day { break-inside:avoid; } .task { min-height:0; padding:5px 0; }
       .box { border-color:#000; } .grid { grid-template-columns:1fr 1fr; }
     }
@@ -247,7 +271,7 @@
     const nk = "call:" + c.id + ":note";
     const localNote = notes[c.id] || "";
     const nstat = localNote ? "Note saved" : done[nk] ? "A note was saved on another device (Riley has it)" : "";
-    return '<div class="call' + (urgent ? " urgent" : "") + (isDone ? " done" : "") + '" data-call="' + esc(c.id) + '">' +
+    return '<div class="call' + (urgent ? " urgent" : "") + (isDone ? " done" : "") + (c.id === spCall ? " active" : "") + '" data-call="' + esc(c.id) + '">' +
       '<div class="call-h">' + (c.time ? '<span class="ctime">' + esc(c.time) + '</span>' : "") +
         '<span class="cname">' + esc(c.name || c.company || "") + '</span>' + (c.role ? '<span class="crole">' + esc(c.role) + '</span>' : "") + '</div>' +
       (c.company && c.name ? '<div class="ccomp">' + esc(c.company) + '</div>' : "") +
@@ -296,11 +320,84 @@
     }
     renderCalls();
   }
+  // ── Script side panel. Tabs are built from callScripts (voicemail split into attorney/owner by paragraph prefix).
+  const SP_TAB_KEY = "amy-day-v2-sptab";
+  let spTab = localStorage.getItem(SP_TAB_KEY) || "atty_live", spCall = null, spCollapsed = true;
+  function scriptTabs(cs) {
+    const T = (k) => (cs[k] && (cs[k].text ?? cs[k].body)) || "";
+    const vm = String(T("voicemail")).split(/\n\s*\n/).map((x) => x.trim()).filter(Boolean);
+    const pick = (re) => vm.filter((x) => re.test(x)).join("\n\n");
+    const vmA = pick(/^\*\*Attorney/i), vmO = pick(/^\*\*Owner/i), vmL = pick(/^\*\*LINK/i);
+    const vmT = (cs.voicemail && cs.voicemail.title) || "Voicemail";
+    const tabs = [
+      ["atty_live", "Attorney/Trustee · live", (cs.live_attorney && cs.live_attorney.title) || "Live call: Attorney / Trustee", T("live_attorney")],
+      ["atty_vm", "Attorney/Trustee · voicemail", vmT, vmA || T("voicemail")],
+      ["owner_live", "Owner · live", (cs.live_owner && cs.live_owner.title) || "Live call: Owner", T("live_owner")],
+      ["owner_vm", "Owner · voicemail", vmT, vmO || T("voicemail")],
+      ["link", "Link-only", (cs.link_only && cs.link_only.title) || "Link-only", T("link_only") + (vmL ? "\n\n## Voicemail (link email sent)\n" + vmL : "")],
+      ["questions", "Likely questions", (cs.questions && cs.questions.title) || "Likely questions", T("questions")],
+      ["gatekeeper", "Gatekeeper tips", (cs.gatekeeper && cs.gatekeeper.title) || "Gatekeeper tips", T("gatekeeper")],
+      ["bankruptcy", "Bankruptcy cheat sheet", (cs.bankruptcy && cs.bankruptcy.title) || "Bankruptcy cheat sheet", T("bankruptcy")],
+    ];
+    const known = ["voicemail", "live_attorney", "live_owner", "link_only", "questions", "gatekeeper", "bankruptcy"];
+    for (const [k, b] of Object.entries(cs)) if (!known.includes(k)) tabs.push([k, (b && b.title) || k, (b && b.title) || k, T(k)]);
+    return tabs.filter((t) => String(t[3]).trim());
+  }
+  const leadKind = (c) => {
+    const tag = String(c.script_tag || "").toUpperCase();
+    if (/LINK/.test(tag)) return "link";
+    if (/^OWNER/.test(tag)) return "owner";
+    if (/ATTORNEY|TRUSTEE/.test(tag) || c.chapter || /trustee|counsel|attorney/i.test(c.role || "")) return "atty";
+    return "owner";
+  };
+  const firstName = (n) => {
+    const parts = String(n || "").replace(/\(.*?\)/g, " ").split(",")[0].trim().split(/\s+/).filter(Boolean);
+    const skip = /^(mr|mrs|ms|dr|hon|the)\.?$/i;
+    return parts.find((w) => !skip.test(w) && !/^[A-Z]\.$/.test(w)) || parts[0] || "";
+  };
+  const shortCo = (co) => String(co || "").split(/\s\+\s|\s\(/)[0].trim();
+  function fillScript(html, c) {
+    if (!c) return html;
+    const rep = { "[Name]": firstName(c.name), "[Company]": shortCo(c.company), "[email]": c.email || "" };
+    for (const [ph, v] of Object.entries(rep)) if (v) html = html.split(esc(ph)).join("<mark>" + esc(v) + "</mark>");
+    return html;
+  }
+  function panelHtml(sd, calls) {
+    const cs = sd.callScripts && typeof sd.callScripts === "object" ? sd.callScripts : {};
+    const tabs = scriptTabs(cs);
+    if (!tabs.length) return "";
+    if (!tabs.some((t) => t[0] === spTab)) spTab = tabs[0][0];
+    const t = tabs.find((x) => x[0] === spTab);
+    const c = spCall ? calls.find((x) => x.id === spCall) : null;
+    return '<aside class="spanel' + (spCollapsed ? " collapsed" : "") + '" id="spanel"><div class="sp-h"><b>📜 Call script</b>' +
+      '<button type="button" class="sp-toggle" id="sptoggle">' + (spCollapsed ? "Show script ▾" : "Hide script ▴") + '</button></div>' +
+      '<div class="sp-body"><div class="stabs">' + tabs.map(([k, l]) => '<button type="button" class="stab' + (k === spTab ? " on" : "") + '" data-stab="' + esc(k) + '">' + esc(l) + '</button>').join("") + '</div>' +
+      (c ? '<div class="sp-for">For: <b>' + esc(c.name || c.company || "") + '</b>' + (c.company && c.name ? " · " + esc(shortCo(c.company)) : "") + ' <button type="button" id="spclear">clear</button></div>'
+         : (calls.length ? '<div class="sp-for">Tap a lead to switch to its script and fill in the name.</div>' : "")) +
+      '<div class="sp-title">' + esc(t[2]) + '</div><div class="stext">' + fillScript(md(t[3]), c) + '</div></div></aside>';
+  }
+  function setTab(k) { spTab = k; try { localStorage.setItem(SP_TAB_KEY, k); } catch {} }
+  document.addEventListener("click", (e) => {
+    const tb = e.target.closest("[data-stab]");
+    if (tb) { setTab(tb.dataset.stab); renderCalls(); const sp = document.getElementById("spanel"); if (sp) sp.scrollTop = 0; return; }
+    if (e.target.id === "sptoggle") { spCollapsed = !spCollapsed; renderCalls(); return; }
+    if (e.target.id === "spclear") { spCall = null; renderCalls(); return; }
+    if (e.target.closest("textarea,input,[data-savenote]")) return; // don't re-render while typing a note
+    const card = e.target.closest(".call[data-call]");
+    if (!card || card.dataset.call === spCall) return;
+    const c = ((secret && secret.calls) || []).find((x) => x && x.id === card.dataset.call); if (!c) return;
+    spCall = c.id;
+    const kind = leadKind(c), vmMode = /_vm$/.test(spTab);
+    setTab(kind === "link" ? "link" : kind + (vmMode ? "_vm" : "_live"));
+    renderCalls();
+    const sp = document.getElementById("spanel"); if (sp) sp.scrollTop = 0;
+  });
   function renderCalls() {
     const box = document.getElementById("calls");
     if (!box || !data) return;
     if (lockState === "loading") { box.innerHTML = '<div class="empty">Loading calls…</div>'; return; }
     if (lockState === "locked") {
+      document.getElementById("calls-sec").classList.remove("split");
       box.innerHTML = '<form class="unlock" id="unlock"><div class="cline">🔒 Your call list is private. Enter your passcode once on this device.</div>' +
         '<div class="cnote"><input id="callpass" type="password" autocomplete="current-password" autocapitalize="none" spellcheck="false" placeholder="Passcode" />' +
         '<button type="submit">Unlock</button></div><div class="nstat err">' + esc(lockErr) + '</div></form>';
@@ -309,9 +406,7 @@
     const sd = secret || {};
     const calls = Array.isArray(sd.calls) ? sd.calls.filter((c) => c && c.id) : [];
     calls.forEach((c) => { labels["call:" + c.id] = { label: [c.name, c.company].filter(Boolean).join(" · "), lane: "calls" }; });
-    const sc = sd.callScripts && typeof sd.callScripts === "object" ? Object.entries(sd.callScripts) : [];
-    const openScripts = document.querySelector("details.scripts")?.open;
-    const openBlocks = [...document.querySelectorAll("details.sblk[open]")].map((d) => d.dataset.k);
+    const spOld = document.getElementById("spanel"), spScroll = spOld ? spOld.scrollTop : 0;
     let h = "";
     if (!calls.length) h += '<div class="empty">No calls today. 🎉 When there\'s a call list, Riley puts it here at 7am.</div>';
     else {
@@ -323,10 +418,11 @@
       for (const c of calls) { const s = c.section || "Calls"; if (!groups[s]) { groups[s] = []; order.push(s); } groups[s].push(c); }
       for (const s of order) h += '<div class="csec">' + esc(s) + "</div>" + groups[s].map(callHtml).join("");
     }
-    if (sc.length) h += '<details class="scripts"' + (openScripts ? " open" : "") + '><summary>📜 Scripts</summary>' +
-      sc.map(([k, b]) => '<details class="sblk" data-k="' + esc(k) + '"' + (openBlocks.includes(k) ? " open" : "") + '><summary>' + esc((b && b.title) || k) + '</summary><div class="stext">' + md(b && (b.text ?? b.body)) + "</div></details>").join("") + "</details>";
     if (lockState === "ok") h += '<button type="button" class="linkbtn" id="calllock">🔒 Lock call list on this device</button>';
-    box.innerHTML = h;
+    const panel = panelHtml(sd, calls);
+    document.getElementById("calls-sec").classList.toggle("split", !!panel);
+    box.innerHTML = panel ? '<div class="csplit"><div class="clist">' + h + "</div>" + panel + "</div>" : h;
+    const spNew = document.getElementById("spanel"); if (spNew && spScroll) spNew.scrollTop = spScroll;
   }
   document.addEventListener("submit", (e) => {
     if (e.target.id !== "unlock") return;
