@@ -90,6 +90,14 @@
     .tel.sm { background:none; color:var(--copper); font-size:14px; font-weight:500; padding:6px 0; min-height:0; text-decoration:underline; }
     .cmail { font-size:13px; color:var(--muted); word-break:break-all; }
     .cline { font-size:14px; color:var(--muted); margin-top:4px; } .cline b { color:var(--ink); font-weight:600; }
+    .who { border:1px solid var(--line); border-radius:10px; padding:8px 10px; margin:6px 0; }
+    .who.wt { border-color:var(--copper); background:var(--copper-dim); }
+    .wlab { font-size:14px; margin-bottom:4px; } .wlab b { font-weight:600; } .wlab .k { font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--copper); font-weight:700; margin-right:4px; }
+    .tel.c2 { background:var(--elev); color:var(--ink); border:1px solid var(--line); font-size:15px; padding:8px 14px; min-height:40px; }
+    .badge.tnf { background:var(--elev); color:var(--muted); border-style:dashed; }
+    .cnote button.saved { background:var(--ok); border-color:var(--ok); color:#fff; font-weight:600; }
+    .cnote button:disabled { opacity:.6; cursor:wait; }
+    .nstat.ok { color:var(--ok); font-size:13px; }
     .crec { color:var(--ink); } .crec b { color:var(--copper); }
     .call details { font-size:14px; color:var(--muted); margin-top:4px; } .call summary { cursor:pointer; color:var(--ink); padding:4px 0; }
     .outs { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
@@ -248,6 +256,18 @@
   // Notes ride the same /tick endpoint: id "call:<callId>:note", label = note text (≤200 chars, worker clips).
   const NOTES_KEY = "amy-day-v2-callnotes";
   let notes = load(NOTES_KEY, {});
+  const NOTES_AT_KEY = "amy-day-v2-callnotes-at";
+  let notesAt = load(NOTES_AT_KEY, {});
+  const noteBusy = {}, noteFlash = {}, noteErr = {};
+  const hhmm = (iso) => { const d = new Date(iso); return isNaN(d) ? "" : d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }); };
+  function noteStatus(cid) {
+    const nk = "call:" + cid + ":note";
+    if (noteErr[cid]) return { cls: "err", text: noteErr[cid] };
+    if (noteBusy[cid]) return { cls: "", text: "Saving…" };
+    if (notes[cid]) { const t = hhmm(notesAt[cid] || done[nk]); return { cls: "ok", text: "✓ Saved" + (t ? " " + t : "") + ": “" + notes[cid] + "”" }; }
+    if (done[nk]) { const t = hhmm(done[nk]); return { cls: "", text: "A note was saved on another device" + (t ? " at " + t : "") + " (Riley has it)" }; }
+    return { cls: "", text: "" };
+  }
   const OUTCOMES = [["answered","Answered"],["voicemail","Voicemail"],["gatekeeper","Gatekeeper"],["no_answer","No answer"],["interested","Interested"],["not_interested","Not interested"],["call_back","Call back"]];
   const telHref = (p) => "tel:" + String(p || "").replace(/[^\d+]/g, "");
   const callDone = (c) => OUTCOMES.some(([k]) => done["call:" + c.id + ":" + k]);
@@ -271,7 +291,15 @@
     const big = c.direct_phone || c.phone, small = c.direct_phone && c.phone && c.phone !== c.direct_phone ? c.phone : "";
     const nk = "call:" + c.id + ":note";
     const localNote = notes[c.id] || "";
-    const nstat = localNote ? "Note saved" : done[nk] ? "A note was saved on another device (Riley has it)" : "";
+    const nst = noteStatus(c.id);
+    const tr = c.trustee && c.trustee.status === "verified" ? c.trustee : null, trNF = c.trustee && c.trustee.status === "not_found";
+    const co = c.counsel || null;
+    const whoHtml = tr ? '<div class="who wt"><div class="wlab"><span class="k">1 · Call first</span>Trustee: <b>' + esc(tr.name) + '</b></div>' +
+        (tr.phone ? '<a class="tel" data-who="trustee" href="' + esc(telHref(tr.phone)) + '">📞 Trustee: ' + esc(tr.name) + ' · ' + esc(tr.phone) + '</a>' : '<span class="cline">No trustee phone on file</span>') +
+        (tr.email ? '<div class="cmail">✉ ' + esc(tr.email) + '</div>' : "") + '</div>' +
+      (co ? '<div class="who wc"><div class="wlab"><span class="k">2 · Then</span>Counsel: <b>' + esc(co.name) + '</b>' + (co.role ? ' <span class="crole">' + esc(co.role) + '</span>' : "") + '</div>' +
+        (co.phone ? '<a class="tel c2" data-who="counsel" href="' + esc(telHref(co.phone)) + '">📞 Counsel · ' + esc(co.phone) + '</a>' : "") +
+        (co.email ? '<div class="cmail">✉ ' + esc(co.email) + '</div>' : "") + '</div>' : "") : "";
     return '<div class="call' + (urgent ? " urgent" : "") + (isDone ? " done" : "") + (c.id === spCall ? " active" : "") + '" data-call="' + esc(c.id) + '">' +
       '<div class="call-h">' + (c.time ? '<span class="ctime">' + esc(c.time) + '</span>' : "") +
         '<span class="cname">' + esc(c.name || c.company || "") + '</span>' + (c.role ? '<span class="crole">' + esc(c.role) + '</span>' : "") + '</div>' +
@@ -280,16 +308,17 @@
         (c.chapter ? '<span class="badge ch">' + esc(c.chapter) + '</span>' : "") +
         (c.script_tag ? '<span class="badge">' + esc(c.script_tag) + '</span>' : "") +
         (c.attempt ? '<span class="badge">' + esc(c.attempt) + '</span>' : "") +
+        (tr ? '<span class="badge urg">CALL TRUSTEE FIRST</span>' : trNF ? '<span class="badge tnf">trustee: not found</span>' : "") +
         (isDone ? '<span class="badge ok">✓ Called</span>' : "") + '</div>' +
-      '<div class="phones">' + (big ? '<a class="tel" href="' + esc(telHref(big)) + '">📞 ' + esc(big) + (c.direct_phone ? " · direct" : "") + '</a>' : '<span class="cline">No phone on file</span>') +
+      (tr ? whoHtml : '<div class="phones">' + (big ? '<a class="tel" href="' + esc(telHref(big)) + '">📞 ' + esc(big) + (c.direct_phone ? " · direct" : "") + '</a>' : '<span class="cline">No phone on file</span>') +
         (small ? '<a class="tel sm" href="' + esc(telHref(small)) + '">main office ' + esc(small) + '</a>' : "") + '</div>' +
-      (c.email ? '<div class="cmail">✉ ' + esc(c.email) + '</div>' : "") +
+      (c.email ? '<div class="cmail">✉ ' + esc(c.email) + '</div>' : "")) +
       (c.why ? '<div class="cline"><b>Why:</b> ' + esc(c.why) + '</div>' : "") +
       '<div class="cline crec"><b>Records to mention:</b> ' + esc(recMention(c)) + '</div>' +
       (c.records ? '<details><summary>Records they could sell</summary>' + esc(c.records) + '</details>' : "") +
       '<div class="outs">' + OUTCOMES.map(([k, l]) => '<button type="button" class="out' + (done["call:" + c.id + ":" + k] ? " on" : "") + '" data-call="' + esc(c.id) + '" data-out="' + k + '">' + l + '</button>').join("") + '</div>' +
-      '<div class="cnote"><textarea maxlength="200" rows="1" placeholder="Quick note (who answered, call back when…)" data-note="' + esc(c.id) + '">' + esc(localNote) + '</textarea><button type="button" data-savenote="' + esc(c.id) + '">Save</button></div>' +
-      '<div class="nstat" id="nstat-' + esc(c.id) + '">' + esc(nstat) + '</div>' +
+      '<div class="cnote"><textarea maxlength="200" rows="1" placeholder="Quick note (who answered, call back when…)" data-note="' + esc(c.id) + '">' + esc(localNote) + '</textarea><button type="button" data-savenote="' + esc(c.id) + '"' + (noteBusy[c.id] ? " disabled" : "") + (noteFlash[c.id] > Date.now() ? ' class="saved"' : "") + '>' + (noteBusy[c.id] ? "Saving…" : noteFlash[c.id] > Date.now() ? "Saved ✓" : "Save") + '</button></div>' +
+      '<div class="nstat' + (nst.cls ? " " + nst.cls : "") + '" id="nstat-' + esc(c.id) + '">' + esc(nst.text) + '</div>' +
       '</div>';
   }
   // Encrypted payload: ./calls.enc.json = AES-GCM(PBKDF2-SHA256(passcode)) of {calls, callScripts, updated}.
@@ -324,7 +353,7 @@
   }
   // ── Script side panel. Tabs are built from callScripts (voicemail split into attorney/owner by paragraph prefix).
   const SP_TAB_KEY = "amy-day-v2-sptab";
-  let spTab = localStorage.getItem(SP_TAB_KEY) || "atty_live", spCall = null, spCollapsed = true;
+  let spTab = localStorage.getItem(SP_TAB_KEY) || "atty_live", spCall = null, spCollapsed = true, spWho = "";
   function scriptTabs(cs) {
     const T = (k) => (cs[k] && (cs[k].text ?? cs[k].body)) || "";
     const vm = String(T("voicemail")).split(/\n\s*\n/).map((x) => x.trim()).filter(Boolean);
@@ -362,7 +391,9 @@
   const shortCo = (co) => String(co || "").split(/\s\+\s|\s\(/)[0].trim();
   function fillScript(html, c) {
     if (!c) return html;
-    const rep = { "[Name]": firstName(c.name), "[Company]": shortCo(c.company), "[Records]": recMention(c), "[email]": c.email || "" };
+    const tr = c.trustee && c.trustee.status === "verified" ? c.trustee : null;
+    const person = spWho === "trustee" && tr ? tr.name : spWho === "counsel" && c.counsel ? c.counsel.name : c.name;
+    const rep = { "[Name]": firstName(person), "[Company]": shortCo(c.company), "[Records]": recMention(c), "[email]": c.email || "" };
     for (const [ph, v] of Object.entries(rep)) if (v) html = html.split(esc(ph)).join("<mark>" + esc(v) + "</mark>");
     return html;
   }
@@ -376,9 +407,15 @@
     return '<aside class="spanel' + (spCollapsed ? " collapsed" : "") + '" id="spanel"><div class="sp-h"><b>📜 Call script</b>' +
       '<button type="button" class="sp-toggle" id="sptoggle">' + (spCollapsed ? "Show script ▾" : "Hide script ▴") + '</button></div>' +
       '<div class="sp-body"><div class="stabs">' + tabs.map(([k, l]) => '<button type="button" class="stab' + (k === spTab ? " on" : "") + '" data-stab="' + esc(k) + '">' + esc(l) + '</button>').join("") + '</div>' +
-      (c ? '<div class="sp-for">For: <b>' + esc(c.name || c.company || "") + '</b>' + (c.company && c.name ? " · " + esc(shortCo(c.company)) : "") + ' <button type="button" id="spclear">clear</button></div>'
+      (c ? '<div class="sp-for">For: <b>' + esc(spWhoLabel(c)) + '</b>' + (c.company && c.name ? " · " + esc(shortCo(c.company)) : "") + ' <button type="button" id="spclear">clear</button></div>'
          : (calls.length ? '<div class="sp-for">Tap a lead to switch to its script and fill in the name, company and records.</div>' : "")) +
       '<div class="sp-title">' + esc(t[2]) + '</div><div class="stext">' + fillScript(md(t[3]), c) + '</div></div></aside>';
+  }
+  function spWhoLabel(c) {
+    const tr = c.trustee && c.trustee.status === "verified" ? c.trustee : null;
+    if (spWho === "trustee" && tr) return "Trustee: " + tr.name;
+    if (spWho === "counsel" && c.counsel) return "Counsel: " + c.counsel.name;
+    return c.name || c.company || "";
   }
   function setTab(k) { spTab = k; try { localStorage.setItem(SP_TAB_KEY, k); } catch {} }
   document.addEventListener("click", (e) => {
@@ -388,8 +425,13 @@
     if (e.target.id === "spclear") { spCall = null; renderCalls(); return; }
     if (e.target.closest("textarea,input,[data-savenote]")) return; // don't re-render while typing a note
     const card = e.target.closest(".call[data-call]");
-    if (!card || card.dataset.call === spCall) return;
-    const c = ((secret && secret.calls) || []).find((x) => x && x.id === card.dataset.call); if (!c) return;
+    if (!card) return;
+    const whoEl = e.target.closest("[data-who]"), c = ((secret && secret.calls) || []).find((x) => x && x.id === card.dataset.call); if (!c) return;
+    const tr0 = c.trustee && c.trustee.status === "verified";
+    const newWho = whoEl ? whoEl.dataset.who : (card.dataset.call === spCall ? spWho : (tr0 ? "trustee" : ""));
+    if (card.dataset.call === spCall && newWho === spWho) return;
+    spWho = newWho;
+    if (card.dataset.call === spCall) { renderCalls(); return; }
     spCall = c.id;
     const kind = leadKind(c), vmMode = /_vm$/.test(spTab);
     setTab(kind === "link" ? "link" : kind + (vmMode ? "_vm" : "_live"));
@@ -444,15 +486,34 @@
     outbox.push({ id, label, lane: "calls", done: now, device });
     save(OUT_KEY, outbox); flush();
   }
-  function saveNote(cid) {
+  function paintNote(cid) {
+    const st = document.getElementById("nstat-" + cid), btn = document.querySelector('[data-savenote="' + CSS.escape(cid) + '"]');
+    const ns = noteStatus(cid);
+    if (st) { st.className = "nstat" + (ns.cls ? " " + ns.cls : ""); st.textContent = ns.text; }
+    if (btn) { const fl = noteFlash[cid] > Date.now(); btn.disabled = !!noteBusy[cid]; btn.className = fl ? "saved" : ""; btn.textContent = noteBusy[cid] ? "Saving…" : fl ? "Saved ✓" : "Save"; }
+  }
+  async function saveNote(cid, viaBlur) {
+    if (noteBusy[cid]) return;
     const ta = document.querySelector('textarea[data-note="' + CSS.escape(cid) + '"]'); if (!ta) return;
     const text = ta.value.trim().slice(0, 200);
-    if ((notes[cid] || "") === text) return;
     const id = "call:" + cid + ":note";
-    if (text) { notes[cid] = text; done[id] = new Date().toISOString(); } else { delete notes[cid]; delete done[id]; }
-    save(NOTES_KEY, notes); save(DONE_KEY, done);
-    pushTick(id, text, !!text);
-    const st = document.getElementById("nstat-" + cid); if (st) st.textContent = text ? "Note saved" : "Note cleared";
+    const pending = outbox.some((o) => o.id === id);
+    if ((notes[cid] || "") === text) {           // same text as last save: don't post it again
+      if (pending) { noteBusy[cid] = true; paintNote(cid); const ok = await flush(); noteBusy[cid] = false; noteErr[cid] = ok ? "" : noteErr[cid]; if (ok) noteFlash[cid] = Date.now() + 3000; paintNote(cid); setTimeout(() => paintNote(cid), 3100); }
+      else if (!viaBlur && text) { noteFlash[cid] = Date.now() + 3000; paintNote(cid); setTimeout(() => paintNote(cid), 3100); }
+      return;
+    }
+    const now = new Date().toISOString();
+    if (text) { notes[cid] = text; notesAt[cid] = now; done[id] = now; } else { delete notes[cid]; delete notesAt[cid]; delete done[id]; }
+    save(NOTES_KEY, notes); save(NOTES_AT_KEY, notesAt); save(DONE_KEY, done);
+    outbox = outbox.filter((o) => o.id !== id);   // only the latest note text for this lead is queued
+    outbox.push({ id, label: text, lane: "calls", done: !!text, device }); save(OUT_KEY, outbox);
+    noteBusy[cid] = true; noteErr[cid] = ""; paintNote(cid);
+    const ok = await flush();
+    noteBusy[cid] = false;
+    if (ok) { noteFlash[cid] = Date.now() + 3000; noteErr[cid] = ""; setTimeout(() => paintNote(cid), 3100); }
+    else noteErr[cid] = "⚠️ Couldn't reach Riley. The note is kept on this device and will retry; tap Save to try again now.";
+    paintNote(cid);
   }
   document.addEventListener("click", (e) => {
     const b = e.target.closest(".out");
@@ -467,7 +528,7 @@
     const sv = e.target.closest("[data-savenote]");
     if (sv) saveNote(sv.dataset.savenote);
   });
-  document.addEventListener("change", (e) => { if (e.target.matches && e.target.matches("textarea[data-note]")) saveNote(e.target.dataset.note); });
+  document.addEventListener("change", (e) => { if (e.target.matches && e.target.matches("textarea[data-note]")) saveNote(e.target.dataset.note, true); });
 
   document.addEventListener("click", (e) => {
     const b = e.target.closest(".task"); if (!b) return;
@@ -480,19 +541,22 @@
     render(); flush();
   });
 
-  let flushing = false;
-  async function flush() {
-    if (flushing) return; flushing = true;
-    try {
-      while (outbox.length) {
-        const r = await fetch(API + "/tick", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(outbox[0]) });
-        if (!r.ok) throw new Error("tick " + r.status);
-        outbox.shift(); save(OUT_KEY, outbox);
-      }
-      setSync("ok", "Saved · Riley can see it");
-    } catch {
-      setSync("wait", "Saved on this device · will sync when online");
-    } finally { flushing = false; }
+  let flushP = null;
+  function flush() {   // resolves true once the outbox is empty (everything reached the worker)
+    if (flushP) return flushP;
+    flushP = (async () => {
+      try {
+        while (outbox.length) {
+          const r = await fetch(API + "/tick", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(outbox[0]) });
+          if (!r.ok) throw new Error("tick " + r.status);
+          outbox.shift(); save(OUT_KEY, outbox);
+        }
+        setSync("ok", "Saved · Riley can see it"); return true;
+      } catch {
+        setSync("wait", "Saved on this device · will sync when online"); return false;
+      } finally { flushP = null; }
+    })();
+    return flushP;
   }
 
   async function pullState() {
