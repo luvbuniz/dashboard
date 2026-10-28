@@ -83,6 +83,12 @@
     .badges { display:flex; flex-wrap:wrap; gap:6px; margin:6px 0; }
     .badge { font-size:11px; font-weight:600; letter-spacing:.04em; padding:3px 8px; border-radius:99px; background:var(--elev); color:var(--muted); border:1px solid var(--line); }
     .badge.urg { background:var(--copper); color:#fff; border-color:var(--copper); }
+    .badge.kd { font-size:12.5px; background:var(--card); color:var(--ink); border-color:var(--ink); }
+    .badge.kd.soon { background:#b3261e; color:#fff; border-color:#b3261e; }
+    .badge.kd.past { background:var(--elev); color:var(--muted); border-style:dashed; text-decoration:line-through; text-decoration-thickness:1px; }
+    .badge.kd.nf { background:var(--elev); color:var(--muted); border-style:dashed; }
+    .badge.em { background:var(--ok); color:#fff; border-color:var(--ok); }
+    .ckd { font-size:12.5px; color:var(--muted); }
     .badge.ch { color:var(--copper); background:var(--copper-dim); border-color:transparent; }
     .badge.ok { background:var(--ok); color:#fff; border-color:var(--ok); }
     .phones { display:flex; flex-wrap:wrap; align-items:center; gap:6px 12px; margin:6px 0; }
@@ -271,6 +277,48 @@
   const OUTCOMES = [["answered","Answered"],["voicemail","Voicemail"],["gatekeeper","Gatekeeper"],["no_answer","No answer"],["interested","Interested"],["not_interested","Not interested"],["call_back","Call back"]];
   const telHref = (p) => "tel:" + String(p || "").replace(/[^\d+]/g, "");
   const callDone = (c) => OUTCOMES.some(([k]) => done["call:" + c.id + ":" + k]);
+  // ---- court dates (341 / hearings / bar dates) ----
+  const ETZ = "America/New_York";
+  function kdEvents(c) {
+    const k = c.kdates; if (!k || !Array.isArray(k.events)) return [];
+    return k.events.map((e) => {
+      const allDay = !e.iso, t = allDay ? Date.parse(e.date + "T23:59:00-05:00") : Date.parse(e.iso);
+      return { e, t, allDay };
+    }).filter((x) => !isNaN(x.t)).sort((a, b) => a.t - b.t);
+  }
+  function kdFmt(x) {
+    const d = x.allDay ? new Date(x.e.date + "T12:00:00") : new Date(x.t);
+    const yr = d.getFullYear() !== 2026;
+    const day = d.toLocaleDateString("en-US", { timeZone: x.allDay ? undefined : ETZ, weekday: "short", month: "short", day: "numeric", year: yr ? "numeric" : undefined }).replace(/,/g, "").replace(/(\d) (\d{4})$/, "$1, $2");
+    if (x.allDay) return day;
+    const tm = d.toLocaleTimeString("en-US", { timeZone: ETZ, hour: "numeric", minute: "2-digit" }).replace(":00", "").replace(" ", "").toLowerCase();
+    return day + ", " + tm + " ET";
+  }
+  const etDay = (ms) => new Date(ms).toLocaleDateString("en-CA", { timeZone: ETZ });
+  const kdDays = (x) => Math.round((Date.parse(x.allDay ? x.e.date : etDay(x.t)) - Date.parse(etDay(Date.now()))) / 864e5);
+  const kdWhat = (e) => e.kind === "341" ? (e.what.includes("concluded") ? "341 (held)" : "341") : e.what;
+  function keyDate(c) {   // {x, state:'soon'|'up'|'past'} or {state:'nf'} or null
+    if (!c.kdates) return null;
+    const ev = kdEvents(c); if (!ev.length) return { state: "nf" };
+    const now = Date.now(), up = ev.filter((x) => x.t >= now);
+    if (up.length) return { x: up[0], state: kdDays(up[0]) <= 7 ? "soon" : "up" };
+    return { x: ev[ev.length - 1], state: "past" };
+  }
+  function kdBadge(c) {
+    const k = keyDate(c); if (!k) return "";
+    if (k.state === "nf") return '<span class="badge kd nf">📅 date: not found</span>';
+    const e = k.x.e, days = kdDays(k.x);
+    const tail = k.state === "soon" ? " · " + (days <= 0 ? "TODAY" : days === 1 ? "TOMORROW" : "in " + days + " days") : k.state === "past" ? " · past" : "";
+    return '<span class="badge kd ' + k.state + '"' + (e.local && !/ET$/.test(e.local) ? ' title="' + esc(e.local) + ' local"' : "") + '>' + (k.state === "soon" ? "⚠️ " : "📅 ") + esc(kdWhat(e)) + ": " + esc(kdFmt(k.x)) + esc(tail) + '</span>';
+  }
+  function kdLine(c) {
+    const ev = kdEvents(c); if (ev.length < 2) return "";
+    return '<div class="cline ckd">Court dates: ' + ev.map((x) => esc(kdWhat(x.e)) + " " + esc(kdFmt(x)) + (x.t < Date.now() ? " (past)" : "")).join(" · ") + '</div>';
+  }
+  function ch7Sort(list) {   // not-called: soonest upcoming → undated → past (latest first); called/ticked last, in original order
+    const rank = (c) => { if (callDone(c)) return [3, 0]; const k = keyDate(c); if (!k || k.state === "nf") return [1, 0]; return k.state === "past" ? [2, -k.x.t] : [0, k.x.t]; };
+    return list.map((c, i) => ({ c, i, r: rank(c) })).sort((a, b) => a.r[0] - b.r[0] || a.r[1] - b.r[1] || a.i - b.i).map((o) => o.c);
+  }
   function md(text) {
     const inl = (t) => esc(t).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
     let out = "", list = false;
@@ -304,17 +352,18 @@
       '<div class="call-h">' + (c.time ? '<span class="ctime">' + esc(c.time) + '</span>' : "") +
         '<span class="cname">' + esc(c.name || c.company || "") + '</span>' + (c.role ? '<span class="crole">' + esc(c.role) + '</span>' : "") + '</div>' +
       (c.company && c.name ? '<div class="ccomp">' + esc(c.company) + '</div>' : "") +
-      '<div class="badges">' + (urgent ? '<span class="badge urg">URGENT</span>' : "") +
+      '<div class="badges">' + kdBadge(c) + (urgent ? '<span class="badge urg">URGENT</span>' : "") +
         (c.chapter ? '<span class="badge ch">' + esc(c.chapter) + '</span>' : "") +
         (c.script_tag ? '<span class="badge">' + esc(c.script_tag) + '</span>' : "") +
         (c.attempt ? '<span class="badge">' + esc(c.attempt) + '</span>' : "") +
         (tr ? '<span class="badge urg">CALL TRUSTEE FIRST</span>' : trNF ? '<span class="badge tnf">trustee: not found</span>' : "") +
+        (Array.isArray(c.tags) ? c.tags.map((t) => '<span class="badge em">✉ ' + esc(t) + '</span>').join("") : "") +
         (isDone ? '<span class="badge ok">✓ Called</span>' : "") + '</div>' +
       (tr ? whoHtml : '<div class="phones">' + (big ? '<a class="tel" href="' + esc(telHref(big)) + '">📞 ' + esc(big) + (c.direct_phone ? " · direct" : "") + '</a>' : '<span class="cline">No phone on file</span>') +
         (small ? '<a class="tel sm" href="' + esc(telHref(small)) + '">main office ' + esc(small) + '</a>' : "") + '</div>' +
       (c.email ? '<div class="cmail">✉ ' + esc(c.email) + '</div>' : "")) +
       (c.why ? '<div class="cline"><b>Why:</b> ' + esc(c.why) + '</div>' : "") +
-      '<div class="cline crec"><b>Records to mention:</b> ' + esc(recMention(c)) + '</div>' +
+      kdLine(c) + '<div class="cline crec"><b>Records to mention:</b> ' + esc(recMention(c)) + '</div>' +
       (c.records ? '<details><summary>Records they could sell</summary>' + esc(c.records) + '</details>' : "") +
       '<div class="outs">' + OUTCOMES.map(([k, l]) => '<button type="button" class="out' + (done["call:" + c.id + ":" + k] ? " on" : "") + '" data-call="' + esc(c.id) + '" data-out="' + k + '">' + l + '</button>').join("") + '</div>' +
       '<div class="cnote"><textarea maxlength="200" rows="1" placeholder="Quick note (who answered, call back when…)" data-note="' + esc(c.id) + '">' + esc(localNote) + '</textarea><button type="button" data-savenote="' + esc(c.id) + '"' + (noteBusy[c.id] ? " disabled" : "") + (noteFlash[c.id] > Date.now() ? ' class="saved"' : "") + '>' + (noteBusy[c.id] ? "Saving…" : noteFlash[c.id] > Date.now() ? "Saved ✓" : "Save") + '</button></div>' +
@@ -462,7 +511,10 @@
         '<div class="pbar"><i style="width:' + Math.round((d / n) * 100) + '%"></i></div>';
       const order = [], groups = {};
       for (const c of calls) { const s = c.section || "Calls"; if (!groups[s]) { groups[s] = []; order.push(s); } groups[s].push(c); }
-      for (const s of order) h += '<div class="csec">' + esc(s) + "</div>" + groups[s].map(callHtml).join("");
+      for (const s of order) {
+        const g = groups[s], isCh7 = g.some((c) => c.chapter === "Ch 7" && c.kdates);
+        h += '<div class="csec">' + esc(s) + "</div>" + (isCh7 ? '<div class="cline ckd">Sorted by soonest court date. Undated next, past dates after, already-called at the bottom.</div>' : "") + (isCh7 ? ch7Sort(g) : g).map(callHtml).join("");
+      }
     }
     if (lockState === "ok") h += '<button type="button" class="linkbtn" id="calllock">🔒 Lock call list on this device</button>';
     const panel = panelHtml(sd, calls);
