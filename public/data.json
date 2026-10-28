@@ -66,6 +66,11 @@
           "id": "mercor-link",
           "text": "Send Riley your Mercor referral link",
           "note": "Carried over · two emails are waiting for it"
+        },
+        {
+          "id": "d1028-expo",
+          "text": "Optional: Manatee Advanced Learning Expo, 6–7:30pm",
+          "note": "MTC Main Campus, 6305 SR-70 E, Bradenton · Scout education companies among the community partners · Food trucks"
         }
       ],
       "waiting": [
@@ -239,7 +244,8 @@
       "items": [
         "Ch 7 calls · check-in 2:15",
         "Van pickup at A&B",
-        "Witt early release 1:50"
+        "Witt early release 1:50",
+        "Optional: Learning Expo 6–7:30pm"
       ],
       "trash": true,
       "today": true
