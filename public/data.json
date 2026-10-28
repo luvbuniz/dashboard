@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-28T10:25:00-04:00",
+  "updated": "2026-10-28T10:23:12-04:00",
   "heading": "Wednesday, Oct 28",
   "kicker": "Project week · no kids",
   "message": "Three things matter today. Everything else can wait in its lane.",
@@ -282,5 +282,41 @@
       "trash": true
     }
   ],
-  "elodie": []
+  "elodie": [
+    {
+      "id": "elo-printify",
+      "text": "Confirm the Printify email",
+      "note": "Link expires Thu 10/29, 4:31 AM — click it in the Printify email if not done"
+    },
+    {
+      "id": "elo-etsy-desc",
+      "text": "Approve the Etsy shop description",
+      "note": "Draft waiting: approve, edit, or skip"
+    },
+    {
+      "id": "elo-wiz-ep3",
+      "text": "Post Wizlings Ep3 on Instagram @wizlingstv",
+      "note": "Due today Wed 10/28, vertical 3:34"
+    },
+    {
+      "id": "elo-wiz-ep4",
+      "text": "Post Wizlings Ep4 on Instagram @wizlingstv",
+      "note": "Due Thu 10/29"
+    },
+    {
+      "id": "elo-wiz-ep5",
+      "text": "Post Wizlings Ep5 on Instagram @wizlingstv",
+      "note": "Due Fri 10/30"
+    },
+    {
+      "id": "elo-crowns",
+      "text": "Bring the container with both popped crowns to the dentist",
+      "note": "Thu 10/29, 11 AM, Family Smile Dentistry"
+    },
+    {
+      "id": "elo-newrez",
+      "text": "Newrez mortgage + escrow note",
+      "note": "Sun 11/1, 8 AM; escrow note $608.99"
+    }
+  ]
 }
