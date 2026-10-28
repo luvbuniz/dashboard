@@ -1,39 +1,39 @@
 {
-  "updated": "2026-10-27T09:40:00-04:00",
-  "heading": "Tuesday, Oct 27",
+  "updated": "2026-10-28T10:25:00-04:00",
+  "heading": "Wednesday, Oct 28",
   "kicker": "Project week · no kids",
   "message": "Three things matter today. Everything else can wait in its lane.",
   "frog": {
-    "id": "d1027-facebook",
-    "text": "Unlock Facebook and change the password",
-    "note": "Unlock link is in Meta's email from yesterday. About 10 minutes, then treat yourself 🎂"
+    "id": "d1028-ch7-calls",
+    "text": "Ch 7 calls first, from the Call leads card",
+    "note": "Unlock with your passcode · call check-in at 2:15 PM 🐸"
   },
   "today": [
     {
-      "id": "d1027-calls",
-      "text": "Lead calls from the printed list, 9 AM–2 PM",
-      "note": "First call 9:00 · Robert Greenbaum, Karalis PC (Pottstown Medical)"
+      "id": "d1028-ch7-calls",
+      "text": "Ch 7 calls first (Call leads card)",
+      "note": "Call check-in at 2:15 PM · today's frog 🐸"
     },
     {
-      "id": "d1027-send-marc-matt",
-      "text": "Send Marc's draft, then Matt's (Buni Gmail drafts)",
-      "note": "Marc first (CDX questionnaire), then Matt at Techcyte"
+      "id": "d1028-van-pickup",
+      "text": "Pick up the van from A&B Auto Tech",
+      "note": "Ready in a couple of hours — they'll call you"
     },
     {
-      "id": "d1027-facebook",
-      "text": "Unlock Facebook and change the password",
-      "note": "Today's frog 🐸"
+      "id": "d1028-review-drafts",
+      "text": "Review and send the drafts waiting in Riley's chat",
+      "note": "Daun and Adhi nudges · Heart-Tech trustee email + thank-you to Kevin Mann"
     }
   ],
   "quick": [
-    "Strip the bed, sheets in the washer (10 min)",
+    "Send the Daun and Adhi nudge drafts (5 min)",
+    "Add Heidi tutoring, Tue 11/3 4:45 PM, to the calendar (5 min)",
+    "Check if the micro1 robotics gig is still open (5 min)",
     "Clear the kitchen counters (15 min)",
-    "Text Heidi which day works, confirm $50/hr (5 min)",
+    "Dishes, one load (15 min)",
     "Bathroom sink and mirror (10 min)",
-    "Look over the Google and DocuSign sign-in alerts (10 min)",
     "Pick up the floor in one room (15 min)",
-    "Sheets to the dryer, remake the bed (10 min)",
-    "Call A&B about the oil leak and thermostat (5 min)"
+    "Trash out after 5 PM, 2 bags max (5 min)"
   ],
   "lanes": [
     {
@@ -43,30 +43,36 @@
       "tag": "TOP PRIORITY",
       "tasks": [
         {
-          "id": "d1027-calls",
-          "text": "Lead calls, 9 AM–2 PM",
-          "note": "First 60 have times; the rest roll to tomorrow"
+          "id": "d1028-ch7-calls",
+          "text": "Ch 7 calls first",
+          "note": "On the Call leads card · check-in at 2:15 PM"
         },
         {
-          "id": "d1027-send-marc",
-          "text": "Send Marc's draft (CDX questionnaire PDF)"
+          "id": "d1028-heart-tech",
+          "text": "Heart-Tech Health: review the trustee email + thank-you to Kevin Mann",
+          "note": "Mann says Heart-Tech can't sell assets now — go through the Chapter 7 trustee. Riley is drafting both"
+        },
+        {
+          "id": "d1028-daun-adhi",
+          "text": "Send the Daun (BioXcel) and Adhi (Mercor) nudge drafts",
+          "note": "Both quiet since 10/23 · drafts are in Riley's chat"
         },
         {
           "id": "d1027-send-matt",
-          "text": "Send Matt's draft (Techcyte)"
+          "text": "Send Matt's draft (Techcyte)",
+          "note": "Carried over from yesterday if not sent yet"
         },
         {
           "id": "mercor-link",
           "text": "Send Riley your Mercor referral link",
-          "note": "Two emails are waiting for it"
-        },
-        {
-          "id": "d1027-lead-emails",
-          "text": "OK today's 40 lead emails with Riley"
+          "note": "Carried over · two emails are waiting for it"
         }
       ],
       "waiting": [
         "Lawyer cost replies: Peal, Moore, Lapointe, Silberstein"
+      ],
+      "facts": [
+        "LinkedIn attorney outreach routine runs around 10:30 AM"
       ]
     },
     {
@@ -75,22 +81,23 @@
       "name": "Admin",
       "tasks": [
         {
+          "id": "d1028-van-pickup",
+          "text": "Pick up the van from A&B Auto Tech",
+          "note": "Ready in a couple of hours — they'll call"
+        },
+        {
           "id": "d1027-facebook",
-          "text": "Unlock Facebook and change the password"
+          "text": "Unlock Facebook and change the password",
+          "note": "Carried over from yesterday"
         },
         {
           "id": "signin-alerts",
           "text": "Confirm the Google and DocuSign sign-in alerts were you"
         },
         {
-          "id": "van-oil-thermo",
-          "text": "Van: check in with A&B on the oil leak and thermostat",
-          "note": "AC is fixed ✓ · leak and thermostat still in progress"
-        },
-        {
-          "id": "heidi-tutoring",
-          "text": "Answer Heidi about tutoring",
-          "note": "Which day, and confirm $50/hr"
+          "id": "heidi-calendar",
+          "text": "Put Heidi tutoring on the calendar",
+          "note": "Tue 11/3, 4:45 PM — not on the calendar yet"
         },
         {
           "id": "aaa-assuresign",
@@ -102,8 +109,10 @@
         }
       ],
       "facts": [
+        "Done today ✓ X Money W-9 · OpenArt contest entry · Downloads back in the Dock",
+        "Running in the background: Mac Downloads moving to the Seagate drive",
         "Trash: out after 5 PM, Sun–Thu, 2 bags max. Fines start this week.",
-        "Dentist: Thu 10/29, 11 AM, Family Smile Dentistry (stays as booked)"
+        "Dentist: Thu 10/29, 11 AM, Family Smile Dentistry"
       ]
     },
     {
@@ -119,7 +128,7 @@
       ],
       "tag": "ON HOLD",
       "facts": [
-        "On hold until the van is back from A&B — no sub slots for now"
+        "On hold until the van is back from A&B — pickup is today"
       ]
     },
     {
@@ -128,9 +137,37 @@
       "name": "AI training",
       "tasks": [
         {
-          "id": "micro1-assessment",
-          "text": "Finish the micro1 assessment steps",
-          "note": "Interview is done; application still shows incomplete"
+          "id": "d1028-mercor-interview",
+          "text": "Prep for the Mercor AI interview (education expert)",
+          "note": "Expecting to hear about the reviewer role today"
+        },
+        {
+          "id": "d1028-micro1",
+          "text": "micro1: check the robotics gig is still open, then prep for the AI interview"
+        },
+        {
+          "id": "d1028-realestate-role",
+          "text": "Apply for the property and real estate expert AI-training role"
+        }
+      ],
+      "facts": [
+        "Mercor cut the Odin cap to 2 hours",
+        "micro1 Voice Coach not certified — Voice Recording interview still open"
+      ]
+    },
+    {
+      "id": "x",
+      "emoji": "🐰",
+      "name": "@bunifree on X",
+      "tag": "YOU POST",
+      "tasks": [
+        {
+          "id": "d1028-bunifree-pin",
+          "text": "Post and pin an intro post on @bunifree"
+        },
+        {
+          "id": "d1028-bunifree-header",
+          "text": "Refresh the @bunifree header"
         }
       ]
     },
@@ -176,9 +213,9 @@
           "note": "15 min"
         },
         {
-          "id": "d1027-trash",
+          "id": "d1028-trash",
           "text": "Trash out after 5 PM, 2 bags max",
-          "note": "10 min"
+          "note": "5 min"
         }
       ]
     },
@@ -188,7 +225,7 @@
       "name": "Kids & calendar",
       "tasks": [],
       "facts": [
-        "Wed 10/28 · Witt early release, pickup 1:50 PM",
+        "Wed 10/28 · Witt early release, pickup 1:50 PM (today)",
         "Thu 10/29 · Picture retakes",
         "Fri 10/30 · Fall Parade",
         "Thu 11/19 · Fiona's school meeting, 10 AM (on the calendar)"
@@ -197,22 +234,15 @@
   ],
   "week": [
     {
-      "day": "Tue",
-      "date": "10/27",
-      "items": [
-        "Lead calls 9–2",
-        "Van check-in with A&B"
-      ],
-      "trash": true,
-      "today": true
-    },
-    {
       "day": "Wed",
       "date": "10/28",
       "items": [
+        "Ch 7 calls · check-in 2:15",
+        "Van pickup at A&B",
         "Witt early release 1:50"
       ],
-      "trash": true
+      "trash": true,
+      "today": true
     },
     {
       "day": "Thu",
@@ -243,6 +273,12 @@
       "items": [
         "Pick up at Wawa's 10 AM"
       ],
+      "trash": true
+    },
+    {
+      "day": "Mon",
+      "date": "11/2",
+      "items": [],
       "trash": true
     }
   ],
