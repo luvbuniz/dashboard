@@ -500,6 +500,54 @@
   });
   let extraOpen = false;
   document.addEventListener("toggle", (e) => { if (e.target && e.target.id === "extra-det") extraOpen = e.target.open; }, true);
+  // ── Call-session timer: ticks "callsession:YYYYMMDD:N:start|stop" (opaque), label = ISO time. Mirrored in localStorage.
+  const SESS_KEY = "amy-day-v2-callsess";
+  let sessAt = load(SESS_KEY, {});
+  const SESS_SEED = { "callsession:20261029:1:start": "2026-10-29T13:20:00.000Z" };   // Amy started 9:20 AM ET 10/29
+  const etYmd = (d) => new Date(d).toLocaleDateString("en-CA", { timeZone: "America/New_York" });
+  const sessAtOf = (id) => sessAt[id] || (done[id] ? (SESS_SEED[id] || done[id]) : null) || SESS_SEED[id] || null;
+  function todaySessions() {
+    const pre = "callsession:" + etYmd(Date.now()).replace(/-/g, "") + ":", out = [];
+    for (let n = 1; n < 50; n++) {
+      const st = sessAtOf(pre + n + ":start"); if (!st) break;
+      out.push({ n, start: Date.parse(st), stop: sessAtOf(pre + n + ":stop") ? Date.parse(sessAtOf(pre + n + ":stop")) : null, pre: pre + n });
+    }
+    return out;
+  }
+  const durFmt = (ms) => { const m = Math.floor(ms / 60000), h = Math.floor(m / 60); return h ? h + "h " + (m % 60) + "m" : m + "m"; };
+  const clkFmt = (ms) => { const t = Math.floor(ms / 1000), h = Math.floor(t / 3600), m = Math.floor(t / 60) % 60, x = t % 60; return h + ":" + String(m).padStart(2, "0") + ":" + String(x).padStart(2, "0"); };
+  function sessHtml() {
+    const ss = todaySessions(), run = ss.find((x) => !x.stop), now = Date.now();
+    const tot = ss.reduce((a, x) => a + ((x.stop || now) - x.start), 0);
+    return '<div class="calls-top" id="sessbar"><button type="button" id="sessbtn">' + (run ? "⏹ Stop calling" : "▶ Start calling") + '</button> ' +
+      '<span id="sessclk"><b>' + (run ? clkFmt(now - run.start) : "0:00:00") + '</b>' + (run ? " since " + hhmm(run.start) : "") + '</span> · ' +
+      '<span id="sesstot">Calling today: <b>' + durFmt(tot) + '</b></span></div>';
+  }
+  function paintSess() {
+    const b = document.getElementById("sessbar"); if (!b) return;
+    const t = document.createElement("div"); t.innerHTML = sessHtml(); const n = t.firstChild;
+    for (const k of ["sessclk", "sesstot"]) { const a = document.getElementById(k), z = n.querySelector("#" + k); if (a && a.innerHTML !== z.innerHTML) a.innerHTML = z.innerHTML; }
+    const bt = document.getElementById("sessbtn"), nb = n.querySelector("#sessbtn"); if (bt.textContent !== nb.textContent) bt.textContent = nb.textContent;
+  }
+  setInterval(paintSess, 1000);
+  document.addEventListener("click", (e) => {
+    if (e.target.id !== "sessbtn") return;
+    const ss = todaySessions(), run = ss.find((x) => !x.stop), iso = new Date().toISOString();
+    const id = run ? run.pre + ":stop" : "callsession:" + etYmd(Date.now()).replace(/-/g, "") + ":" + (ss.length + 1) + ":start";
+    sessAt[id] = iso; done[id] = iso; save(SESS_KEY, sessAt); save(DONE_KEY, done);
+    pushTick(id, iso, true); paintSess();
+  });
+  function todayCallsHtml(calls) {
+    const today = etYmd(Date.now()), rows = [];
+    for (const c of calls) {
+      let first = null; const outs = [];
+      for (const [k, lab] of OUTCOMES) { const v = done["call:" + c.id + ":" + k]; if (v && !isNaN(Date.parse(v)) && etYmd(v) === today) { outs.push(lab); if (!first || v < first) first = v; } }
+      if (first) rows.push({ c, first, outs });
+    }
+    rows.sort((a, b) => a.first < b.first ? -1 : 1);
+    return '<details class="cline"><summary><b>Today: ' + rows.length + ' call' + (rows.length === 1 ? "" : "s") + '</b></summary>' +
+      (rows.length ? rows.map((r) => '<div>' + esc(hhmm(r.first)) + " · " + esc(r.c.name || r.c.id) + (r.c.company ? " · " + esc(r.c.company) : "") + " — " + esc(r.outs.join(", ")) + "</div>").join("") : "<div>No outcomes ticked yet today.</div>") + "</details>";
+  }
   function renderCalls() {
     const box = document.getElementById("calls");
     if (!box || !data) return;
@@ -519,6 +567,7 @@
     if (!calls.length) h += '<div class="empty">No calls today. 🎉 When there\'s a call list, Riley puts it here at 7am.</div>';
     else {
       const n = calls.length, d = calls.filter(callDone).length;
+      h += sessHtml() + todayCallsHtml(calls);
       h += '<div class="calls-top"><span class="calls-prog"><b>' + d + " of " + n + "</b> called</span>" +
         (calls.some((c) => c.chapter === "Ch 7") ? '<span class="tag">CHAPTER 7 FIRST</span>' : "") + '</div>' +
         '<div class="pbar"><i style="width:' + Math.round((d / n) * 100) + '%"></i></div>';
