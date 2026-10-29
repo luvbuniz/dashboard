@@ -316,7 +316,7 @@
     return '<div class="cline ckd">Court dates: ' + ev.map((x) => esc(kdWhat(x.e)) + " " + esc(kdFmt(x)) + (x.t < Date.now() ? " (past)" : "")).join(" · ") + '</div>';
   }
   function ch7Sort(list) {   // not-called: soonest upcoming → undated → past (latest first); called/ticked last, in original order
-    const rank = (c) => { if (callDone(c)) return [3, 0]; const k = keyDate(c); if (!k || k.state === "nf") return [1, 0]; return k.state === "past" ? [2, -k.x.t] : [0, k.x.t]; };
+    const rank = (c) => { if (callDone(c)) return [3, 0]; if (c.pin) return [-1, +c.pin || 0]; if (c.prior_called) return [2.5, 0]; const k = keyDate(c); if (!k || k.state === "nf") return [1, 0]; return k.state === "past" ? [2, -k.x.t] : [0, k.x.t]; };
     return list.map((c, i) => ({ c, i, r: rank(c) })).sort((a, b) => a.r[0] - b.r[0] || a.r[1] - b.r[1] || a.i - b.i).map((o) => o.c);
   }
   function md(text) {
@@ -487,6 +487,8 @@
     renderCalls();
     const sp = document.getElementById("spanel"); if (sp) sp.scrollTop = 0;
   });
+  let extraOpen = false;
+  document.addEventListener("toggle", (e) => { if (e.target && e.target.id === "extra-det") extraOpen = e.target.open; }, true);
   function renderCalls() {
     const box = document.getElementById("calls");
     if (!box || !data) return;
@@ -511,10 +513,16 @@
         '<div class="pbar"><i style="width:' + Math.round((d / n) * 100) + '%"></i></div>';
       const order = [], groups = {};
       for (const c of calls) { const s = c.section || "Calls"; if (!groups[s]) { groups[s] = []; order.push(s); } groups[s].push(c); }
+      let ex = "", exN = 0;
       for (const s of order) {
         const g = groups[s], isCh7 = g.some((c) => c.chapter === "Ch 7" && c.kdates);
-        h += '<div class="csec">' + esc(s) + "</div>" + (isCh7 ? '<div class="cline ckd">Sorted by soonest court date. Undated next, past dates after, already-called at the bottom.</div>' : "") + (isCh7 ? ch7Sort(g) : g).map(callHtml).join("");
+        if (/^Extra/.test(s)) {   // all "Extra …" sections go in one collapsed block, sub-headed by what follows "·"
+          const sub = s.includes("·") ? s.split("·").slice(1).join("·").trim() : "";
+          ex += (sub ? '<div class="csec">' + esc(sub) + "</div>" : "") + g.map(callHtml).join(""); exN += g.length; continue;
+        }
+        h += '<div class="csec">' + esc(s) + "</div>" + (isCh7 ? '<div class="cline ckd">Pinned first, then soonest court date. Undated next, past dates after, called on an earlier day and already-called at the bottom.</div>' : "") + (isCh7 ? ch7Sort(g) : g).map(callHtml).join("");
       }
+      if (exN) h += '<details id="extra-det"' + (extraOpen ? " open" : "") + '><summary class="csec">Extra – only if on a roll (' + exN + ")</summary>" + ex + "</details>";
     }
     if (lockState === "ok") h += '<button type="button" class="linkbtn" id="calllock">🔒 Lock call list on this device</button>';
     const panel = panelHtml(sd, calls);
