@@ -103,6 +103,7 @@
     .badge.ok { background:var(--ok); color:#fff; border-color:var(--ok); }
     .phones { display:flex; flex-wrap:wrap; align-items:center; gap:6px 12px; margin:6px 0; }
     .tel { display:inline-flex; align-items:center; gap:6px; background:var(--copper); color:#fff; text-decoration:none; font-weight:600; font-size:17px; padding:10px 16px; border-radius:999px; min-height:44px; }
+    .cdur { font-weight:600; margin-left:6px; }
     .tel.sm { background:none; color:var(--copper); font-size:14px; font-weight:500; padding:6px 0; min-height:0; text-decoration:underline; }
     .cmail { font-size:13px; color:var(--muted); word-break:break-all; }
     .cline { font-size:14px; color:var(--muted); margin-top:4px; } .cline b { color:var(--ink); font-weight:600; }
@@ -288,7 +289,15 @@
     return { cls: "", text: "" };
   }
   const OUTCOMES = [["answered","Answered"],["voicemail","Voicemail"],["gatekeeper","Gatekeeper"],["no_answer","No answer"],["interested","Interested"],["not_interested","Not interested"],["call_back","Call back"]];
-  const telHref = (p) => "tel:" + String(p || "").replace(/[^\d+]/g, "");
+  const telHref = (p) => {   // E.164-ish (+1 for 10-digit US numbers); extension -> ",ext" (pause then digits)
+    const m = String(p || "").match(/^(.*?)(?:\s*(?:ext\.?|x|#|extension)\s*(\d+))?\s*$/i);
+    let d = (m[1] || "").replace(/[^\d+]/g, "");
+    if (!d.startsWith("+")) d = d.length === 10 ? "+1" + d : d.length === 11 && d[0] === "1" ? "+" + d : d;
+    return "tel:" + d + (m[2] ? "," + m[2] : "");
+  };
+  // Dial timing (10/29): tap Call -> call:<id>:dialed; next outcome -> call:<id>:dur:<sec|unknown> (only one dur tick on at a time).
+  const durOf = (cid) => { const k = Object.keys(done).find((x) => x.startsWith("call:" + cid + ":dur:")); return k ? { v: k.split(":").pop(), at: done[k], k } : null; };
+  const fmtDur = (s) => Math.floor(s / 60) + ":" + String(Math.round(s % 60)).padStart(2, "0");
   const callDone = (c) => OUTCOMES.some(([k]) => done["call:" + c.id + ":" + k]);
   // ---- court dates (341 / hearings / bar dates) ----
   const ETZ = "America/New_York";
@@ -363,10 +372,10 @@
     const tr = c.trustee && c.trustee.status === "verified" ? c.trustee : null, trNF = c.trustee && c.trustee.status === "not_found";
     const co = c.counsel || null;
     const whoHtml = tr ? '<div class="who wt"><div class="wlab"><span class="k">1 · Call first</span>Trustee: <b>' + esc(tr.name) + '</b></div>' +
-        (tr.phone ? '<a class="tel" data-who="trustee" href="' + esc(telHref(tr.phone)) + '">📞 Trustee: ' + esc(tr.name) + ' · ' + esc(tr.phone) + '</a>' : '<span class="cline">No trustee phone on file</span>') +
+        (tr.phone ? '<a class="tel" data-who="trustee" href="' + esc(telHref(tr.phone)) + '">📞 Call Trustee: ' + esc(tr.name) + ' · ' + esc(tr.phone) + '</a>' : '<span class="cline">No trustee phone on file</span>') +
         (tr.email ? '<div class="cmail">✉ ' + esc(tr.email) + '</div>' : "") + '</div>' +
       (co ? '<div class="who wc"><div class="wlab"><span class="k">2 · Then</span>Counsel: <b>' + esc(co.name) + '</b>' + (co.role ? ' <span class="crole">' + esc(co.role) + '</span>' : "") + '</div>' +
-        (co.phone ? '<a class="tel c2" data-who="counsel" href="' + esc(telHref(co.phone)) + '">📞 Counsel · ' + esc(co.phone) + '</a>' : "") +
+        (co.phone ? '<a class="tel c2" data-who="counsel" href="' + esc(telHref(co.phone)) + '">📞 Call Counsel · ' + esc(co.phone) + '</a>' : "") +
         (co.email ? '<div class="cmail">✉ ' + esc(co.email) + '</div>' : "") + '</div>' : "") : "";
     return '<div class="call' + (urgent ? " urgent" : "") + (isDone ? " done" : "") + (c.id === spCall ? " active" : "") + '" data-call="' + esc(c.id) + '">' +
       '<div class="call-h">' + (c.time ? '<span class="ctime">' + esc(c.time) + '</span>' : "") +
@@ -381,8 +390,8 @@
         (tr ? '<span class="badge urg">CALL TRUSTEE FIRST</span>' : trNF ? '<span class="badge tnf">trustee: not found</span>' : "") +
         (Array.isArray(c.tags) ? c.tags.map((t) => '<span class="badge em">' + (/^emailed/i.test(t) ? "✉ " : "") + esc(t) + '</span>').join("") : "") +
         (isDone ? '<span class="badge ok">✓ Called</span>' : "") + '</div>' +
-      (tr ? whoHtml : '<div class="phones">' + (big ? '<a class="tel" href="' + esc(telHref(big)) + '">📞 ' + esc(big) + (c.direct_phone ? " · direct" : "") + '</a>' : '<span class="cline">No phone on file</span>') +
-        (small ? '<a class="tel sm" href="' + esc(telHref(small)) + '">main office ' + esc(small) + '</a>' : "") + '</div>' +
+      (tr ? whoHtml : '<div class="phones">' + (big ? '<a class="tel" href="' + esc(telHref(big)) + '">📞 Call ' + esc(big) + (c.direct_phone ? " · direct" : "") + '</a>' : '<span class="cline">No phone on file</span>') +
+        (small ? '<a class="tel sm" href="' + esc(telHref(small)) + '">📞 Call main office ' + esc(small) + '</a>' : "") + '</div>' +
       (c.email ? '<div class="cmail">✉ ' + esc(c.email) + '</div>' : "")) +
       (c.signal ? '<div class="cline csig"><b>🚩 ' + esc(c.signal) + (c.signal_date ? " · " + esc(c.signal_date) : "") + ':</b> ' + esc(c.signal_detail || "") +
         (c.source_url ? ' <a href="' + esc(c.source_url) + '" target="_blank" rel="noopener">source ↗</a>' : "") + (c.city_state ? '<br>📍 ' + esc(c.city_state) : "") + '</div>' : "") +
@@ -393,7 +402,7 @@
       (c.other_avenues ? '<div class="cline cav"><b>Other avenues:</b> ' + esc(c.other_avenues) + '</div>' : "") + '<div class="cline crec"><b>Records to mention:</b> ' + esc(recMention(c)) + '</div>' +
       (c.records ? '<details><summary>Records they could sell</summary>' + esc(c.records) + '</details>' : "") +
       mrefHtml(c) +
-      '<div class="outs">' + OUTCOMES.map(([k, l]) => '<button type="button" class="out' + (done["call:" + c.id + ":" + k] ? " on" : "") + '" data-call="' + esc(c.id) + '" data-out="' + k + '">' + l + '</button>').join("") + '</div>' +
+      '<div class="outs">' + OUTCOMES.map(([k, l]) => '<button type="button" class="out' + (done["call:" + c.id + ":" + k] ? " on" : "") + '" data-call="' + esc(c.id) + '" data-out="' + k + '">' + l + '</button>').join("") + (() => { const d = durOf(c.id); return d ? ' <span class="cdur">⏱ ' + (d.v === "unknown" ? "?" : fmtDur(+d.v)) + "</span>" : ""; })() + '</div>' +
       '<div class="cnote"><textarea maxlength="200" rows="1" placeholder="Quick note (who answered, call back when…)" data-note="' + esc(c.id) + '">' + esc(localNote) + '</textarea><button type="button" data-savenote="' + esc(c.id) + '"' + (noteBusy[c.id] ? " disabled" : "") + (noteFlash[c.id] > Date.now() ? ' class="saved"' : "") + '>' + (noteBusy[c.id] ? "Saving…" : noteFlash[c.id] > Date.now() ? "Saved ✓" : "Save") + '</button></div>' +
       '<div class="nstat' + (nst.cls ? " " + nst.cls : "") + '" id="nstat-' + esc(c.id) + '">' + esc(nst.text) + '</div>' +
       '</div>';
@@ -590,8 +599,24 @@
     }
     rows.sort((a, b) => a.first < b.first ? -1 : 1);
     todayRank = {}; rows.forEach((r, i) => { todayRank[r.c.id] = i + 1; });
-    return '<div style="font-size:2rem;font-weight:800;margin:6px 0">📞 ' + rows.length + ' call' + (rows.length === 1 ? "" : "s") + ' today</div><details class="cline"><summary><b>Today: ' + rows.length + ' call' + (rows.length === 1 ? "" : "s") + '</b></summary>' +
+    return '<div style="font-size:2rem;font-weight:800;margin:6px 0">📞 ' + rows.length + ' call' + (rows.length === 1 ? "" : "s") + ' today</div>' + avgHtml(calls) + '<details class="cline"><summary><b>Today: ' + rows.length + ' call' + (rows.length === 1 ? "" : "s") + '</b></summary>' +
       (rows.length ? rows.map((r) => '<div>' + esc(hhmm(r.first)) + " · " + esc(r.c.name || r.c.id) + (r.c.company ? " · " + esc(r.c.company) : "") + " — " + esc(r.outs.join(", ")) + "</div>").join("") : "<div>No outcomes ticked yet today.</div>") + "</details>";
+  }
+  document.addEventListener("click", (e) => {   // Call button: record dial time (link still opens dialer / Phone Link)
+    const a = e.target.closest && e.target.closest("a.tel"), card = a && a.closest(".call[data-call]"); if (!card) return;
+    const k = "call:" + card.dataset.call + ":dialed", iso = new Date().toISOString();
+    done[k] = iso; save(DONE_KEY, done); pushTick(k, iso, true);
+  }, true);
+  function avgHtml(calls) {
+    const today = etYmd(Date.now()), S = { "Avg voicemail": [], "Avg live call": [], "Avg gatekeeper": [] };
+    for (const c of calls) {
+      const d = durOf(c.id); if (!d || d.v === "unknown" || etYmd(d.at) !== today) continue;
+      const on = (k) => done["call:" + c.id + ":" + k];
+      const cat = on("voicemail") ? "Avg voicemail" : on("gatekeeper") ? "Avg gatekeeper" : ["answered", "interested", "not_interested", "call_back"].some(on) ? "Avg live call" : null;
+      if (cat) S[cat].push(+d.v);
+    }
+    const parts = Object.entries(S).filter(([, a]) => a.length).map(([k, a]) => k + ": " + fmtDur(a.reduce((x, y) => x + y, 0) / a.length));
+    return parts.length ? '<div class="cline">⏱ ' + esc(parts.join(" · ")) + "</div>" : "";
   }
   let outLock = 0, outLockCid = null;
   let frozenOn = false, frozen = {};   // after an outcome tap, keep card order fixed until reload or "Tidy called"
@@ -713,6 +738,12 @@
       b.classList.toggle("on", now);   // instant green
       if (!frozenOn) { frozenOn = true; renderCalls(); }   // snapshot current order before ticking
       if (now) done[id] = new Date().toISOString(); else delete done[id];
+      const dk = "call:" + cid + ":dialed", dAt = done[dk], od = durOf(cid);
+      if (now && dAt && (!od || od.at < dAt)) {   // first outcome after this dial -> store duration
+        const sec = Math.round((Date.now() - Date.parse(dAt)) / 1000), v = sec >= 0 && sec <= 1800 ? String(sec) : "unknown";
+        if (od) { delete done[od.k]; pushTick(od.k, "dur", false); }
+        const nk = "call:" + cid + ":dur:" + v; done[nk] = new Date().toISOString(); pushTick(nk, v, true);
+      }
       save(DONE_KEY, done);
       const meta = labels["call:" + cid] || {};
       pushTick(id, b.textContent + " · " + (meta.label || cid), now);
