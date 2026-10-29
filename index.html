@@ -360,6 +360,7 @@
       (c.company && c.name ? '<div class="ccomp">' + esc(c.company) + '</div>' : "") +
       '<div class="badges">' + kdBadge(c) + (urgent ? '<span class="badge urg">URGENT</span>' : "") +
         (c.chapter ? '<span class="badge ch">' + esc(c.chapter) + '</span>' : "") +
+        (c.big_upside ? '<span class="badge ok">Big upside</span>' : "") +
         (c.fit ? '<span class="badge fit fit-' + esc(String(c.fit).toLowerCase()) + '">Fit: ' + esc(c.fit) + '</span>' : "") +
         (c.script_tag ? '<span class="badge">' + esc(c.script_tag) + '</span>' : "") +
         (c.attempt ? '<span class="badge">' + esc(c.attempt) + '</span>' : "") +
@@ -372,6 +373,7 @@
       (c.why ? '<div class="cline"><b>Why:</b> ' + esc(c.why) + '</div>' : "") +
       kdLine(c) + (c.fit ? '<div class="cline cfit"><b>Buyer fit:</b> ' + esc(c.fit) + (c.fit_why ? ' · ' + esc(c.fit_why) : "") + '</div>' : "") +
       (c.payout ? '<div class="cline cpay"><b>💰 Your payout (est.):</b> ' + String(c.payout).split(' || ').map(esc).join('<br>') + '</div>' : "") +
+      (c.company_range ? '<div class="cline crange"><b>🏢</b> ' + esc(c.company_range) + '</div>' : "") +
       (c.other_avenues ? '<div class="cline cav"><b>Other avenues:</b> ' + esc(c.other_avenues) + '</div>' : "") + '<div class="cline crec"><b>Records to mention:</b> ' + esc(recMention(c)) + '</div>' +
       (c.records ? '<details><summary>Records they could sell</summary>' + esc(c.records) + '</details>' : "") +
       '<div class="outs">' + OUTCOMES.map(([k, l]) => '<button type="button" class="out' + (done["call:" + c.id + ":" + k] ? " on" : "") + '" data-call="' + esc(c.id) + '" data-out="' + k + '">' + l + '</button>').join("") + '</div>' +
