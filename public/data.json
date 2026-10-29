@@ -1,28 +1,43 @@
 {
-  "updated": "2026-10-29T07:22:52-04:00",
-  "heading": "Wednesday, Oct 28",
+  "updated": "2026-10-29T09:04:19-04:00",
+  "heading": "Thursday, Oct 29",
   "kicker": "Project week · no kids",
-  "message": "Three things matter today. Everything else can wait in its lane.",
+  "message": "Calls, dentist, lunch, Mercor, micro1, Costco. One at a time.",
   "frog": {
-    "id": "d1028-ch7-calls",
-    "text": "Ch 7 calls first, from the Call leads card",
-    "note": "Unlock with your passcode · call check-in at 2:15 PM 🐸"
+    "id": "d1029-calls",
+    "text": "Calls first, from the Call leads card",
+    "note": "Before the dentist, so no numb mouth · start with Rick Palacio 🐸"
   },
   "today": [
     {
-      "id": "d1028-ch7-calls",
-      "text": "Ch 7 calls first (Call leads card)",
-      "note": "Call check-in at 2:15 PM · today's frog 🐸"
+      "id": "d1029-calls",
+      "text": "1. Calls (Call leads card)",
+      "note": "Now until about 10:30 · start with Rick Palacio"
     },
     {
-      "id": "d1028-van-pickup",
-      "text": "Pick up the van from A&B Auto Tech",
-      "note": "Ready in a couple of hours — they'll call you"
+      "id": "d1029-dentist",
+      "text": "2. Dentist, 11 AM, Family Smile Dentistry",
+      "note": "Bring the container with both popped crowns"
     },
     {
-      "id": "d1028-review-drafts",
-      "text": "Review and send the drafts waiting in Riley's chat",
-      "note": "Daun and Adhi nudges · Heart-Tech trustee email + thank-you to Kevin Mann"
+      "id": "d1029-lunch",
+      "text": "3. Lunch",
+      "note": "Quick one"
+    },
+    {
+      "id": "d1029-mercor",
+      "text": "4. Mercor Project Odin, 2 hours",
+      "note": "Slack, videos, tasks · about 1–3 PM"
+    },
+    {
+      "id": "d1029-micro1",
+      "text": "5. micro1 voice recording interview",
+      "note": "Link expires about 11:20 PM ET tonight · plug in the Q2U (USB-C), pick Q2U as the input"
+    },
+    {
+      "id": "d1029-costco",
+      "text": "6. Costco emergency food run",
+      "note": "Canned protein, rice, water, shelf-stable milk · closes 8:30 PM"
     }
   ],
   "quick": [
@@ -86,11 +101,6 @@
       "name": "Admin",
       "tasks": [
         {
-          "id": "d1028-van-pickup",
-          "text": "Pick up the van from A&B Auto Tech",
-          "note": "Ready in a couple of hours — they'll call"
-        },
-        {
           "id": "d1027-facebook",
           "text": "Unlock Facebook and change the password",
           "note": "Carried over from yesterday"
@@ -114,7 +124,7 @@
         }
       ],
       "facts": [
-        "Done today ✓ X Money W-9 · OpenArt contest entry · Downloads back in the Dock",
+        "Done ✓ Van picked up from A&B Auto Tech",
         "Running in the background: Mac Downloads moving to the Seagate drive",
         "Trash: out after 5 PM, Sun–Thu, 2 bags max. Fines start this week.",
         "Dentist: Thu 10/29, 11 AM, Family Smile Dentistry"
@@ -133,7 +143,7 @@
       ],
       "tag": "ON HOLD",
       "facts": [
-        "On hold until the van is back from A&B — pickup is today"
+        "Van is back from A&B ✓"
       ]
     },
     {
@@ -243,35 +253,41 @@
       "date": "10/28",
       "items": [
         "Ch 7 calls · check-in 2:15",
-        "Van pickup at A&B",
         "Witt early release 1:50",
         "Optional: Learning Expo 6–7:30pm"
       ],
       "trash": true,
-      "today": true
+      "today": false
     },
     {
       "day": "Thu",
       "date": "10/29",
       "items": [
+        "Calls",
         "Dentist 11 AM",
+        "Mercor Odin 2 hrs",
+        "micro1 interview",
+        "Costco",
         "Picture retakes"
       ],
-      "trash": true
+      "trash": true,
+      "today": true
     },
     {
       "day": "Fri",
       "date": "10/30",
       "items": [
         "Fall Parade"
-      ]
+      ],
+      "today": false
     },
     {
       "day": "Sat",
       "date": "10/31",
       "items": [
         "Halloween 🎃"
-      ]
+      ],
+      "today": false
     },
     {
       "day": "Sun",
@@ -279,13 +295,15 @@
       "items": [
         "Pick up at Wawa's 10 AM"
       ],
-      "trash": true
+      "trash": true,
+      "today": false
     },
     {
       "day": "Mon",
       "date": "11/2",
       "items": [],
-      "trash": true
+      "trash": true,
+      "today": false
     }
   ],
   "elodie": [
