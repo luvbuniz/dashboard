@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-28T10:23:12-04:00",
+  "updated": "2026-10-29T07:22:52-04:00",
   "heading": "Wednesday, Oct 28",
   "kicker": "Project week · no kids",
   "message": "Three things matter today. Everything else can wait in its lane.",
@@ -323,6 +323,26 @@
       "id": "elo-newrez",
       "text": "Newrez mortgage + escrow note",
       "note": "Sun 11/1, 8 AM; escrow note $608.99"
+    },
+    {
+      "id": "elo-thu-calls",
+      "text": "Call block 8:30-10:30 AM, trustees and leads",
+      "note": "Thu 10/29, priority 1"
+    },
+    {
+      "id": "elo-thu-mercor",
+      "text": "Mercor work (Odin): 2-hour testing limit, then real hours up to 60",
+      "note": "Thu 10/29, after dentist, priority 3"
+    },
+    {
+      "id": "elo-thu-micro1",
+      "text": "Micro1 onboarding / interview next",
+      "note": "Thu 10/29, after Mercor, priority 4"
+    },
+    {
+      "id": "elo-thu-costco",
+      "text": "Costco run: emergency box, canned food, cases of water",
+      "note": "Thu 10/29, last; warehouse closes 8:30 PM"
     }
   ]
 }
