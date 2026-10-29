@@ -89,6 +89,12 @@
     .badge.kd.nf { background:var(--elev); color:var(--muted); border-style:dashed; }
     .badge.em { background:var(--ok); color:#fff; border-color:var(--ok); }
     .ckd { font-size:12.5px; color:var(--muted); }
+    .badge.fit { background:#eef3ff; color:#2a4a8a; border-color:#c9d6f2; }
+    .badge.fit-mercor { background:#f2ecff; color:#5a3a9a; border-color:#d9ccf2; }
+    .badge.fit-both { background:#e8f6ee; color:#1f6b45; border-color:#bfe3cf; }
+    .badge.fit-neither { background:#f4f4f4; color:#666; }
+    .sp-links { font-size:12px; margin:0 0 8px; padding:6px 8px; background:var(--copper-dim); border-radius:8px; }
+    .sp-links p { margin:0; } .sp-links a, .stext a { color:var(--copper); }
     .badge.ch { color:var(--copper); background:var(--copper-dim); border-color:transparent; }
     .badge.ok { background:var(--ok); color:#fff; border-color:var(--ok); }
     .phones { display:flex; flex-wrap:wrap; align-items:center; gap:6px 12px; margin:6px 0; }
@@ -320,7 +326,7 @@
     return list.map((c, i) => ({ c, i, r: rank(c) })).sort((a, b) => a.r[0] - b.r[0] || a.r[1] - b.r[1] || a.i - b.i).map((o) => o.c);
   }
   function md(text) {
-    const inl = (t) => esc(t).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
+    const inl = (t) => esc(t).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>").replace(/\[([^\]]+)\]\((https:\/\/[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
     let out = "", list = false;
     for (const raw of String(text || "").split("\n")) {
       const ln = raw.trimEnd();
@@ -354,6 +360,7 @@
       (c.company && c.name ? '<div class="ccomp">' + esc(c.company) + '</div>' : "") +
       '<div class="badges">' + kdBadge(c) + (urgent ? '<span class="badge urg">URGENT</span>' : "") +
         (c.chapter ? '<span class="badge ch">' + esc(c.chapter) + '</span>' : "") +
+        (c.fit ? '<span class="badge fit fit-' + esc(String(c.fit).toLowerCase()) + '">Fit: ' + esc(c.fit) + '</span>' : "") +
         (c.script_tag ? '<span class="badge">' + esc(c.script_tag) + '</span>' : "") +
         (c.attempt ? '<span class="badge">' + esc(c.attempt) + '</span>' : "") +
         (tr ? '<span class="badge urg">CALL TRUSTEE FIRST</span>' : trNF ? '<span class="badge tnf">trustee: not found</span>' : "") +
@@ -363,7 +370,8 @@
         (small ? '<a class="tel sm" href="' + esc(telHref(small)) + '">main office ' + esc(small) + '</a>' : "") + '</div>' +
       (c.email ? '<div class="cmail">✉ ' + esc(c.email) + '</div>' : "")) +
       (c.why ? '<div class="cline"><b>Why:</b> ' + esc(c.why) + '</div>' : "") +
-      kdLine(c) + '<div class="cline crec"><b>Records to mention:</b> ' + esc(recMention(c)) + '</div>' +
+      kdLine(c) + (c.fit ? '<div class="cline cfit"><b>Buyer fit:</b> ' + esc(c.fit) + (c.fit_why ? ' · ' + esc(c.fit_why) : "") + '</div>' : "") +
+      (c.other_avenues ? '<div class="cline cav"><b>Other avenues:</b> ' + esc(c.other_avenues) + '</div>' : "") + '<div class="cline crec"><b>Records to mention:</b> ' + esc(recMention(c)) + '</div>' +
       (c.records ? '<details><summary>Records they could sell</summary>' + esc(c.records) + '</details>' : "") +
       '<div class="outs">' + OUTCOMES.map(([k, l]) => '<button type="button" class="out' + (done["call:" + c.id + ":" + k] ? " on" : "") + '" data-call="' + esc(c.id) + '" data-out="' + k + '">' + l + '</button>').join("") + '</div>' +
       '<div class="cnote"><textarea maxlength="200" rows="1" placeholder="Quick note (who answered, call back when…)" data-note="' + esc(c.id) + '">' + esc(localNote) + '</textarea><button type="button" data-savenote="' + esc(c.id) + '"' + (noteBusy[c.id] ? " disabled" : "") + (noteFlash[c.id] > Date.now() ? ' class="saved"' : "") + '>' + (noteBusy[c.id] ? "Saving…" : noteFlash[c.id] > Date.now() ? "Saved ✓" : "Save") + '</button></div>' +
@@ -419,7 +427,7 @@
       ["gatekeeper", "Gatekeeper tips", (cs.gatekeeper && cs.gatekeeper.title) || "Gatekeeper tips", T("gatekeeper")],
       ["bankruptcy", "Bankruptcy cheat sheet", (cs.bankruptcy && cs.bankruptcy.title) || "Bankruptcy cheat sheet", T("bankruptcy")],
     ];
-    const known = ["voicemail", "live_attorney", "live_owner", "link_only", "questions", "gatekeeper", "bankruptcy"];
+    const known = ["voicemail", "live_attorney", "live_owner", "link_only", "questions", "gatekeeper", "bankruptcy", "buyer_links"];
     for (const [k, b] of Object.entries(cs)) if (!known.includes(k)) tabs.push([k, (b && b.title) || k, (b && b.title) || k, T(k)]);
     return tabs.filter((t) => String(t[3]).trim());
   }
@@ -455,7 +463,7 @@
     const c = spCall ? calls.find((x) => x.id === spCall) : null;
     return '<aside class="spanel' + (spCollapsed ? " collapsed" : "") + '" id="spanel"><div class="sp-h"><b>📜 Call script</b>' +
       '<button type="button" class="sp-toggle" id="sptoggle">' + (spCollapsed ? "Show script ▾" : "Hide script ▴") + '</button></div>' +
-      '<div class="sp-body"><div class="stabs">' + tabs.map(([k, l]) => '<button type="button" class="stab' + (k === spTab ? " on" : "") + '" data-stab="' + esc(k) + '">' + esc(l) + '</button>').join("") + '</div>' +
+      '<div class="sp-body">' + (cs.buyer_links && cs.buyer_links.text ? '<div class="sp-links">' + md(cs.buyer_links.text) + '</div>' : "") + '<div class="stabs">' + tabs.map(([k, l]) => '<button type="button" class="stab' + (k === spTab ? " on" : "") + '" data-stab="' + esc(k) + '">' + esc(l) + '</button>').join("") + '</div>' +
       (c ? '<div class="sp-for">For: <b>' + esc(spWhoLabel(c)) + '</b>' + (c.company && c.name ? " · " + esc(shortCo(c.company)) : "") + ' <button type="button" id="spclear">clear</button></div>'
          : (calls.length ? '<div class="sp-for">Tap a lead to switch to its script and fill in the name, company and records.</div>' : "")) +
       '<div class="sp-title">' + esc(t[2]) + '</div><div class="stext">' + fillScript(md(t[3]), c) + '</div></div></aside>';
