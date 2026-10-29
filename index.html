@@ -339,7 +339,14 @@
     }
     return out + (list ? "</ul>" : "");
   }
+  let todayRank = {};
   function callHtml(c) {
+    const hh = callHtml0(c), r = todayRank[c.id];
+    if (!r) return hh;
+    const i = hh.indexOf(">") + 1;
+    return hh.slice(0, i) + '<div class="tag" style="background:#1f7a3a;color:#fff;display:inline-block;margin-bottom:4px">Today: #' + r + '</div>' + hh.slice(i);
+  }
+  function callHtml0(c) {
     const urgent = c.chapter === "Ch 7", isDone = callDone(c);
     const who = [c.name, c.company].filter(Boolean).join(" · ");
     const big = c.direct_phone || c.phone, small = c.direct_phone && c.phone && c.phone !== c.direct_phone ? c.phone : "";
@@ -545,8 +552,14 @@
       if (first) rows.push({ c, first, outs });
     }
     rows.sort((a, b) => a.first < b.first ? -1 : 1);
-    return '<details class="cline"><summary><b>Today: ' + rows.length + ' call' + (rows.length === 1 ? "" : "s") + '</b></summary>' +
+    todayRank = {}; rows.forEach((r, i) => { todayRank[r.c.id] = i + 1; });
+    return '<div style="font-size:2rem;font-weight:800;margin:6px 0">📞 ' + rows.length + ' call' + (rows.length === 1 ? "" : "s") + ' today</div><details class="cline"><summary><b>Today: ' + rows.length + ' call' + (rows.length === 1 ? "" : "s") + '</b></summary>' +
       (rows.length ? rows.map((r) => '<div>' + esc(hhmm(r.first)) + " · " + esc(r.c.name || r.c.id) + (r.c.company ? " · " + esc(r.c.company) : "") + " — " + esc(r.outs.join(", ")) + "</div>").join("") : "<div>No outcomes ticked yet today.</div>") + "</details>";
+  }
+  function ch7Div(list) {
+    const k = list.findIndex(callDone); if (k < 0) return list.map(callHtml).join("");
+    const nt = list.filter((c) => todayRank[c.id]).length;
+    return list.slice(0, k).map(callHtml).join("") + '<div class="csec" style="color:#1f7a3a">✓ Called today (' + nt + ')' + (list.length - k > nt ? " and earlier" : "") + '</div>' + list.slice(k).map(callHtml).join("");
   }
   function renderCalls() {
     const box = document.getElementById("calls");
@@ -580,7 +593,7 @@
           const sub = s.includes("·") ? s.split("·").slice(1).join("·").trim() : "";
           ex += (sub ? '<div class="csec">' + esc(sub) + "</div>" : "") + g.map(callHtml).join(""); exN += g.length; continue;
         }
-        h += '<div class="csec">' + esc(s) + "</div>" + (isCh7 ? '<div class="cline ckd">Pinned first, then soonest court date. Undated next, past dates after, called on an earlier day and already-called at the bottom.</div>' : "") + (isCh7 ? ch7Sort(g) : g).map(callHtml).join("");
+        h += '<div class="csec">' + esc(s) + "</div>" + (isCh7 ? '<div class="cline ckd">Pinned first, then soonest court date. Undated next, past dates after, called on an earlier day and already-called at the bottom.</div>' : "") + (isCh7 ? ch7Div(ch7Sort(g)) : g.map(callHtml).join(""));
       }
       if (exN) h += '<details id="extra-det"' + (extraOpen ? " open" : "") + '><summary class="csec">Extra – only if on a roll (' + exN + ")</summary>" + ex + "</details>";
     }
