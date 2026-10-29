@@ -160,6 +160,9 @@
       .wrap { padding:0; max-width:none; } .card,.day { break-inside:avoid; } .task { min-height:0; padding:5px 0; }
       .box { border-color:#000; } .grid { grid-template-columns:1fr 1fr; }
     }
+    .ltabs { display:flex; gap:6px; flex-wrap:wrap; margin:8px 0; }
+    .ltab { background:var(--panel); color:var(--ink); border:1px solid var(--line); border-radius:8px; font:inherit; font-size:14px; padding:8px 12px; min-height:40px; cursor:pointer; }
+    .ltab.on { background:var(--copper); border-color:var(--copper); color:#fff; font-weight:600; }
   </style>
 </head>
 <body>
@@ -381,7 +384,9 @@
       (tr ? whoHtml : '<div class="phones">' + (big ? '<a class="tel" href="' + esc(telHref(big)) + '">📞 ' + esc(big) + (c.direct_phone ? " · direct" : "") + '</a>' : '<span class="cline">No phone on file</span>') +
         (small ? '<a class="tel sm" href="' + esc(telHref(small)) + '">main office ' + esc(small) + '</a>' : "") + '</div>' +
       (c.email ? '<div class="cmail">✉ ' + esc(c.email) + '</div>' : "")) +
-      (c.why ? '<div class="cline"><b>Why:</b> ' + esc(c.why) + '</div>' : "") +
+      (c.signal ? '<div class="cline csig"><b>🚩 ' + esc(c.signal) + (c.signal_date ? " · " + esc(c.signal_date) : "") + ':</b> ' + esc(c.signal_detail || "") +
+        (c.source_url ? ' <a href="' + esc(c.source_url) + '" target="_blank" rel="noopener">source ↗</a>' : "") + (c.city_state ? '<br>📍 ' + esc(c.city_state) : "") + '</div>' : "") +
+      (c.why && !c.signal ? '<div class="cline"><b>Why:</b> ' + esc(c.why) + '</div>' : "") +
       kdLine(c) + (c.fit ? '<div class="cline cfit"><b>Buyer fit:</b> ' + esc(c.fit) + (c.fit_why ? ' · ' + esc(c.fit_why) : "") + '</div>' : "") +
       (c.payout ? '<div class="cline cpay"><b>💰 Your payout (est.):</b> ' + String(c.payout).split(' || ').map(esc).join('<br>') + '</div>' : "") +
       (c.company_range ? '<div class="cline crange"><b>🏢</b> ' + esc(c.company_range) + '</div>' : "") +
@@ -468,6 +473,7 @@
   const leadKind = (c) => {
     const tag = String(c.script_tag || "").toUpperCase();
     if (/LINK/.test(tag)) return "link";
+    if (/ASSIGNEE|RECEIVER/.test(tag)) return "assignee";
     if (/^OWNER/.test(tag)) return "owner";
     if (/ATTORNEY|TRUSTEE/.test(tag) || c.chapter || /trustee|counsel|attorney/i.test(c.role || "")) return "atty";
     return "owner";
@@ -530,6 +536,13 @@
     const sp = document.getElementById("spanel"); if (sp) sp.scrollTop = 0;
   });
   let extraOpen = false;
+  const LTAB_KEY = "amy-day-v2-listtab";
+  let listTab = localStorage.getItem(LTAB_KEY) || "main";
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest && e.target.closest("[data-ltab]"); if (!b) return;
+    listTab = b.dataset.ltab; try { localStorage.setItem(LTAB_KEY, listTab); } catch {}
+    renderCalls();
+  });
   document.addEventListener("toggle", (e) => { if (e.target && e.target.id === "extra-det") extraOpen = e.target.open; }, true);
   // ── Call-session timer: ticks "callsession:YYYYMMDD:N:start|stop" (opaque), label = ISO time. Mirrored in localStorage.
   const SESS_KEY = "amy-day-v2-callsess";
@@ -609,14 +622,20 @@
       return;
     }
     const sd = secret || {};
-    const calls = Array.isArray(sd.calls) ? sd.calls.filter((c) => c && c.id) : [];
-    calls.forEach((c) => { labels["call:" + c.id] = { label: [c.name, c.company].filter(Boolean).join(" · "), lane: "calls" }; });
+    const allCalls = Array.isArray(sd.calls) ? sd.calls.filter((c) => c && c.id) : [];
+    // Tabs (10/29): calls with tab:"prebk" (ABC / receivership leads) get their own tab; everything else is the main list.
+    const pbCalls = allCalls.filter((c) => c.tab === "prebk"), mainCalls = allCalls.filter((c) => c.tab !== "prebk");
+    if (!pbCalls.length) listTab = "main";
+    const calls = listTab === "prebk" ? pbCalls : mainCalls;
+    allCalls.forEach((c) => { labels["call:" + c.id] = { label: [c.name, c.company].filter(Boolean).join(" · "), lane: "calls" }; });
     const spOld = document.getElementById("spanel"), spScroll = spOld ? spOld.scrollTop : 0;
     let h = "";
-    if (!calls.length) h += '<div class="empty">No calls today. 🎉 When there\'s a call list, Riley puts it here at 7am.</div>';
+    if (!allCalls.length) h += '<div class="empty">No calls today. 🎉 When there\'s a call list, Riley puts it here at 7am.</div>';
     else {
       const n = calls.length, d = calls.filter(callDone).length;
-      h += sessHtml() + todayCallsHtml(calls);
+      h += sessHtml() + todayCallsHtml(allCalls);
+      if (pbCalls.length) h += '<div class="ltabs">' + [["main", "Chapter 7 & main", mainCalls], ["prebk", "Pre-bankruptcy (ABC / receivership)", pbCalls]].map(([k, l, g]) =>
+        '<button type="button" class="ltab' + (k === listTab ? " on" : "") + '" data-ltab="' + k + '">' + esc(l) + " (" + g.filter(callDone).length + "/" + g.length + ")</button>").join("") + "</div>";
       h += '<div class="calls-top"><span class="calls-prog"><b>' + d + " of " + n + "</b> called</span>" +
         (calls.some((c) => c.chapter === "Ch 7") ? '<span class="tag">CHAPTER 7 FIRST</span>' : "") + '</div>' +
         '<div class="pbar"><i style="width:' + Math.round((d / n) * 100) + '%"></i></div>';
@@ -634,7 +653,7 @@
       if (exN) h += '<details id="extra-det"' + (extraOpen ? " open" : "") + '><summary class="csec">Extra – only if on a roll (' + exN + ")</summary>" + ex + "</details>";
     }
     if (lockState === "ok") h += '<button type="button" class="linkbtn" id="calllock">🔒 Lock call list on this device</button>';
-    const panel = panelHtml(sd, calls);
+    const panel = panelHtml(sd, allCalls);
     document.getElementById("calls-sec").classList.toggle("split", !!panel);
     box.innerHTML = panel ? '<div class="csplit"><div class="clist">' + h + "</div>" + panel + "</div>" : h;
     const spNew = document.getElementById("spanel"); if (spNew && spScroll) spNew.scrollTop = spScroll;
