@@ -379,7 +379,7 @@
         (c.script_tag ? '<span class="badge">' + esc(c.script_tag) + '</span>' : "") +
         (c.attempt ? '<span class="badge">' + esc(c.attempt) + '</span>' : "") +
         (tr ? '<span class="badge urg">CALL TRUSTEE FIRST</span>' : trNF ? '<span class="badge tnf">trustee: not found</span>' : "") +
-        (Array.isArray(c.tags) ? c.tags.map((t) => '<span class="badge em">✉ ' + esc(t) + '</span>').join("") : "") +
+        (Array.isArray(c.tags) ? c.tags.map((t) => '<span class="badge em">' + (/^emailed/i.test(t) ? "✉ " : "") + esc(t) + '</span>').join("") : "") +
         (isDone ? '<span class="badge ok">✓ Called</span>' : "") + '</div>' +
       (tr ? whoHtml : '<div class="phones">' + (big ? '<a class="tel" href="' + esc(telHref(big)) + '">📞 ' + esc(big) + (c.direct_phone ? " · direct" : "") + '</a>' : '<span class="cline">No phone on file</span>') +
         (small ? '<a class="tel sm" href="' + esc(telHref(small)) + '">main office ' + esc(small) + '</a>' : "") + '</div>' +
