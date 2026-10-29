@@ -556,7 +556,19 @@
     return '<div style="font-size:2rem;font-weight:800;margin:6px 0">📞 ' + rows.length + ' call' + (rows.length === 1 ? "" : "s") + ' today</div><details class="cline"><summary><b>Today: ' + rows.length + ' call' + (rows.length === 1 ? "" : "s") + '</b></summary>' +
       (rows.length ? rows.map((r) => '<div>' + esc(hhmm(r.first)) + " · " + esc(r.c.name || r.c.id) + (r.c.company ? " · " + esc(r.c.company) : "") + " — " + esc(r.outs.join(", ")) + "</div>").join("") : "<div>No outcomes ticked yet today.</div>") + "</details>";
   }
+  let outLock = 0, outLockCid = null;
+  let frozenOn = false, frozen = {};   // after an outcome tap, keep card order fixed until reload or "Tidy called"
   function ch7Div(list) {
+    const key = list.map((c) => c.id).sort().join("|");
+    if (frozenOn) {
+      if (!frozen[key]) frozen[key] = { ids: list.map((c) => c.id), k: list.findIndex(callDone) };
+      const f = frozen[key], by = {}; list.forEach((c) => { by[c.id] = c; });
+      const ord = f.ids.map((id) => by[id]).filter(Boolean);
+      const head = f.k < 0 ? ord : ord.slice(0, f.k), tail = f.k < 0 ? [] : ord.slice(f.k);
+      const nt = list.filter((c) => todayRank[c.id]).length;
+      return '<button type="button" class="linkbtn" id="tidycalls">↕ Tidy called (move ticked cards down)</button>' + head.map(callHtml).join("") +
+        '<div class="csec" style="color:#1f7a3a">✓ Called today (' + nt + ')' + (tail.length ? "" : " · tidy to group them here") + '</div>' + tail.map(callHtml).join("");
+    }
     const k = list.findIndex(callDone); if (k < 0) return list.map(callHtml).join("");
     const nt = list.filter((c) => todayRank[c.id]).length;
     return list.slice(0, k).map(callHtml).join("") + '<div class="csec" style="color:#1f7a3a">✓ Called today (' + nt + ')' + (list.length - k > nt ? " and earlier" : "") + '</div>' + list.slice(k).map(callHtml).join("");
@@ -649,9 +661,14 @@
     paintNote(cid);
   }
   document.addEventListener("click", (e) => {
+    if (e.target.id === "tidycalls") { frozenOn = false; frozen = {}; renderCalls(); return; }
     const b = e.target.closest(".out");
     if (b) {
       const cid = b.dataset.call, id = "call:" + cid + ":" + b.dataset.out, now = !done[id];
+      if (Date.now() < outLock && cid !== outLockCid) return;   // debounce taps on other cards
+      outLock = Date.now() + 600; outLockCid = cid;
+      b.classList.toggle("on", now);   // instant green
+      if (!frozenOn) { frozenOn = true; renderCalls(); }   // snapshot current order before ticking
       if (now) done[id] = new Date().toISOString(); else delete done[id];
       save(DONE_KEY, done);
       const meta = labels["call:" + cid] || {};
