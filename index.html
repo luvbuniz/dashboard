@@ -134,6 +134,9 @@
     .cskipbox button { background:var(--bg); color:var(--ink); border:1px solid var(--line); border-radius:8px; font:inherit; font-size:14px; padding:8px 14px; min-height:40px; cursor:pointer; }
     .cskipbox .sksave { background:var(--ok); border-color:var(--ok); color:#fff; font-weight:600; }
     .cskipbox .sksave:disabled { opacity:.6; }
+    .emlbtn.on { border-color:var(--ok); color:var(--ink); }
+    .cemlbox input { width:100%; box-sizing:border-box; background:var(--bg); color:var(--ink); border:1px solid var(--line); border-radius:8px; font:inherit; font-size:15px; padding:8px 10px; margin-top:6px; }
+    .badge.eml { background:transparent; color:var(--muted); border:1px solid var(--line); }
     .badge.skp { background:transparent; color:var(--muted); border:1px solid var(--line); }
     .call.skipped, .cline.cskip { opacity:.85; }
     .cline.cskip { color:var(--muted); }
@@ -173,7 +176,7 @@
     footer { margin-top:32px; font-size:11px; color:var(--faint); }
     @media print {
       :root { --bg:#fff; --panel:#fff; --ink:#000; --muted:#333; --faint:#555; --line:#ccc; --copper:#000; --copper-dim:transparent; }
-      .linkbtn,.stuck-sec,.sync,footer,.outs,.cnote,.cskipbox,.stabs,.sp-toggle { display:none !important; }
+      .linkbtn,.stuck-sec,.sync,footer,.outs,.cnote,.cskipbox,.emlbtn,.stabs,.sp-toggle { display:none !important; }
       .wrap { padding:0; max-width:none; } .card,.day { break-inside:avoid; } .task { min-height:0; padding:5px 0; }
       .box { border-color:#000; } .grid { grid-template-columns:1fr 1fr; }
     }
@@ -318,6 +321,12 @@
   const SKIP_KEY = "amy-day-v2-callskip";
   let skips = load(SKIP_KEY, {});            // {cid: reason} for skips saved on this device
   const skipOpen = {}, skipBusy = {};
+  // Email request (10/30): id "call:<callId>:email", label = "email|note" (≤200), done true = requested, false = cleared.
+  const EML_KEY = "amy-day-v2-callemail";
+  let emls = load(EML_KEY, {});              // {cid: "email|note"}
+  const emlOpen = {};
+  const isEml = (cid) => !!done["call:" + cid + ":email"];
+  const emlLabel = (em, note) => { em = em.trim().slice(0, 200); note = note.trim().replace(/\s+/g, " "); return (em + "|" + note).slice(0, 200); };
   const isSkipped = (cid) => !!done["call:" + cid + ":skip"];
   const callDone = (c) => isSkipped(c.id) || OUTCOMES.some(([k]) => done["call:" + c.id + ":" + k]);
   // ---- court dates (341 / hearings / bar dates) ----
@@ -418,7 +427,7 @@
         (tr ? '<span class="badge urg">CALL TRUSTEE FIRST</span>' : trNF ? '<span class="badge tnf">trustee: not found</span>' : "") +
         ((rf) => rf ? '<span class="badge em">🤝 Referred: ' + esc(rf.buyer) + '</span>' : "")(refFor(secret || {}, c.id)) + (Array.isArray(c.tags) ? c.tags.map((t) => '<span class="badge em">' + (/^emailed/i.test(t) ? "✉ " : "") + esc(t) + '</span>').join("") : "") +
         meetFor(secret || {}, c.id).map((m) => '<span class="badge mtg">📅 Meeting ' + esc(m.label || m.start) + '</span>').join("") +
-        (isSkipped(c.id) ? '<span class="badge skp">Skipped</span>' : isDone ? '<span class="badge ok">✓ Called</span>' : "") + '</div>' +
+        (isEml(c.id) ? '<span class="badge eml">✉ Email requested</span>' : "") + (isSkipped(c.id) ? '<span class="badge skp">Skipped</span>' : isDone ? '<span class="badge ok">✓ Called</span>' : "") + '</div>' +
       (isSkipped(c.id) ? '<div class="cline cskip"><b>Skip reason:</b> ' + (skips[c.id] ? esc(skips[c.id]) : '<i>' + (skips[c.id] === "" ? "none given" : "saved on another device (Riley has it)") + '</i>') + '</div>' : "") +
       (tr ? whoHtml : '<div class="phones">' + (big ? '<a class="tel" href="' + esc(telHref(big)) + '">📞 Call ' + esc(big) + (c.direct_phone ? " · direct" : "") + '</a>' : '<span class="cline">No phone on file</span>') +
         (small ? '<a class="tel sm" href="' + esc(telHref(small)) + '">📞 Call main office ' + esc(small) + '</a>' : "") + '</div>' +
@@ -431,7 +440,12 @@
       (c.company_range ? '<div class="cline crange"><b>🏢</b> ' + esc(c.company_range) + '</div>' : "") +
       (c.other_avenues ? '<div class="cline cav"><b>Other avenues:</b> ' + esc(c.other_avenues) + '</div>' : "") + '<div class="cline crec"><b>Records to mention:</b> ' + esc(recMention(c)) + '</div>' +
       (c.records ? '<details><summary>Records they could sell</summary>' + esc(c.records) + '</details>' : "") +
-      '<div class="outs">' + OUTCOMES.map(([k, l]) => '<button type="button" class="out' + (done["call:" + c.id + ":" + k] ? " on" : "") + '" data-call="' + esc(c.id) + '" data-out="' + k + '">' + l + '</button>').join("") + '<button type="button" class="skipbtn' + (isSkipped(c.id) ? " on" : "") + (skipOpen[c.id] ? " open" : "") + '" data-skip="' + esc(c.id) + '">' + (isSkipped(c.id) ? "Skipped ✎" : "Skip") + '</button>' + (() => { const d = durOf(c.id); return d ? ' <span class="cdur">⏱ ' + (d.v === "unknown" ? "?" : fmtDur(+d.v)) + "</span>" : ""; })() + '</div>' +
+      '<div class="outs">' + OUTCOMES.map(([k, l]) => '<button type="button" class="out' + (done["call:" + c.id + ":" + k] ? " on" : "") + '" data-call="' + esc(c.id) + '" data-out="' + k + '">' + l + '</button>').join("") + '<button type="button" class="skipbtn' + (isSkipped(c.id) ? " on" : "") + (skipOpen[c.id] ? " open" : "") + '" data-skip="' + esc(c.id) + '">' + (isSkipped(c.id) ? "Skipped ✎" : "Skip") + '</button>' + '<button type="button" class="skipbtn emlbtn' + (isEml(c.id) ? " on" : "") + (emlOpen[c.id] ? " open" : "") + '" data-eml="' + esc(c.id) + '">' + (isEml(c.id) ? "✉ Requested ✎" : "✉ Email") + '</button>' + (() => { const d = durOf(c.id); return d ? ' <span class="cdur">⏱ ' + (d.v === "unknown" ? "?" : fmtDur(+d.v)) + "</span>" : ""; })() + '</div>' +
+      (emlOpen[c.id] ? ((v) => '<div class="cskipbox cemlbox"><input type="email" placeholder="Email address (optional)" data-emladdr="' + esc(c.id) + '" value="' + esc(v[0]) + '">' +
+        '<input type="text" maxlength="200" placeholder="What to say (e.g. wants intake form)" data-emlnote="' + esc(c.id) + '" value="' + esc(v.slice(1).join("|")) + '">' +
+        '<div class="skrow"><button type="button" class="sksave" data-emlsave="' + esc(c.id) + '">Save</button>' +
+        (isEml(c.id) ? '<button type="button" class="skun" data-emlclear="' + esc(c.id) + '">Clear request</button>' : "") +
+        '<button type="button" class="skcancel" data-emlclose="' + esc(c.id) + '">Cancel</button></div></div>')((emls[c.id] != null ? emls[c.id] : (c.email || "") + "|").split("|")) : "") +
       (skipOpen[c.id] ? '<div class="cskipbox"><textarea maxlength="200" rows="2" placeholder="Why skip? (e.g. photo rights too tricky)" data-skipreason="' + esc(c.id) + '">' + esc(skips[c.id] || "") + '</textarea>' +
         '<div class="skrow"><button type="button" class="sksave" data-skipsave="' + esc(c.id) + '"' + (skipBusy[c.id] ? " disabled" : "") + '>' + (skipBusy[c.id] ? "Saving…" : isSkipped(c.id) ? "Save reason" : "Save") + '</button>' +
         (isSkipped(c.id) ? '<button type="button" class="skun" data-unskip="' + esc(c.id) + '">Un-skip</button>' : "") +
@@ -806,6 +820,25 @@
     const sb = e.target.closest("[data-skip]");
     if (sb) { const cid = sb.dataset.skip; skipOpen[cid] = !skipOpen[cid]; sb.classList.toggle("open", !!skipOpen[cid]); renderCalls();
       const ta = document.querySelector('textarea[data-skipreason="' + CSS.escape(cid) + '"]'); if (ta) ta.focus(); return; }
+    const eb = e.target.closest("[data-eml]");
+    if (eb) { const cid = eb.dataset.eml; emlOpen[cid] = !emlOpen[cid]; renderCalls();
+      const n = document.querySelector('input[data-emlnote="' + CSS.escape(cid) + '"]'); if (n) n.focus(); return; }
+    const ec = e.target.closest("[data-emlclose]");
+    if (ec) { delete emlOpen[ec.dataset.emlclose]; renderCalls(); return; }
+    const es = e.target.closest("[data-emlsave]"), ex = e.target.closest("[data-emlclear]");
+    if (es || ex) {
+      const cid = (es || ex).dataset[es ? "emlsave" : "emlclear"], id = "call:" + cid + ":email";
+      if (Date.now() < outLock && cid !== outLockCid) return;   // same 600ms debounce
+      outLock = Date.now() + 600; outLockCid = cid;
+      if (!frozenOn) { frozenOn = true; renderCalls(); }   // keep card order fixed
+      outbox = outbox.filter((o) => o.id !== id);
+      if (es) { const a = document.querySelector('input[data-emladdr="' + CSS.escape(cid) + '"]'), n = document.querySelector('input[data-emlnote="' + CSS.escape(cid) + '"]');
+        const lab = emlLabel(a ? a.value : "", n ? n.value : ""); emls[cid] = lab; done[id] = new Date().toISOString();
+        outbox.push({ id, label: lab, lane: "calls", done: true, device }); }
+      else { delete emls[cid]; delete done[id]; outbox.push({ id, label: "", lane: "calls", done: false, device }); }
+      delete emlOpen[cid]; save(EML_KEY, emls); save(DONE_KEY, done); save(OUT_KEY, outbox);
+      renderCalls(); flush(); return;
+    }
     const sc = e.target.closest("[data-skipclose]");
     if (sc) { delete skipOpen[sc.dataset.skipclose]; renderCalls(); return; }
     const ss = e.target.closest("[data-skipsave]"), us = e.target.closest("[data-unskip]");
