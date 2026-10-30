@@ -103,6 +103,9 @@
     .badge.ok { background:var(--ok); color:#fff; border-color:var(--ok); }
     .phones { display:flex; flex-wrap:wrap; align-items:center; gap:6px 12px; margin:6px 0; }
     .tel { display:inline-flex; align-items:center; gap:6px; background:var(--copper); color:#fff; text-decoration:none; font-weight:600; font-size:17px; padding:10px 16px; border-radius:999px; min-height:44px; }
+    .meets { border:2px solid var(--copper); background:var(--elev); border-radius:12px; padding:8px 12px; margin:8px 0; }
+    .meet { padding:6px 0; border-top:1px solid var(--line); } .meet:first-of-type { border-top:0; }
+    .badge.mtg { background:var(--copper); color:#fff; }
     .cdur { font-weight:600; margin-left:6px; }
     .tel.sm { background:none; color:var(--copper); font-size:14px; font-weight:500; padding:6px 0; min-height:0; text-decoration:underline; }
     .cmail { font-size:13px; color:var(--muted); word-break:break-all; }
@@ -389,6 +392,7 @@
         (c.attempt ? '<span class="badge">' + esc(c.attempt) + '</span>' : "") +
         (tr ? '<span class="badge urg">CALL TRUSTEE FIRST</span>' : trNF ? '<span class="badge tnf">trustee: not found</span>' : "") +
         (Array.isArray(c.tags) ? c.tags.map((t) => '<span class="badge em">' + (/^emailed/i.test(t) ? "✉ " : "") + esc(t) + '</span>').join("") : "") +
+        meetFor(secret || {}, c.id).map((m) => '<span class="badge mtg">📅 Meeting ' + esc(m.label || m.start) + '</span>').join("") +
         (isDone ? '<span class="badge ok">✓ Called</span>' : "") + '</div>' +
       (tr ? whoHtml : '<div class="phones">' + (big ? '<a class="tel" href="' + esc(telHref(big)) + '">📞 Call ' + esc(big) + (c.direct_phone ? " · direct" : "") + '</a>' : '<span class="cline">No phone on file</span>') +
         (small ? '<a class="tel sm" href="' + esc(telHref(small)) + '">📞 Call main office ' + esc(small) + '</a>' : "") + '</div>' +
@@ -607,6 +611,17 @@
     const k = "call:" + card.dataset.call + ":dialed", iso = new Date().toISOString();
     done[k] = iso; save(DONE_KEY, done); pushTick(k, iso, true);
   }, true);
+  // Upcoming meetings (10/29): sd.meetings from the encrypted payload; next 14 days, not yet ended.
+  const meetFor = (sd, cid) => (Array.isArray(sd.meetings) ? sd.meetings : []).filter((m) => m.lead_id === cid && Date.parse(m.end || m.start) > Date.now());
+  function meetHtml(sd) {
+    const now = Date.now(), lim = now + 14 * 864e5;
+    const ms = (Array.isArray(sd.meetings) ? sd.meetings : []).filter((m) => Date.parse(m.end || m.start) > now && Date.parse(m.start) < lim);
+    if (!ms.length) return "";
+    return '<div class="meets"><div class="csec">📅 Upcoming meetings</div>' + ms.map((m) =>
+      '<div class="meet"><b>' + esc(m.label || m.start) + '</b> · ' + esc(m.who || "") + (m.company ? '<div class="cline">' + esc(m.company) + '</div>' : "") +
+      (m.phone ? '<a class="tel c2" href="' + esc(telHref(m.phone)) + '">📞 Call ' + esc(m.phone) + '</a>' : "") +
+      (m.prep_notes ? '<details><summary>Prep notes</summary><div class="stext">' + md(m.prep_notes) + '</div></details>' : "") + '</div>').join("") + '</div>';
+  }
   function avgHtml(calls) {
     const today = etYmd(Date.now()), S = { "Avg voicemail": [], "Avg live call": [], "Avg gatekeeper": [] };
     for (const c of calls) {
@@ -658,7 +673,7 @@
     if (!allCalls.length) h += '<div class="empty">No calls today. 🎉 When there\'s a call list, Riley puts it here at 7am.</div>';
     else {
       const n = calls.length, d = calls.filter(callDone).length;
-      h += sessHtml() + todayCallsHtml(allCalls);
+      h += sessHtml() + todayCallsHtml(allCalls) + meetHtml(sd);
       if (pbCalls.length) h += '<div class="ltabs">' + [["main", "Chapter 7 & main", mainCalls], ["prebk", "Pre-bankruptcy (ABC / receivership)", pbCalls]].map(([k, l, g]) =>
         '<button type="button" class="ltab' + (k === listTab ? " on" : "") + '" data-ltab="' + k + '">' + esc(l) + " (" + g.filter(callDone).length + "/" + g.length + ")</button>").join("") + "</div>";
       h += '<div class="calls-top"><span class="calls-prog"><b>' + d + " of " + n + "</b> called</span>" +
