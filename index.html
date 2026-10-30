@@ -101,6 +101,9 @@
     .tel { display:inline-flex; align-items:center; gap:6px; background:var(--copper); color:#fff; text-decoration:none; font-weight:600; font-size:17px; padding:10px 16px; border-radius:999px; min-height:44px; }
     .meets { border:1px solid var(--line); border-left:3px solid var(--copper); background:var(--panel); color:var(--ink); border-radius:var(--r); padding:12px 16px; margin:8px 0 22px; }
     .meets-h { margin:0 0 8px; font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); font-weight:600; } .meet { padding:10px 0; border-top:1px solid var(--line); } .meet:first-of-type{border-top:0}
+    .reftot { font-size:15px; color:var(--muted); margin:2px 0 6px; } .reftot b { font-size:28px; color:#4cc38a; margin-left:6px; } .refup { font-size:12px !important; color:#e0a060 !important; }
+    .refb { padding:6px 0 4px; border-top:1px solid var(--line); } .refb:first-of-type{border-top:0} .refbh a { font-size:13px; color:var(--copper); }
+    .rsteps { display:flex; gap:4px; flex-wrap:wrap; margin:4px 0; } .rstep { font-size:11px; padding:2px 7px; border-radius:10px; border:1px solid var(--line); color:var(--muted); } .rstep.on { border-color:var(--copper); color:var(--ink); }
     .meets .cline { color:var(--muted); font-size:14px; } .meets details { font-size:14px; color:var(--muted); margin-top:4px; } .meets summary { cursor:pointer; color:var(--ink); padding:4px 0; }
     .mwhen { font-size:15px; font-weight:600; color:var(--copper); margin-bottom:2px; } .nocall { color:var(--faint); font-style:italic; font-size:13px; }
     .badge.mtg { background:var(--copper); color:#fff; }
@@ -413,7 +416,7 @@
         (c.script_tag ? '<span class="badge">' + esc(c.script_tag) + '</span>' : "") +
         (c.attempt ? '<span class="badge">' + esc(c.attempt) + '</span>' : "") +
         (tr ? '<span class="badge urg">CALL TRUSTEE FIRST</span>' : trNF ? '<span class="badge tnf">trustee: not found</span>' : "") +
-        (Array.isArray(c.tags) ? c.tags.map((t) => '<span class="badge em">' + (/^emailed/i.test(t) ? "✉ " : "") + esc(t) + '</span>').join("") : "") +
+        ((rf) => rf ? '<span class="badge em">🤝 Referred: ' + esc(rf.buyer) + '</span>' : "")(refFor(secret || {}, c.id)) + (Array.isArray(c.tags) ? c.tags.map((t) => '<span class="badge em">' + (/^emailed/i.test(t) ? "✉ " : "") + esc(t) + '</span>').join("") : "") +
         meetFor(secret || {}, c.id).map((m) => '<span class="badge mtg">📅 Meeting ' + esc(m.label || m.start) + '</span>').join("") +
         (isSkipped(c.id) ? '<span class="badge skp">Skipped</span>' : isDone ? '<span class="badge ok">✓ Called</span>' : "") + '</div>' +
       (isSkipped(c.id) ? '<div class="cline cskip"><b>Skip reason:</b> ' + (skips[c.id] ? esc(skips[c.id]) : '<i>' + (skips[c.id] === "" ? "none given" : "saved on another device (Riley has it)") + '</i>') + '</div>' : "") +
@@ -629,6 +632,35 @@
       '<div class="cline nocall">No dialing here. Call happens at the meeting time.</div>' +
       (m.prep_notes ? '<details><summary>Prep notes</summary><div class="stext">' + md(m.prep_notes) + '</div></details>' : "") + '</div>').join("") + '</section>';
   }
+  // Referrals tracker (10/30): sd.referrals {buyers:{name:{stages,slots,portal}}, referrals:[{buyer,lead_id,company,listing,submitted,up_to,paid,stage,contact,note}]}
+  const refFor = (sd, cid) => ((sd.referrals && sd.referrals.referrals) || []).find((r) => r.lead_id === cid);
+  function refHtml(sd) {
+    const R = sd.referrals || {}, B = R.buyers || {}, L = Array.isArray(R.referrals) ? R.referrals : [];
+    const names = [...new Set(Object.keys(B).concat(L.map((r) => r.buyer)))]; if (!names.length) return "";
+    const $ = (n) => "$" + Math.round(n || 0).toLocaleString("en-US");
+    const openL = L.filter((r) => (r.stage || 0) < ((B[r.buyer] || {}).stages || [1, 2, 3, 4]).length - 1);
+    const tot = openL.reduce((a, r) => a + (r.up_to || 0), 0), slotB = names.filter((b) => B[b] && B[b].slots);
+    const up = L.filter((r) => r.past_payouts).map((r) => esc(r.listing) + " " + esc(r.past_payouts)).join(" · ");
+    const head = '<div class="reftot">Potential referral value: <b>' + $(tot) + '</b></div>' +
+      slotB.map((b) => { const n = L.filter((r) => r.buyer === b).length, m = B[b].slots;
+        return '<div class="cline">' + esc(b) + ' slots used ' + n + '/' + m + '</div><div class="pbar"><i style="width:' + Math.round(n / m * 100) + '%"></i></div>'; }).join("") +
+      (up ? '<div class="cline refup">Company side, past payouts on this listing (not expected earnings): ' + up + '</div>' : "");
+    return '<section class="meets refs"><h3 class="meets-h">Referrals</h3>' + head + names.map((b) => {
+      const cfg = B[b] || {}, st = cfg.stages || ["Submitted", "In progress", "Confirmed", "Paid"], rs = L.filter((r) => r.buyer === b);
+      const open = rs.filter((r) => (r.stage || 0) < st.length - 1).length, paid = rs.reduce((a, r) => a + (r.paid || 0), 0);
+      const pot = rs.reduce((a, r) => a + (r.up_to || 0), 0);
+      const sum = (pot ? "Potential " + $(pot) + " · " : "") + rs.length + " referred · " + $(paid) + " paid · " + open + " open" +
+        (cfg.slots ? " · " + Math.max(0, cfg.slots - rs.length) + " of " + cfg.slots + " slots open" : "");
+      return '<div class="refb"><div class="refbh"><b>' + esc(b) + '</b> <span class="cline">' + esc(sum) + '</span>' +
+        (cfg.portal ? ' <a href="' + esc(cfg.portal) + '" target="_blank" rel="noopener">Portal ↗</a>' : "") + '</div>' +
+        (rs.length ? rs.map((r) => {
+          const d = r.submitted ? new Date(r.submitted + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "";
+          return '<div class="meet ref"><b>' + esc(r.company || "") + '</b><div class="cline">' + esc([r.listing, d && "submitted " + d, r.up_to && "Up to " + $(r.up_to)].filter(Boolean).join(" · ")) + '</div>' +
+            (r.past_payouts ? '<div class="cline refup">Past payouts on this listing: ' + esc(r.past_payouts) + '</div>' : "") + '<div class="rsteps">' + st.map((s, i) => '<span class="rstep' + (i <= (r.stage || 0) ? " on" : "") + '">' + esc(s) + '</span>').join("") + '</div>' +
+            ((r.contact || r.note) ? '<div class="cline">' + esc([r.contact, r.note].filter(Boolean).join(" · ")) + '</div>' : "") + '</div>';
+        }).join("") : '<div class="cline">No ' + esc(b) + ' referrals yet</div>') + '</div>';
+    }).join("") + '</section>';
+  }
   function avgHtml(calls) {
     const today = etYmd(Date.now()), S = { "Avg voicemail": [], "Avg live call": [], "Avg gatekeeper": [] };
     for (const c of calls) {
@@ -680,7 +712,7 @@
     if (!allCalls.length) h += '<div class="empty">No calls today. 🎉 When there\'s a call list, Riley puts it here at 7am.</div>';
     else {
       const n = calls.length, d = calls.filter(callDone).length;
-      h += meetHtml(sd) + sessHtml() + todayCallsHtml(allCalls);
+      h += meetHtml(sd) + refHtml(sd) + sessHtml() + todayCallsHtml(allCalls);
       if (pbCalls.length) h += '<div class="ltabs">' + [["main", "Chapter 7 & main", mainCalls], ["prebk", "Pre-bankruptcy (ABC / receivership)", pbCalls]].map(([k, l, g]) =>
         '<button type="button" class="ltab' + (k === listTab ? " on" : "") + '" data-ltab="' + k + '">' + esc(l) + " (" + g.filter(callDone).length + "/" + g.length + ")</button>").join("") + "</div>";
       h += '<div class="calls-top"><span class="calls-prog"><b>' + d + " of " + n + "</b> called</span>" +
