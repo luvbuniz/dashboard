@@ -183,6 +183,17 @@
     .ltabs { display:flex; gap:6px; flex-wrap:wrap; margin:8px 0; }
     .ltab { background:var(--panel); color:var(--ink); border:1px solid var(--line); border-radius:8px; font:inherit; font-size:14px; padding:8px 12px; min-height:40px; cursor:pointer; }
     .ltab.on { background:var(--copper); border-color:var(--copper); color:#fff; font-weight:600; }
+    #pomo { position:sticky; top:0; z-index:50; background:#1d1a17; color:#f4ece4; border:1px solid #e8792b; border-radius:10px; padding:8px 12px; margin:6px 0 10px; box-shadow:0 2px 8px rgba(0,0,0,.35); }
+    #pomo.brk { background:#163226; border-color:#3fae7a; }
+    #pomo .prow { display:flex; flex-wrap:wrap; align-items:center; gap:6px 14px; }
+    #pomo button { background:#e8792b; color:#fff; border:0; border-radius:8px; font:inherit; font-weight:600; padding:7px 12px; min-height:38px; cursor:pointer; }
+    #pomo.brk button { background:#3fae7a; } #pomo button.sec { background:transparent; border:1px solid #8a7a6a; color:#f4ece4; }
+    #pomo .pclk { font-size:1.9rem; font-weight:800; font-variant-numeric:tabular-nums; letter-spacing:1px; }
+    #pomo .pbar { display:inline-block; width:90px; height:7px; background:#3a332c; border-radius:4px; vertical-align:middle; overflow:hidden; }
+    #pomo .pbar i { display:block; height:100%; background:#e8792b; }
+    #pomo .pmsg { font-size:13px; color:#bfe8d2; } #pomo .psm { font-size:13px; color:#c9b9a8; }
+    #pomo details { font-size:13px; color:#c9b9a8; margin-top:4px; }
+    @media print { #pomo { display:none !important; } }
   </style>
 </head>
 <body>
@@ -202,6 +213,7 @@
 
   <section id="calls-sec">
     <h2>Call leads</h2>
+    <div id="pomo"></div>
     <div class="card" id="calls"></div>
   </section>
 
@@ -618,6 +630,90 @@
     sessAt[id] = iso; done[id] = iso; save(SESS_KEY, sessAt); save(DONE_KEY, done);
     pushTick(id, iso, true); paintSess();
   });
+
+  // ── Pomodoro call timer (10/30). State = timestamps in localStorage "amy-day-v2-pomo" (survives reload/background).
+  // Each finished focus block posts tick "pomo:YYYYMMDD:N" label "startISO|endISO|dials|avgSec" (avgSec from call:<id>:dur ticks; "" if none).
+  const POMO_KEY = "amy-day-v2-pomo", FOCUS = 25 * 60000, SHORT = 5 * 60000, LONG = 15 * 60000, PGOAL = 6;
+  const ymdN = () => etYmd(Date.now()).replace(/-/g, "");
+  let P = load(POMO_KEY, null);
+  if (!P || P.date !== ymdN()) P = { date: ymdN(), phase: "idle", block: 0, endsAt: 0, left: 0, paused: false, bStart: null, dials: [], secs: [], log: [] };
+  const pSave = () => save(POMO_KEY, P);
+  const mmss = (ms) => { const t = Math.max(0, Math.ceil(ms / 1000)); return String(Math.floor(t / 60)).padStart(2, "0") + ":" + String(t % 60).padStart(2, "0"); };
+  const avgS = (a) => a.length ? Math.round(a.reduce((x, y) => x + y, 0) / a.length) : null;
+  const mfmt = (s) => s == null ? "–" : Math.floor(s / 60) + "m " + (s % 60) + "s";
+  function pBeep() {
+    try { const C = new (window.AudioContext || window.webkitAudioContext)(), o = C.createOscillator(), g = C.createGain();
+      o.frequency.value = 660; g.gain.setValueAtTime(0.0001, C.currentTime); g.gain.exponentialRampToValueAtTime(0.15, C.currentTime + 0.03);
+      g.gain.exponentialRampToValueAtTime(0.0001, C.currentTime + 0.5); o.connect(g).connect(C.destination); o.start(); o.stop(C.currentTime + 0.55); } catch {}
+    try { navigator.vibrate && navigator.vibrate([200, 100, 200]); } catch {}
+  }
+  function pNotify(t) { try { if ("Notification" in window && Notification.permission === "granted") new Notification(t); } catch {} }
+  function pEndBlock(endMs) {   // record the focus block that just ended
+    const end = new Date(endMs).toISOString(), av = avgS(P.secs);
+    P.log.push({ b: P.block, start: P.bStart, end, dials: P.dials.length, avg: av });
+    pushTick("pomo:" + P.date + ":" + P.block, P.bStart + "|" + end + "|" + P.dials.length + "|" + (av == null ? "" : av), true);
+  }
+  function pAdvance(live) {   // catch up any phases that ended while away
+    let fired = null;
+    while (P.phase !== "idle" && !P.paused && Date.now() >= P.endsAt) {
+      const t = P.endsAt;
+      if (P.phase === "focus") { pEndBlock(t); P.phase = "break"; P.endsAt = t + (P.block % 4 === 0 ? LONG : SHORT); fired = "Block " + P.block + " done: break time"; }
+      else { P.block++; P.phase = "focus"; P.bStart = new Date(t).toISOString(); P.dials = []; P.secs = []; P.endsAt = t + FOCUS; fired = "Break over: Block " + P.block + " starts"; }
+    }
+    if (fired) { pSave(); if (live) { pBeep(); pNotify(fired); } }
+  }
+  function pDialsToday() {
+    const t = etYmd(Date.now()), ids = new Set(), em = new Set();
+    for (const [k, v] of Object.entries(done)) {
+      const m = k.match(/^call:(.+):([a-z_]+)$/); if (!m || !v || isNaN(Date.parse(v)) || etYmd(v) !== t) continue;
+      if (OUTCOMES.some(([o]) => o === m[2])) ids.add(m[1]); else if (m[2] === "email") em.add(m[1]);
+    }
+    return { dials: ids.size, emails: em.size };
+  }
+  function pRender() {
+    const el = document.getElementById("pomo"); if (!el) return;
+    pAdvance(true);
+    const brk = P.phase === "break", run = P.phase !== "idle", left = P.paused ? P.left : P.endsAt - Date.now(), td = pDialsToday();
+    const nDone = P.log.length, n = P.dials.length;
+    el.className = brk ? "brk" : "";
+    const btns = !run ? '<button type="button" data-pomo="start">▶ Start Pomodoro</button>'
+      : '<button type="button" data-pomo="pause">' + (P.paused ? "▶ Resume" : "⏸ Pause") + '</button><button type="button" class="sec" data-pomo="stop">⏹ Stop</button>';
+    const mid = !run ? '<span class="pclk">25:00</span><span class="psm">25 min focus · 5 min break · every 4th break 15</span>'
+      : brk ? '<span class="pclk">' + mmss(left) + '</span><b>' + (P.block % 4 === 0 ? "Long break" : "Break") + '</b><span class="pmsg">Break: send your email requests, stretch, water · ✉ ' + td.emails + ' email request' + (td.emails === 1 ? "" : "s") + ' today</span>'
+      : '<span class="pclk">' + mmss(left) + '</span><b>Block ' + P.block + '</b><span>Dials this block: <b>' + n + ' / ' + PGOAL + '</b> <span class="pbar"><i style="width:' + Math.min(100, n / PGOAL * 100) + '%"></i></span></span>';
+    const html = '<div class="prow">' + btns + mid + '<span class="psm">Today: <b>' + td.dials + '</b> dials · <b>' + nDone + '</b> block' + (nDone === 1 ? "" : "s") + ' done</span></div>' +
+      (nDone ? '<details' + (P.logOpen ? " open" : "") + ' id="pomolog"><summary>Today\'s blocks</summary>' + P.log.map((r) => '<div>Block ' + r.b + ' ' + esc(hhmm(r.start)) + '–' + esc(hhmm(r.end)) + ', ' + r.dials + ' dial' + (r.dials === 1 ? "" : "s") + ', avg ' + mfmt(r.avg) + '</div>').join("") + '</details>' : "");
+    if (el.dataset.h !== html) { el.innerHTML = html; el.dataset.h = html; }
+  }
+  document.addEventListener("toggle", (e) => { if (e.target && e.target.id === "pomolog") { P.logOpen = e.target.open; pSave(); } }, true);
+  document.addEventListener("calloutcome", (e) => {
+    if (P.phase !== "focus" || P.paused) return;
+    const cid = e.detail.cid; if (P.dials.includes(cid)) return;   // one dial per card per block
+    P.dials.push(cid); const d = durOf(cid);
+    if (d && d.v !== "unknown" && Date.parse(d.at) >= Date.parse(P.bStart)) P.secs.push(+d.v);
+    pSave(); pRender();
+  });
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest && e.target.closest("[data-pomo]"); if (!b) return;
+    const a = b.dataset.pomo, now = Date.now();
+    if (a === "start") {
+      try { if ("Notification" in window && Notification.permission === "default") Notification.requestPermission(); } catch {}
+      P.block++; P.phase = "focus"; P.paused = false; P.bStart = new Date(now).toISOString(); P.endsAt = now + FOCUS; P.dials = []; P.secs = [];
+      if (!todaySessions().find((x) => !x.stop)) {   // also start the call-session timer
+        const id = "callsession:" + ymdN() + ":" + (todaySessions().length + 1) + ":start", iso = new Date(now).toISOString();
+        sessAt[id] = iso; done[id] = iso; save(SESS_KEY, sessAt); save(DONE_KEY, done); pushTick(id, iso, true); paintSess();
+      }
+    } else if (a === "pause") {
+      if (P.paused) { P.endsAt = now + P.left; P.paused = false; } else { P.left = P.endsAt - now; P.paused = true; }
+    } else if (a === "stop") {
+      if (P.phase === "focus" && (P.dials.length || now - Date.parse(P.bStart) > 60000)) pEndBlock(now);
+      else if (P.phase === "focus") P.block--;
+      P.phase = "idle"; P.paused = false;
+    }
+    pSave(); pRender();
+  });
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) pRender(); });
+  setInterval(pRender, 1000); pRender();
   function todayCallsHtml(calls) {
     const today = etYmd(Date.now()), rows = [];
     for (const c of calls) {
@@ -815,6 +911,7 @@
       save(DONE_KEY, done);
       const meta = labels["call:" + cid] || {};
       pushTick(id, b.textContent + " · " + (meta.label || cid), now);
+      if (now) document.dispatchEvent(new CustomEvent("calloutcome", { detail: { cid } }));   // Pomodoro dial counter
       renderCalls(); return;
     }
     const sb = e.target.closest("[data-skip]");
