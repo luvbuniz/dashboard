@@ -99,9 +99,10 @@
     .badge.ok { background:var(--ok); color:#fff; border-color:var(--ok); }
     .phones { display:flex; flex-wrap:wrap; align-items:center; gap:6px 12px; margin:6px 0; }
     .tel { display:inline-flex; align-items:center; gap:6px; background:var(--copper); color:#fff; text-decoration:none; font-weight:600; font-size:17px; padding:10px 16px; border-radius:999px; min-height:44px; }
-    .meets { border:2px solid #4f46e5; background:#eef2ff; color:#1e1b4b; border-radius:12px; padding:10px 14px; margin:8px 0 22px; }
-    .meets-h { margin:0 0 6px; font-size:17px; } .meet { padding:6px 0; border-top:1px solid #c7d2fe; } .meet:first-of-type{border-top:0}
-    .mwhen { font-size:16px; font-weight:700; color:#3730a3; } .nocall { color:#6b7280; font-style:italic; font-size:13px; }
+    .meets { border:1px solid var(--line); border-left:3px solid var(--copper); background:var(--panel); color:var(--ink); border-radius:var(--r); padding:12px 16px; margin:8px 0 22px; }
+    .meets-h { margin:0 0 8px; font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); font-weight:600; } .meet { padding:10px 0; border-top:1px solid var(--line); } .meet:first-of-type{border-top:0}
+    .meets .cline { color:var(--muted); font-size:14px; } .meets details { font-size:14px; color:var(--muted); margin-top:4px; } .meets summary { cursor:pointer; color:var(--ink); padding:4px 0; }
+    .mwhen { font-size:15px; font-weight:600; color:var(--copper); margin-bottom:2px; } .nocall { color:var(--faint); font-style:italic; font-size:13px; }
     .meet { padding:6px 0; border-top:1px solid var(--line); } .meet:first-of-type { border-top:0; }
     .badge.mtg { background:var(--copper); color:#fff; }
     .cdur { font-weight:600; margin-left:6px; }
@@ -602,7 +603,7 @@
     const now = Date.now(), lim = now + 14 * 864e5;
     const ms = (Array.isArray(sd.meetings) ? sd.meetings : []).filter((m) => Date.parse(m.end || m.start) > now && Date.parse(m.start) < lim);
     if (!ms.length) return "";
-    return '<section class="meets"><h3 class="meets-h">📅 Upcoming meetings</h3>' + ms.map((m) =>
+    return '<section class="meets"><h3 class="meets-h">Upcoming meetings</h3>' + ms.map((m) =>
       '<div class="meet"><div class="mwhen">' + esc(mtgFmt(m)) + '</div><b>' + esc(m.who || "") + '</b>' + (m.company ? '<div class="cline">' + esc(m.company) + '</div>' : "") +
       '<div class="cline nocall">No dialing here. Call happens at the meeting time.</div>' +
       (m.prep_notes ? '<details><summary>Prep notes</summary><div class="stext">' + md(m.prep_notes) + '</div></details>' : "") + '</div>').join("") + '</section>';
