@@ -13,10 +13,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,500&display=swap" rel="stylesheet" />
   <style>
-    .mref{margin:6px 0;border:1px solid #c7d2fe;border-radius:8px;padding:4px 8px;background:#f5f7ff}
-    .mref{position:relative}.mref summary{font-weight:600;cursor:pointer}.mclose{position:absolute;top:4px;right:6px;font-size:12px;padding:2px 8px;border:1px solid #c7d2fe;border-radius:6px;background:#fff;cursor:pointer}.mnote{font-size:12px;color:#b45309;margin:4px 0}
-    .mrow{display:flex;gap:6px;align-items:flex-start;margin:4px 0;font-size:13px}.mk{flex:0 0 120px;color:#555}
-    .mv{flex:1;word-break:break-word}.mcopy{flex:0 0 auto;font-size:12px;padding:2px 8px}
     :root {
       --bg:#0c0b0a; --panel:#151413; --elev:#1d1b19; --ink:#f3efe8; --muted:#a39c91; --faint:#756e64;
       --line:rgba(243,239,232,.09); --copper:#d0834f; --copper-dim:rgba(208,131,79,.16); --ok:#86ad72; --r:12px;
@@ -405,40 +401,11 @@
       (c.company_range ? '<div class="cline crange"><b>🏢</b> ' + esc(c.company_range) + '</div>' : "") +
       (c.other_avenues ? '<div class="cline cav"><b>Other avenues:</b> ' + esc(c.other_avenues) + '</div>' : "") + '<div class="cline crec"><b>Records to mention:</b> ' + esc(recMention(c)) + '</div>' +
       (c.records ? '<details><summary>Records they could sell</summary>' + esc(c.records) + '</details>' : "") +
-      mrefHtml(c) +
       '<div class="outs">' + OUTCOMES.map(([k, l]) => '<button type="button" class="out' + (done["call:" + c.id + ":" + k] ? " on" : "") + '" data-call="' + esc(c.id) + '" data-out="' + k + '">' + l + '</button>').join("") + (() => { const d = durOf(c.id); return d ? ' <span class="cdur">⏱ ' + (d.v === "unknown" ? "?" : fmtDur(+d.v)) + "</span>" : ""; })() + '</div>' +
       '<div class="cnote"><textarea maxlength="200" rows="1" placeholder="Quick note (who answered, call back when…)" data-note="' + esc(c.id) + '">' + esc(localNote) + '</textarea><button type="button" data-savenote="' + esc(c.id) + '"' + (noteBusy[c.id] ? " disabled" : "") + (noteFlash[c.id] > Date.now() ? ' class="saved"' : "") + '>' + (noteBusy[c.id] ? "Saving…" : noteFlash[c.id] > Date.now() ? "Saved ✓" : "Save") + '</button></div>' +
       '<div class="nstat' + (nst.cls ? " " + nst.cls : "") + '" id="nstat-' + esc(c.id) + '">' + esc(nst.text) + '</div>' +
       '</div>';
   }
-  // Mercor referral box (10/29): mirrors data.mercor.com/refer "Refer a company"; each field has a Copy button.
-  const mrefOpen = new Set();
-  function mrefHtml(c) {
-    const m = c.mercor_ref; if (!m) return "";
-    const F = [["Company name", m.company], ["Company website", m.website], ["Number of employees", m.employees],
-      ["Contact name", m.contact_name], ["Contact email", m.contact_email], ["Contact LinkedIn (optional)", m.linkedin], ["Why are they a good fit?", m.why]];
-    return '<details class="mref" data-mref="' + esc(c.id) + '"' + (mrefOpen.has(c.id) ? " open" : "") + '><summary data-mrefsum="' + esc(c.id) + '">Mercor referral</summary>' +
-      '<button type="button" class="mclose" data-mrefclose="' + esc(c.id) + '">✕ Close</button>' +
-      '<div class="mnote">Only after they say yes · 5 slots max</div>' +
-      '<div class="mrow"><span class="mk">Listing</span><a href="' + esc(m.listing_url) + '" target="_blank" rel="noopener">' + esc(m.listing) + ' ↗</a></div>' +
-      F.map(([k, v]) => '<div class="mrow"><span class="mk">' + esc(k) + '</span><span class="mv">' + (v ? esc(v) : '<i>(fill in)</i>') + '</span>' +
-        (v ? '<button type="button" class="mcopy" data-copy="' + esc(v) + '">Copy</button>' : "") + '</div>').join("") + '</details>';
-  }
-  // Open state lives only in memory (default closed); we drive it by hand so re-renders/toggle events can't force it open.
-  document.addEventListener("click", (e) => {
-    const t = e.target.closest && e.target.closest("[data-mrefsum],[data-mrefclose]"); if (!t) return;
-    e.preventDefault(); e.stopPropagation();
-    const id = t.dataset.mrefsum || t.dataset.mrefclose, d = t.closest("details.mref"); if (!d) return;
-    const open = t.dataset.mrefclose ? false : !d.hasAttribute("open");
-    open ? mrefOpen.add(id) : mrefOpen.delete(id);
-    if (open) d.setAttribute("open", ""); else d.removeAttribute("open");
-  }, true);
-  document.addEventListener("click", (e) => {
-    const b = e.target.closest && e.target.closest(".mcopy"); if (!b) return;
-    e.preventDefault(); e.stopPropagation();
-    const v = b.dataset.copy, ok = () => { b.textContent = "Copied ✓"; setTimeout(() => (b.textContent = "Copy"), 1500); };
-    if (navigator.clipboard?.writeText) navigator.clipboard.writeText(v).then(ok, () => prompt("Copy:", v)); else prompt("Copy:", v);
-  }, true);
   // Encrypted payload: ./calls.enc.json = AES-GCM(PBKDF2-SHA256(passcode)) of {calls, callScripts, updated}.
   const PASS_KEY = "amy-day-v2-callpass", ENC_KEY = "amy-day-v2-callsenc";
   let secret = null, lockState = "loading", lockErr = "";
