@@ -122,6 +122,18 @@
     .out { background:var(--elev); color:var(--ink); border:1px solid var(--line); border-radius:999px; font:inherit; font-size:14px; padding:8px 12px; min-height:40px; cursor:pointer; -webkit-tap-highlight-color:transparent; }
     .out.on { background:var(--ok); border-color:var(--ok); color:#fff; font-weight:600; }
     .cnote { display:flex; gap:6px; margin-top:8px; }
+    .skipbtn { background:transparent; color:var(--muted); border:1px dashed var(--line); border-radius:999px; font:inherit; font-size:14px; padding:8px 12px; min-height:40px; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+    .skipbtn.on { background:var(--elev); border-style:solid; color:var(--ink); }
+    .skipbtn.open { border-color:var(--ink); }
+    .cskipbox { margin-top:8px; padding:8px; background:var(--elev); border:1px solid var(--line); border-radius:10px; }
+    .cskipbox textarea { width:100%; box-sizing:border-box; min-height:52px; resize:vertical; background:var(--bg); color:var(--ink); border:1px solid var(--line); border-radius:8px; font:inherit; font-size:15px; padding:8px 10px; }
+    .cskipbox .skrow { display:flex; gap:6px; margin-top:6px; }
+    .cskipbox button { background:var(--bg); color:var(--ink); border:1px solid var(--line); border-radius:8px; font:inherit; font-size:14px; padding:8px 14px; min-height:40px; cursor:pointer; }
+    .cskipbox .sksave { background:var(--ok); border-color:var(--ok); color:#fff; font-weight:600; }
+    .cskipbox .sksave:disabled { opacity:.6; }
+    .badge.skp { background:transparent; color:var(--muted); border:1px solid var(--line); }
+    .call.skipped, .cline.cskip { opacity:.85; }
+    .cline.cskip { color:var(--muted); }
     .cnote textarea { flex:1; min-height:44px; resize:vertical; background:var(--bg); color:var(--ink); border:1px solid var(--line); border-radius:8px; font:inherit; font-size:15px; padding:8px 10px; }
     .cnote button { background:var(--elev); color:var(--ink); border:1px solid var(--line); border-radius:8px; font:inherit; font-size:14px; padding:0 12px; cursor:pointer; }
     .cnote input { flex:1; min-height:44px; background:var(--bg); color:var(--ink); border:1px solid var(--line); border-radius:8px; font:inherit; font-size:16px; padding:8px 10px; }
@@ -158,7 +170,7 @@
     footer { margin-top:32px; font-size:11px; color:var(--faint); }
     @media print {
       :root { --bg:#fff; --panel:#fff; --ink:#000; --muted:#333; --faint:#555; --line:#ccc; --copper:#000; --copper-dim:transparent; }
-      .linkbtn,.stuck-sec,.sync,footer,.outs,.cnote,.stabs,.sp-toggle { display:none !important; }
+      .linkbtn,.stuck-sec,.sync,footer,.outs,.cnote,.cskipbox,.stabs,.sp-toggle { display:none !important; }
       .wrap { padding:0; max-width:none; } .card,.day { break-inside:avoid; } .task { min-height:0; padding:5px 0; }
       .box { border-color:#000; } .grid { grid-template-columns:1fr 1fr; }
     }
@@ -299,7 +311,12 @@
   // Dial timing (10/29): tap Call -> call:<id>:dialed; next outcome -> call:<id>:dur:<sec|unknown> (only one dur tick on at a time).
   const durOf = (cid) => { const k = Object.keys(done).find((x) => x.startsWith("call:" + cid + ":dur:")); return k ? { v: k.split(":").pop(), at: done[k], k } : null; };
   const fmtDur = (s) => Math.floor(s / 60) + ":" + String(Math.round(s % 60)).padStart(2, "0");
-  const callDone = (c) => OUTCOMES.some(([k]) => done["call:" + c.id + ":" + k]);
+  // Skip (10/30): id "call:<callId>:skip", label = reason text (≤200), done true = skipped, false = un-skipped.
+  const SKIP_KEY = "amy-day-v2-callskip";
+  let skips = load(SKIP_KEY, {});            // {cid: reason} for skips saved on this device
+  const skipOpen = {}, skipBusy = {};
+  const isSkipped = (cid) => !!done["call:" + cid + ":skip"];
+  const callDone = (c) => isSkipped(c.id) || OUTCOMES.some(([k]) => done["call:" + c.id + ":" + k]);
   // ---- court dates (341 / hearings / bar dates) ----
   const ETZ = "America/New_York";
   function kdEvents(c) {
@@ -398,7 +415,8 @@
         (tr ? '<span class="badge urg">CALL TRUSTEE FIRST</span>' : trNF ? '<span class="badge tnf">trustee: not found</span>' : "") +
         (Array.isArray(c.tags) ? c.tags.map((t) => '<span class="badge em">' + (/^emailed/i.test(t) ? "✉ " : "") + esc(t) + '</span>').join("") : "") +
         meetFor(secret || {}, c.id).map((m) => '<span class="badge mtg">📅 Meeting ' + esc(m.label || m.start) + '</span>').join("") +
-        (isDone ? '<span class="badge ok">✓ Called</span>' : "") + '</div>' +
+        (isSkipped(c.id) ? '<span class="badge skp">Skipped</span>' : isDone ? '<span class="badge ok">✓ Called</span>' : "") + '</div>' +
+      (isSkipped(c.id) ? '<div class="cline cskip"><b>Skip reason:</b> ' + (skips[c.id] ? esc(skips[c.id]) : '<i>' + (skips[c.id] === "" ? "none given" : "saved on another device (Riley has it)") + '</i>') + '</div>' : "") +
       (tr ? whoHtml : '<div class="phones">' + (big ? '<a class="tel" href="' + esc(telHref(big)) + '">📞 Call ' + esc(big) + (c.direct_phone ? " · direct" : "") + '</a>' : '<span class="cline">No phone on file</span>') +
         (small ? '<a class="tel sm" href="' + esc(telHref(small)) + '">📞 Call main office ' + esc(small) + '</a>' : "") + '</div>' +
       (c.email ? '<div class="cmail">✉ ' + esc(c.email) + '</div>' : "")) +
@@ -410,7 +428,11 @@
       (c.company_range ? '<div class="cline crange"><b>🏢</b> ' + esc(c.company_range) + '</div>' : "") +
       (c.other_avenues ? '<div class="cline cav"><b>Other avenues:</b> ' + esc(c.other_avenues) + '</div>' : "") + '<div class="cline crec"><b>Records to mention:</b> ' + esc(recMention(c)) + '</div>' +
       (c.records ? '<details><summary>Records they could sell</summary>' + esc(c.records) + '</details>' : "") +
-      '<div class="outs">' + OUTCOMES.map(([k, l]) => '<button type="button" class="out' + (done["call:" + c.id + ":" + k] ? " on" : "") + '" data-call="' + esc(c.id) + '" data-out="' + k + '">' + l + '</button>').join("") + (() => { const d = durOf(c.id); return d ? ' <span class="cdur">⏱ ' + (d.v === "unknown" ? "?" : fmtDur(+d.v)) + "</span>" : ""; })() + '</div>' +
+      '<div class="outs">' + OUTCOMES.map(([k, l]) => '<button type="button" class="out' + (done["call:" + c.id + ":" + k] ? " on" : "") + '" data-call="' + esc(c.id) + '" data-out="' + k + '">' + l + '</button>').join("") + '<button type="button" class="skipbtn' + (isSkipped(c.id) ? " on" : "") + (skipOpen[c.id] ? " open" : "") + '" data-skip="' + esc(c.id) + '">' + (isSkipped(c.id) ? "Skipped ✎" : "Skip") + '</button>' + (() => { const d = durOf(c.id); return d ? ' <span class="cdur">⏱ ' + (d.v === "unknown" ? "?" : fmtDur(+d.v)) + "</span>" : ""; })() + '</div>' +
+      (skipOpen[c.id] ? '<div class="cskipbox"><textarea maxlength="200" rows="2" placeholder="Why skip? (e.g. photo rights too tricky)" data-skipreason="' + esc(c.id) + '">' + esc(skips[c.id] || "") + '</textarea>' +
+        '<div class="skrow"><button type="button" class="sksave" data-skipsave="' + esc(c.id) + '"' + (skipBusy[c.id] ? " disabled" : "") + '>' + (skipBusy[c.id] ? "Saving…" : isSkipped(c.id) ? "Save reason" : "Save") + '</button>' +
+        (isSkipped(c.id) ? '<button type="button" class="skun" data-unskip="' + esc(c.id) + '">Un-skip</button>' : "") +
+        '<button type="button" class="skcancel" data-skipclose="' + esc(c.id) + '">Cancel</button></div></div>' : "") +
       '<div class="cnote"><textarea maxlength="200" rows="1" placeholder="Quick note (who answered, call back when…)" data-note="' + esc(c.id) + '">' + esc(localNote) + '</textarea><button type="button" data-savenote="' + esc(c.id) + '"' + (noteBusy[c.id] ? " disabled" : "") + (noteFlash[c.id] > Date.now() ? ' class="saved"' : "") + '>' + (noteBusy[c.id] ? "Saving…" : noteFlash[c.id] > Date.now() ? "Saved ✓" : "Save") + '</button></div>' +
       '<div class="nstat' + (nst.cls ? " " + nst.cls : "") + '" id="nstat-' + esc(c.id) + '">' + esc(nst.text) + '</div>' +
       '</div>';
@@ -748,6 +770,24 @@
       const meta = labels["call:" + cid] || {};
       pushTick(id, b.textContent + " · " + (meta.label || cid), now);
       renderCalls(); return;
+    }
+    const sb = e.target.closest("[data-skip]");
+    if (sb) { const cid = sb.dataset.skip; skipOpen[cid] = !skipOpen[cid]; sb.classList.toggle("open", !!skipOpen[cid]); renderCalls();
+      const ta = document.querySelector('textarea[data-skipreason="' + CSS.escape(cid) + '"]'); if (ta) ta.focus(); return; }
+    const sc = e.target.closest("[data-skipclose]");
+    if (sc) { delete skipOpen[sc.dataset.skipclose]; renderCalls(); return; }
+    const ss = e.target.closest("[data-skipsave]"), us = e.target.closest("[data-unskip]");
+    if (ss || us) {
+      const cid = (ss || us).dataset[ss ? "skipsave" : "unskip"], id = "call:" + cid + ":skip";
+      if (Date.now() < outLock && cid !== outLockCid) return;   // same 600ms debounce as outcomes
+      outLock = Date.now() + 600; outLockCid = cid;
+      if (!frozenOn) { frozenOn = true; renderCalls(); }   // keep card order fixed
+      if (ss) { const ta = document.querySelector('textarea[data-skipreason="' + CSS.escape(cid) + '"]');
+        const why = ta ? ta.value.trim().slice(0, 200) : ""; skips[cid] = why; done[id] = new Date().toISOString();
+        outbox = outbox.filter((o) => o.id !== id); outbox.push({ id, label: why, lane: "calls", done: true, device }); }
+      else { delete skips[cid]; delete done[id]; outbox = outbox.filter((o) => o.id !== id); outbox.push({ id, label: "", lane: "calls", done: false, device }); }
+      delete skipOpen[cid]; save(SKIP_KEY, skips); save(DONE_KEY, done); save(OUT_KEY, outbox);
+      renderCalls(); flush(); return;
     }
     const sv = e.target.closest("[data-savenote]");
     if (sv) saveNote(sv.dataset.savenote);
