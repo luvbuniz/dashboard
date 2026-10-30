@@ -99,7 +99,9 @@
     .badge.ok { background:var(--ok); color:#fff; border-color:var(--ok); }
     .phones { display:flex; flex-wrap:wrap; align-items:center; gap:6px 12px; margin:6px 0; }
     .tel { display:inline-flex; align-items:center; gap:6px; background:var(--copper); color:#fff; text-decoration:none; font-weight:600; font-size:17px; padding:10px 16px; border-radius:999px; min-height:44px; }
-    .meets { border:2px solid var(--copper); background:var(--elev); border-radius:12px; padding:8px 12px; margin:8px 0; }
+    .meets { border:2px solid #4f46e5; background:#eef2ff; color:#1e1b4b; border-radius:12px; padding:10px 14px; margin:8px 0 22px; }
+    .meets-h { margin:0 0 6px; font-size:17px; } .meet { padding:6px 0; border-top:1px solid #c7d2fe; } .meet:first-of-type{border-top:0}
+    .mwhen { font-size:16px; font-weight:700; color:#3730a3; } .nocall { color:#6b7280; font-style:italic; font-size:13px; }
     .meet { padding:6px 0; border-top:1px solid var(--line); } .meet:first-of-type { border-top:0; }
     .badge.mtg { background:var(--copper); color:#fff; }
     .cdur { font-weight:600; margin-left:6px; }
@@ -355,8 +357,15 @@
     return out + (list ? "</ul>" : "");
   }
   let todayRank = {};
+  const mtgFmt = (m) => new Date(m.start).toLocaleString("en-US", { timeZone: "America/New_York", weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }).replace(/,(?=[^,]*$)/, "") + " ET";
+  const mtgDay = (m) => new Date(m.start).toLocaleDateString("en-US", { timeZone: "America/New_York", weekday: "short", month: "short", day: "numeric" }).replace(",", "");
   function callHtml(c) {
-    const hh = callHtml0(c), r = todayRank[c.id];
+    let hh = callHtml0(c); const r = todayRank[c.id];
+    const fm = meetFor(secret || {}, c.id).find((m) => etYmd(Date.parse(m.start)) > etYmd(Date.now()));
+    if (fm) {   // meeting on a future day: no dialing from the card until that day
+      hh = hh.replace(/<a class="tel[^"]*"[^>]*>[\s\S]*?<\/a>/g, "");
+      hh = hh.replace('<div class="phones">', '<div class="phones"><span class="nocall">📅 Meeting ' + esc(mtgDay(fm)) + ", don't call</span>");
+    }
     if (!r) return hh;
     const i = hh.indexOf(">") + 1;
     return hh.slice(0, i) + '<div class="tag" style="background:#1f7a3a;color:#fff;display:inline-block;margin-bottom:4px">Today: #' + r + '</div>' + hh.slice(i);
@@ -593,10 +602,10 @@
     const now = Date.now(), lim = now + 14 * 864e5;
     const ms = (Array.isArray(sd.meetings) ? sd.meetings : []).filter((m) => Date.parse(m.end || m.start) > now && Date.parse(m.start) < lim);
     if (!ms.length) return "";
-    return '<div class="meets"><div class="csec">📅 Upcoming meetings</div>' + ms.map((m) =>
-      '<div class="meet"><b>' + esc(m.label || m.start) + '</b> · ' + esc(m.who || "") + (m.company ? '<div class="cline">' + esc(m.company) + '</div>' : "") +
-      (m.phone ? '<a class="tel c2" href="' + esc(telHref(m.phone)) + '">📞 Call ' + esc(m.phone) + '</a>' : "") +
-      (m.prep_notes ? '<details><summary>Prep notes</summary><div class="stext">' + md(m.prep_notes) + '</div></details>' : "") + '</div>').join("") + '</div>';
+    return '<section class="meets"><h3 class="meets-h">📅 Upcoming meetings</h3>' + ms.map((m) =>
+      '<div class="meet"><div class="mwhen">' + esc(mtgFmt(m)) + '</div><b>' + esc(m.who || "") + '</b>' + (m.company ? '<div class="cline">' + esc(m.company) + '</div>' : "") +
+      '<div class="cline nocall">No dialing here. Call happens at the meeting time.</div>' +
+      (m.prep_notes ? '<details><summary>Prep notes</summary><div class="stext">' + md(m.prep_notes) + '</div></details>' : "") + '</div>').join("") + '</section>';
   }
   function avgHtml(calls) {
     const today = etYmd(Date.now()), S = { "Avg voicemail": [], "Avg live call": [], "Avg gatekeeper": [] };
@@ -649,7 +658,7 @@
     if (!allCalls.length) h += '<div class="empty">No calls today. 🎉 When there\'s a call list, Riley puts it here at 7am.</div>';
     else {
       const n = calls.length, d = calls.filter(callDone).length;
-      h += sessHtml() + todayCallsHtml(allCalls) + meetHtml(sd);
+      h += meetHtml(sd) + sessHtml() + todayCallsHtml(allCalls);
       if (pbCalls.length) h += '<div class="ltabs">' + [["main", "Chapter 7 & main", mainCalls], ["prebk", "Pre-bankruptcy (ABC / receivership)", pbCalls]].map(([k, l, g]) =>
         '<button type="button" class="ltab' + (k === listTab ? " on" : "") + '" data-ltab="' + k + '">' + esc(l) + " (" + g.filter(callDone).length + "/" + g.length + ")</button>").join("") + "</div>";
       h += '<div class="calls-top"><span class="calls-prog"><b>' + d + " of " + n + "</b> called</span>" +
