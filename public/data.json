@@ -1,54 +1,49 @@
 {
-  "updated": "2026-10-29T09:04:19-04:00",
-  "heading": "Thursday, Oct 29",
-  "kicker": "Project week · no kids",
-  "message": "Calls, dentist, lunch, Mercor, micro1, Costco. One at a time.",
+  "updated": "2026-10-30T07:26:33-04:00",
+  "heading": "Friday, Oct 30",
+  "kicker": "Kids back at 3 PM · last day of project week",
+  "message": "Calls first, then wrap up the week before the kids get home at 3.",
   "frog": {
-    "id": "d1029-calls",
+    "id": "d1030-calls",
     "text": "Calls first, from the Call leads card",
-    "note": "Before the dentist, so no numb mouth · start with Rick Palacio 🐸"
+    "note": "Start with Catherine Stone Curtis (Prime Eco), who replied 10/29 asking for an offer. Explain your introducer role, no price 🐸"
   },
   "today": [
     {
-      "id": "d1029-calls",
+      "id": "d1030-calls",
       "text": "1. Calls (Call leads card)",
-      "note": "Now until about 10:30 · start with Rick Palacio"
+      "note": "Morning block · start with Catherine Stone Curtis · check-in 2:15 PM"
     },
     {
-      "id": "d1029-dentist",
-      "text": "2. Dentist, 11 AM, Family Smile Dentistry",
-      "note": "Bring the container with both popped crowns"
-    },
-    {
-      "id": "d1029-lunch",
-      "text": "3. Lunch",
+      "id": "d1030-lunch",
+      "text": "2. Lunch",
       "note": "Quick one"
     },
     {
-      "id": "d1029-mercor",
-      "text": "4. Mercor Project Odin, 2 hours",
-      "note": "Slack, videos, tasks · about 1–3 PM"
+      "id": "d1030-carryover",
+      "text": "3. Anything from Thursday that didn't happen",
+      "note": "Mercor Odin (2-hour cap), Costco emergency food run"
     },
     {
-      "id": "d1029-micro1",
-      "text": "5. micro1 voice recording interview",
-      "note": "Link expires about 11:20 PM ET tonight · plug in the Q2U (USB-C), pick Q2U as the input"
+      "id": "d1030-wiz-ep5",
+      "text": "4. Wizlings Ep5 on Instagram @wizlingstv",
+      "note": "Due today (on Elodie's list)"
     },
     {
-      "id": "d1029-costco",
-      "text": "6. Costco emergency food run",
-      "note": "Canned protein, rice, water, shelf-stable milk · closes 8:30 PM"
+      "id": "d1030-kids",
+      "text": "5. Kids with you from 3 PM",
+      "note": "Your week through Fri 11/6 · no-screens trial still on"
     }
   ],
   "quick": [
-    "Send the Daun and Adhi nudge drafts (5 min)",
-    "Add Heidi tutoring, Tue 11/3 4:45 PM, to the calendar (5 min)",
+    "Send the Daun and Adhi nudge drafts, if not sent yet (5 min)",
+    "Fund the Flex payment method before the 10/31 charge (5 min)",
+    "Reply to Lea Cathey's Etsy message (10 min)",
     "Check if the micro1 robotics gig is still open (5 min)",
     "Clear the kitchen counters (15 min)",
     "Dishes, one load (15 min)",
     "Bathroom sink and mirror (10 min)",
-    "Pick up the floor in one room (15 min)",
-    "Trash out after 5 PM, 2 bags max (5 min)"
+    "Pick up the floor in one room (15 min)"
   ],
   "lanes": [
     {
@@ -58,8 +53,8 @@
       "tag": "TOP PRIORITY",
       "tasks": [
         {
-          "id": "d1028-ch7-calls",
-          "text": "Ch 7 calls first",
+          "id": "d1030-calls-lane",
+          "text": "Calls first",
           "note": "On the Call leads card · check-in at 2:15 PM"
         },
         {
@@ -70,29 +65,31 @@
         {
           "id": "d1028-daun-adhi",
           "text": "Send the Daun (BioXcel) and Adhi (Mercor) nudge drafts",
-          "note": "Both quiet since 10/23 · drafts are in Riley's chat"
+          "note": "If not sent yet · both quiet since 10/23"
         },
         {
-          "id": "d1027-send-matt",
-          "text": "Send Matt's draft (Techcyte)",
-          "note": "Carried over from yesterday if not sent yet"
+          "id": "d1030-storj",
+          "text": "Check the Storj Labs hearing outcome",
+          "note": "Christopher Arthur (Spilman) said he'd know more after the 10/29 hearing"
         },
         {
-          "id": "mercor-link",
-          "text": "Send Riley your Mercor referral link",
-          "note": "Carried over · two emails are waiting for it"
+          "id": "d1030-chromium",
+          "text": "Handshake Project Chromium: say yes or no",
+          "note": "$80/hr, 10+ hrs a week, starts next week"
         },
         {
-          "id": "d1028-expo",
-          "text": "Optional: Manatee Advanced Learning Expo, 6–7:30pm",
-          "note": "MTC Main Campus, 6305 SR-70 E, Bradenton · Scout education companies among the community partners · Food trucks"
+          "id": "d1030-patent-nudge",
+          "text": "Optional: nudge the patent co-brokers",
+          "note": "J.S. Held, Hilco, ICAP, Tangible IP · no replies since 10/23"
         }
       ],
       "waiting": [
-        "Lawyer cost replies: Peal, Moore, Lapointe, Silberstein"
+        "Lawyer cost replies: Peal, Moore, Lapointe, Silberstein",
+        "Marc Yaverbaum's broker detail for Techcyte"
       ],
       "facts": [
-        "LinkedIn attorney outreach routine runs around 10:30 AM"
+        "LinkedIn attorney outreach routine runs around 10:30 AM",
+        "Kari Bowyer (Orinove trustee) call: Fri 11/6, 12 PM ET (prep notes in Upcoming meetings)"
       ]
     },
     {
@@ -101,46 +98,36 @@
       "name": "Admin",
       "tasks": [
         {
-          "id": "d1027-facebook",
-          "text": "Unlock Facebook and change the password",
-          "note": "Carried over from yesterday"
+          "id": "d1030-flex",
+          "text": "Fund the Flex default payment method",
+          "note": "First payment charges around 10/31"
         },
         {
-          "id": "signin-alerts",
-          "text": "Confirm the Google and DocuSign sign-in alerts were you"
+          "id": "d1030-newrez",
+          "text": "Newrez: make sure November goes out at $608.99",
+          "note": "Due Sun 11/1 (escrow bump from $552.95)"
         },
         {
-          "id": "heidi-calendar",
-          "text": "Put Heidi tutoring on the calendar",
-          "note": "Tue 11/3, 4:45 PM — not on the calendar yet"
+          "id": "d1030-wilcock",
+          "text": "Send Richard Wilcock the Aibani LLC tax info",
+          "note": "2025 insurance on the 4 rentals, business address, McLeod depreciation report · Reed can pull insurance"
         },
         {
-          "id": "aaa-assuresign",
-          "text": "Sign the AAA AssureSign documents"
-        },
-        {
-          "id": "csaa-mypolicy",
-          "text": "Set up CSAA MyPolicy"
+          "id": "d1030-etsy-lea",
+          "text": "Reply to Lea Cathey's Etsy message (Honeybun Threads)",
+          "note": "Custom order question from 10/28"
         }
       ],
       "facts": [
-        "Done ✓ Van picked up from A&B Auto Tech",
         "Running in the background: Mac Downloads moving to the Seagate drive",
-        "Trash: out after 5 PM, Sun–Thu, 2 bags max. Fines start this week.",
-        "Dentist: Thu 10/29, 11 AM, Family Smile Dentistry"
+        "Trash: out after 5 PM, Sun–Thu, 2 bags max. None tonight (Friday)."
       ]
     },
     {
       "id": "sub",
       "emoji": "🍎",
       "name": "Sub-teaching",
-      "tasks": [
-        {
-          "id": "willsub-timesheet-past",
-          "text": "Check the WillSub+ / ESS timesheet for past sub days",
-          "note": "Only if you have past days to log"
-        }
-      ],
+      "tasks": [],
       "tag": "ON HOLD",
       "facts": [
         "Van is back from A&B ✓"
@@ -153,16 +140,21 @@
       "tasks": [
         {
           "id": "d1028-mercor-interview",
-          "text": "Prep for the Mercor AI interview (education expert)",
-          "note": "Expecting to hear about the reviewer role today"
+          "text": "Prep for the Mercor AI interview (education expert)"
         },
         {
           "id": "d1028-micro1",
           "text": "micro1: check the robotics gig is still open, then prep for the AI interview"
         },
         {
-          "id": "d1028-realestate-role",
-          "text": "Apply for the property and real estate expert AI-training role"
+          "id": "d1030-micro1-voice",
+          "text": "micro1 Voice Recording interview: if not finished, see if it can be reopened",
+          "note": "The link expired around 11:20 PM on 10/29"
+        },
+        {
+          "id": "d1030-crowdgen",
+          "text": "Review the CrowdGen project invites",
+          "note": "Reminder came 10/29"
         }
       ],
       "facts": [
@@ -226,11 +218,6 @@
           "id": "home-vacuum",
           "text": "Vacuum the living room",
           "note": "15 min"
-        },
-        {
-          "id": "d1028-trash",
-          "text": "Trash out after 5 PM, 2 bags max",
-          "note": "5 min"
         }
       ]
     },
@@ -240,52 +227,32 @@
       "name": "Kids & calendar",
       "tasks": [],
       "facts": [
-        "Wed 10/28 · Witt early release, pickup 1:50 PM (today)",
-        "Thu 10/29 · Picture retakes",
-        "Fri 10/30 · Fall Parade",
+        "Fri 10/30 · Kids with you from 3 PM, through Fri 11/6",
+        "Fri 10/30 · Witt PreK–2nd Fall Parade + Halloween attire day",
+        "Sat 10/31 · Halloween 🎃",
+        "Mon 11/2–Fri 11/6 · Treats for Troops candy collection at Witt",
+        "Tue 11/3 · Math tutoring with Heidi, 4:45 PM, Rocky Bluff Library",
         "Thu 11/19 · Fiona's school meeting, 10 AM (on the calendar)"
       ]
     }
   ],
   "week": [
     {
-      "day": "Wed",
-      "date": "10/28",
-      "items": [
-        "Ch 7 calls · check-in 2:15",
-        "Witt early release 1:50",
-        "Optional: Learning Expo 6–7:30pm"
-      ],
-      "trash": true,
-      "today": false
-    },
-    {
-      "day": "Thu",
-      "date": "10/29",
-      "items": [
-        "Calls",
-        "Dentist 11 AM",
-        "Mercor Odin 2 hrs",
-        "micro1 interview",
-        "Costco",
-        "Picture retakes"
-      ],
-      "trash": true,
-      "today": true
-    },
-    {
       "day": "Fri",
       "date": "10/30",
       "items": [
-        "Fall Parade"
+        "Calls",
+        "Fall Parade (PreK–2nd)",
+        "Kids home 3 PM"
       ],
-      "today": false
+      "today": true
     },
     {
       "day": "Sat",
       "date": "10/31",
       "items": [
-        "Halloween 🎃"
+        "Halloween 🎃",
+        "Flex first payment"
       ],
       "today": false
     },
@@ -293,6 +260,7 @@
       "day": "Sun",
       "date": "11/1",
       "items": [
+        "Newrez $608.99 due",
         "Pick up at Wawa's 10 AM"
       ],
       "trash": true,
@@ -301,7 +269,28 @@
     {
       "day": "Mon",
       "date": "11/2",
-      "items": [],
+      "items": [
+        "Treats for Troops starts",
+        "La Sombra AAA renewal window"
+      ],
+      "trash": true,
+      "today": false
+    },
+    {
+      "day": "Tue",
+      "date": "11/3",
+      "items": [
+        "Math tutoring 4:45 PM"
+      ],
+      "trash": true,
+      "today": false
+    },
+    {
+      "day": "Wed",
+      "date": "11/4",
+      "items": [
+        "Call about the $780 HOA check"
+      ],
       "trash": true,
       "today": false
     }
