@@ -14,7 +14,7 @@
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,500&display=swap" rel="stylesheet" />
   <style>
     .mref{margin:6px 0;border:1px solid #c7d2fe;border-radius:8px;padding:4px 8px;background:#f5f7ff}
-    .mref summary{font-weight:600;cursor:pointer}.mnote{font-size:12px;color:#b45309;margin:4px 0}
+    .mref{position:relative}.mref summary{font-weight:600;cursor:pointer}.mclose{position:absolute;top:4px;right:6px;font-size:12px;padding:2px 8px;border:1px solid #c7d2fe;border-radius:6px;background:#fff;cursor:pointer}.mnote{font-size:12px;color:#b45309;margin:4px 0}
     .mrow{display:flex;gap:6px;align-items:flex-start;margin:4px 0;font-size:13px}.mk{flex:0 0 120px;color:#555}
     .mv{flex:1;word-break:break-word}.mcopy{flex:0 0 auto;font-size:12px;padding:2px 8px}
     :root {
@@ -417,13 +417,22 @@
     const m = c.mercor_ref; if (!m) return "";
     const F = [["Company name", m.company], ["Company website", m.website], ["Number of employees", m.employees],
       ["Contact name", m.contact_name], ["Contact email", m.contact_email], ["Contact LinkedIn (optional)", m.linkedin], ["Why are they a good fit?", m.why]];
-    return '<details class="mref" data-mref="' + esc(c.id) + '"' + (mrefOpen.has(c.id) ? " open" : "") + '><summary>Mercor referral</summary>' +
+    return '<details class="mref" data-mref="' + esc(c.id) + '"' + (mrefOpen.has(c.id) ? " open" : "") + '><summary data-mrefsum="' + esc(c.id) + '">Mercor referral</summary>' +
+      '<button type="button" class="mclose" data-mrefclose="' + esc(c.id) + '">✕ Close</button>' +
       '<div class="mnote">Only after they say yes · 5 slots max</div>' +
       '<div class="mrow"><span class="mk">Listing</span><a href="' + esc(m.listing_url) + '" target="_blank" rel="noopener">' + esc(m.listing) + ' ↗</a></div>' +
       F.map(([k, v]) => '<div class="mrow"><span class="mk">' + esc(k) + '</span><span class="mv">' + (v ? esc(v) : '<i>(fill in)</i>') + '</span>' +
         (v ? '<button type="button" class="mcopy" data-copy="' + esc(v) + '">Copy</button>' : "") + '</div>').join("") + '</details>';
   }
-  document.addEventListener("toggle", (e) => { const d = e.target; if (d.dataset && d.dataset.mref) { d.open ? mrefOpen.add(d.dataset.mref) : mrefOpen.delete(d.dataset.mref); } }, true);
+  // Open state lives only in memory (default closed); we drive it by hand so re-renders/toggle events can't force it open.
+  document.addEventListener("click", (e) => {
+    const t = e.target.closest && e.target.closest("[data-mrefsum],[data-mrefclose]"); if (!t) return;
+    e.preventDefault(); e.stopPropagation();
+    const id = t.dataset.mrefsum || t.dataset.mrefclose, d = t.closest("details.mref"); if (!d) return;
+    const open = t.dataset.mrefclose ? false : !d.hasAttribute("open");
+    open ? mrefOpen.add(id) : mrefOpen.delete(id);
+    if (open) d.setAttribute("open", ""); else d.removeAttribute("open");
+  }, true);
   document.addEventListener("click", (e) => {
     const b = e.target.closest && e.target.closest(".mcopy"); if (!b) return;
     e.preventDefault(); e.stopPropagation();
