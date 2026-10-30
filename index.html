@@ -612,7 +612,7 @@
   function sessHtml() {
     const ss = todaySessions(), run = ss.find((x) => !x.stop), now = Date.now();
     const tot = ss.reduce((a, x) => a + ((x.stop || now) - x.start), 0);
-    return '<div class="calls-top" id="sessbar"><button type="button" id="sessbtn">' + (run ? "⏹ Stop calling" : "▶ Start calling") + '</button> ' +
+    return '<div class="calls-top" id="sessbar">' +
       '<span id="sessclk"><b>' + (run ? clkFmt(now - run.start) : "0:00:00") + '</b>' + (run ? " since " + hhmm(run.start) : "") + '</span> · ' +
       '<span id="sesstot">Calling today: <b>' + durFmt(tot) + '</b></span></div>';
   }
@@ -620,7 +620,7 @@
     const b = document.getElementById("sessbar"); if (!b) return;
     const t = document.createElement("div"); t.innerHTML = sessHtml(); const n = t.firstChild;
     for (const k of ["sessclk", "sesstot"]) { const a = document.getElementById(k), z = n.querySelector("#" + k); if (a && a.innerHTML !== z.innerHTML) a.innerHTML = z.innerHTML; }
-    const bt = document.getElementById("sessbtn"), nb = n.querySelector("#sessbtn"); if (bt.textContent !== nb.textContent) bt.textContent = nb.textContent;
+    
   }
   setInterval(paintSess, 1000);
   document.addEventListener("click", (e) => {
@@ -676,8 +676,9 @@
     const brk = P.phase === "break", run = P.phase !== "idle", left = P.paused ? P.left : P.endsAt - Date.now(), td = pDialsToday();
     const nDone = P.log.length, n = P.dials.length;
     el.className = brk ? "brk" : "";
-    const btns = !run ? '<button type="button" data-pomo="start">▶ Start Pomodoro</button>'
-      : '<button type="button" data-pomo="pause">' + (P.paused ? "▶ Resume" : "⏸ Pause") + '</button><button type="button" class="sec" data-pomo="stop">⏹ Stop</button>';
+    const srun = !!todaySessions().find((x) => !x.stop);   // session may have been started by the old button
+    const btns = !run ? '<button type="button" data-pomo="start">' + (srun ? "▶ Start block" : "▶ Start calling") + '</button>' + (srun ? '<button type="button" class="sec" data-pomo="stop">⏹ Stop calling</button>' : "")
+      : '<button type="button" data-pomo="pause">' + (P.paused ? "▶ Resume" : "⏸ Pause") + '</button><button type="button" class="sec" data-pomo="stop">⏹ Stop calling</button>';
     const mid = !run ? '<span class="pclk">25:00</span><span class="psm">25 min focus · 5 min break · every 4th break 15</span>'
       : brk ? '<span class="pclk">' + mmss(left) + '</span><b>' + (P.block % 4 === 0 ? "Long break" : "Break") + '</b><span class="pmsg">Break: send your email requests, stretch, water · ✉ ' + td.emails + ' email request' + (td.emails === 1 ? "" : "s") + ' today</span>'
       : '<span class="pclk">' + mmss(left) + '</span><b>Block ' + P.block + '</b><span>Dials this block: <b>' + n + ' / ' + PGOAL + '</b> <span class="pbar"><i style="width:' + Math.min(100, n / PGOAL * 100) + '%"></i></span></span>';
@@ -707,8 +708,10 @@
       if (P.paused) { P.endsAt = now + P.left; P.paused = false; } else { P.left = P.endsAt - now; P.paused = true; }
     } else if (a === "stop") {
       if (P.phase === "focus" && (P.dials.length || now - Date.parse(P.bStart) > 60000)) pEndBlock(now);
-      else if (P.phase === "focus") P.block--;
+      else if (P.phase === "focus") P.block--;   // too short to log
       P.phase = "idle"; P.paused = false;
+      const run = todaySessions().find((x) => !x.stop);   // Stop calling also stops the call session
+      if (run) { const id = run.pre + ":stop", iso = new Date(now).toISOString(); sessAt[id] = iso; done[id] = iso; save(SESS_KEY, sessAt); save(DONE_KEY, done); pushTick(id, iso, true); paintSess(); }
     }
     pSave(); pRender();
   });
