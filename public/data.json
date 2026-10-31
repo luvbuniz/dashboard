@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-31T07:46:43-04:00",
+  "updated": "2026-10-31T07:47:10-04:00",
   "heading": "Friday, Oct 30",
   "kicker": "Kids back at 3 PM · last day of project week",
   "message": "Calls first, then wrap up the week before the kids get home at 3.",
@@ -375,6 +375,11 @@
       "id": "elo-oct31-aldi-clean",
       "text": "Aldi's kids shopping and clean house intermittently, Sat Oct 31",
       "note": "Sat Oct 31, quiet Saturday"
+    },
+    {
+      "id": "elo-oct31-micro1-interview",
+      "text": "Micro1 interview, voice actor role, desktop only, do it in a closet for quiet sound",
+      "note": "Deadline tonight Sat Oct 31 after the 24-hour extension"
     }
   ]
 }
