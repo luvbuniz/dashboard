@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-30T07:26:33-04:00",
+  "updated": "2026-10-31T07:46:43-04:00",
   "heading": "Friday, Oct 30",
   "kicker": "Kids back at 3 PM · last day of project week",
   "message": "Calls first, then wrap up the week before the kids get home at 3.",
@@ -350,6 +350,31 @@
       "id": "elo-thu-costco",
       "text": "Costco run: emergency box, canned food, cases of water",
       "note": "Thu 10/29, last; warehouse closes 8:30 PM"
+    },
+    {
+      "id": "elo-oct31-handshake-survey",
+      "text": "Handshake surveys: Project Conductor survey, about 10 minutes",
+      "note": "Sat Oct 31"
+    },
+    {
+      "id": "elo-oct31-handshake-onboarding",
+      "text": "Handshake onboarding: finish onboarding tasks",
+      "note": "Sat Oct 31"
+    },
+    {
+      "id": "elo-oct31-mercor-hours",
+      "text": "Mercor hours: do Mercor training and Mercor hours",
+      "note": "Sat Oct 31"
+    },
+    {
+      "id": "elo-oct31-pay-david-75",
+      "text": "Pay David $75 for Game On via Zelle",
+      "note": "Still unpaid as of Oct 31 morning, reminder fired Oct 30 evening"
+    },
+    {
+      "id": "elo-oct31-aldi-clean",
+      "text": "Aldi's kids shopping and clean house intermittently, Sat Oct 31",
+      "note": "Sat Oct 31, quiet Saturday"
     }
   ]
 }
