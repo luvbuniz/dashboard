@@ -1,18 +1,18 @@
 {
   "updated": "2026-10-31T07:52:02-04:00",
-  "heading": "Friday, Oct 30",
-  "kicker": "Kids back at 3 PM · last day of project week",
-  "message": "Calls first, then wrap up the week before the kids get home at 3.",
+  "heading": "Saturday, Oct 31",
+  "kicker": "Sherri done, back on track",
+  "message": "Mercor first, then Micro1 interview tonight, Aldi's, then cleaning.",
   "frog": {
     "id": "d1030-calls",
     "text": "Calls first, from the Call leads card",
-    "note": "Start with Catherine Stone Curtis (Prime Eco), who replied 10/29 asking for an offer. Explain your introducer role, no price 🐸"
+    "note": "Start with Catherine Stone Curtis (Prime Eco), who replied 10/29 asking for an offer. Explain your introducer role, no price \ud83d\udc38"
   },
   "today": [
     {
       "id": "d1030-calls",
       "text": "1. Calls (Call leads card)",
-      "note": "Morning block · start with Catherine Stone Curtis · check-in 2:15 PM"
+      "note": "Morning block \u00b7 start with Catherine Stone Curtis \u00b7 check-in 2:15 PM"
     },
     {
       "id": "d1030-lunch",
@@ -32,7 +32,7 @@
     {
       "id": "d1030-kids",
       "text": "5. Kids with you from 3 PM",
-      "note": "Your week through Fri 11/6 · no-screens trial still on"
+      "note": "Your week through Fri 11/6 \u00b7 no-screens trial still on"
     }
   ],
   "quick": [
@@ -48,24 +48,24 @@
   "lanes": [
     {
       "id": "data",
-      "emoji": "💼",
+      "emoji": "\ud83d\udcbc",
       "name": "AI data business",
       "tag": "TOP PRIORITY",
       "tasks": [
         {
           "id": "d1030-calls-lane",
           "text": "Calls first",
-          "note": "On the Call leads card · check-in at 2:15 PM"
+          "note": "On the Call leads card \u00b7 check-in at 2:15 PM"
         },
         {
           "id": "d1028-heart-tech",
           "text": "Heart-Tech Health: review the trustee email + thank-you to Kevin Mann",
-          "note": "Mann says Heart-Tech can't sell assets now — go through the Chapter 7 trustee. Riley is drafting both"
+          "note": "Mann says Heart-Tech can't sell assets now \u2014 go through the Chapter 7 trustee. Riley is drafting both"
         },
         {
           "id": "d1028-daun-adhi",
           "text": "Send the Daun (BioXcel) and Adhi (Mercor) nudge drafts",
-          "note": "If not sent yet · both quiet since 10/23"
+          "note": "If not sent yet \u00b7 both quiet since 10/23"
         },
         {
           "id": "d1030-storj",
@@ -80,7 +80,7 @@
         {
           "id": "d1030-patent-nudge",
           "text": "Optional: nudge the patent co-brokers",
-          "note": "J.S. Held, Hilco, ICAP, Tangible IP · no replies since 10/23"
+          "note": "J.S. Held, Hilco, ICAP, Tangible IP \u00b7 no replies since 10/23"
         }
       ],
       "waiting": [
@@ -94,7 +94,7 @@
     },
     {
       "id": "admin",
-      "emoji": "🗂️",
+      "emoji": "\ud83d\uddc2\ufe0f",
       "name": "Admin",
       "tasks": [
         {
@@ -110,7 +110,7 @@
         {
           "id": "d1030-wilcock",
           "text": "Send Richard Wilcock the Aibani LLC tax info",
-          "note": "2025 insurance on the 4 rentals, business address, McLeod depreciation report · Reed can pull insurance"
+          "note": "2025 insurance on the 4 rentals, business address, McLeod depreciation report \u00b7 Reed can pull insurance"
         },
         {
           "id": "d1030-etsy-lea",
@@ -120,22 +120,22 @@
       ],
       "facts": [
         "Running in the background: Mac Downloads moving to the Seagate drive",
-        "Trash: out after 5 PM, Sun–Thu, 2 bags max. None tonight (Friday)."
+        "Trash: out after 5 PM, Sun\u2013Thu, 2 bags max. None tonight (Friday)."
       ]
     },
     {
       "id": "sub",
-      "emoji": "🍎",
+      "emoji": "\ud83c\udf4e",
       "name": "Sub-teaching",
       "tasks": [],
       "tag": "ON HOLD",
       "facts": [
-        "Van is back from A&B ✓"
+        "Van is back from A&B \u2713"
       ]
     },
     {
       "id": "training",
-      "emoji": "🧠",
+      "emoji": "\ud83e\udde0",
       "name": "AI training",
       "tasks": [
         {
@@ -159,12 +159,12 @@
       ],
       "facts": [
         "Mercor cut the Odin cap to 2 hours",
-        "micro1 Voice Coach not certified — Voice Recording interview still open"
+        "micro1 Voice Coach not certified \u2014 Voice Recording interview still open"
       ]
     },
     {
       "id": "x",
-      "emoji": "🐰",
+      "emoji": "\ud83d\udc30",
       "name": "@bunifree on X",
       "tag": "YOU POST",
       "tasks": [
@@ -180,9 +180,9 @@
     },
     {
       "id": "home",
-      "emoji": "🏡",
+      "emoji": "\ud83c\udfe1",
       "name": "Home",
-      "tag": "10–15 MIN CHUNKS",
+      "tag": "10\u201315 MIN CHUNKS",
       "tasks": [
         {
           "id": "home-strip-bed",
@@ -223,16 +223,16 @@
     },
     {
       "id": "kids",
-      "emoji": "👧",
+      "emoji": "\ud83d\udc67",
       "name": "Kids & calendar",
       "tasks": [],
       "facts": [
-        "Fri 10/30 · Kids with you from 3 PM, through Fri 11/6",
-        "Fri 10/30 · Witt PreK–2nd Fall Parade + Halloween attire day",
-        "Sat 10/31 · Halloween 🎃",
-        "Mon 11/2–Fri 11/6 · Treats for Troops candy collection at Witt",
-        "Tue 11/3 · Math tutoring with Heidi, 4:45 PM, Rocky Bluff Library",
-        "Thu 11/19 · Fiona's school meeting, 10 AM (on the calendar)"
+        "Fri 10/30 \u00b7 Kids with you from 3 PM, through Fri 11/6",
+        "Fri 10/30 \u00b7 Witt PreK\u20132nd Fall Parade + Halloween attire day",
+        "Sat 10/31 \u00b7 Halloween \ud83c\udf83",
+        "Mon 11/2\u2013Fri 11/6 \u00b7 Treats for Troops candy collection at Witt",
+        "Tue 11/3 \u00b7 Math tutoring with Heidi, 4:45 PM, Rocky Bluff Library",
+        "Thu 11/19 \u00b7 Fiona's school meeting, 10 AM (on the calendar)"
       ]
     }
   ],
@@ -242,19 +242,19 @@
       "date": "10/30",
       "items": [
         "Calls",
-        "Fall Parade (PreK–2nd)",
+        "Fall Parade (PreK\u20132nd)",
         "Kids home 3 PM"
       ],
-      "today": true
+      "today": false
     },
     {
       "day": "Sat",
       "date": "10/31",
       "items": [
-        "Halloween 🎃",
+        "Halloween \ud83c\udf83",
         "Flex first payment"
       ],
-      "today": false
+      "today": true
     },
     {
       "day": "Sun",
@@ -299,7 +299,7 @@
     {
       "id": "elo-printify",
       "text": "Confirm the Printify email",
-      "note": "Link expires Thu 10/29, 4:31 AM — click it in the Printify email if not done"
+      "note": "Link expires Thu 10/29, 4:31 AM \u2014 click it in the Printify email if not done"
     },
     {
       "id": "elo-etsy-desc",
@@ -435,6 +435,21 @@
       "id": "elo-oct31-kids-beds-sheets",
       "text": "Make the kids beds and wash their sheets before Sun Nov 1 pickup",
       "note": "Before Sun Nov 1 10 AM pickup at Wawa's"
+    },
+    {
+      "id": "elo-oct31-back-on-track",
+      "text": "Back on track after Sherri: Mercor 2-hour evaluation first",
+      "note": "Sat Oct 31, after cafe, Mercor Odin reviewer, 2-hour cap to paid hours"
+    },
+    {
+      "id": "elo-oct31-micro1-closet",
+      "text": "Micro1 interview in closet, desktop only, tonight deadline",
+      "note": "Sat Oct 31, deadline tonight after 24-hour extension, quiet closet"
+    },
+    {
+      "id": "elo-oct31-dashboard-daily",
+      "text": "Dashboard updated to Saturday Oct 31",
+      "note": "Heading and week today flag fixed from Friday Oct 30"
     }
   ]
 }
