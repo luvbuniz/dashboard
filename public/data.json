@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-31T07:47:10-04:00",
+  "updated": "2026-10-31T07:52:02-04:00",
   "heading": "Friday, Oct 30",
   "kicker": "Kids back at 3 PM · last day of project week",
   "message": "Calls first, then wrap up the week before the kids get home at 3.",
@@ -380,6 +380,41 @@
       "id": "elo-oct31-micro1-interview",
       "text": "Micro1 interview, voice actor role, desktop only, do it in a closet for quiet sound",
       "note": "Deadline tonight Sat Oct 31 after the 24-hour extension"
+    },
+    {
+      "id": "elo-oct31-morning-human",
+      "text": "Brush teeth, breakfast, shower, wash hair, coffee",
+      "note": "Sat Oct 31 morning, human stuff first"
+    },
+    {
+      "id": "elo-oct31-sherri",
+      "text": "Sherri at Root and Seed 11 AM, early lunch and chit chat",
+      "note": "Sat Oct 31, 11 AM to 12 PM, Root and Seed, 8209 Natures Way, Bradenton"
+    },
+    {
+      "id": "elo-oct31-mercor-cafe",
+      "text": "Mercor work at cafe before or after Sherri",
+      "note": "Sat Oct 31, desk work at cafe"
+    },
+    {
+      "id": "elo-oct31-sunglasses",
+      "text": "Find sunglasses, if not found go to Bealls before Aldi's for a $10 pair",
+      "note": "Needed for Sun Nov 1 pickup at Wawa's"
+    },
+    {
+      "id": "elo-oct31-aldi-list",
+      "text": "Aldi's shopping: fruit, vegetables, fresh chicken drumsticks to bake and freeze, snacks, breakfast items",
+      "note": "Sat Oct 31, after cafe, Fiona is picky"
+    },
+    {
+      "id": "elo-oct31-dinner-clean",
+      "text": "Dinner and clean up, extra coffee",
+      "note": "Sat Oct 31 evening"
+    },
+    {
+      "id": "elo-oct31-staples-done",
+      "text": "Staples shopping, done",
+      "note": "Already done Sat Oct 31"
     }
   ]
 }
