@@ -380,7 +380,9 @@
     return '<div class="cline ckd">Court dates: ' + ev.map((x) => esc(kdWhat(x.e)) + " " + esc(kdFmt(x)) + (x.t < Date.now() ? " (past)" : "")).join(" · ") + '</div>';
   }
   function ch7Sort(list) {   // not-called: soonest upcoming → undated → past (latest first); called/ticked last, in original order
-    const rank = (c) => { if (callDone(c)) return [3, 0]; if (c.pin) return [-1, +c.pin || 0]; if (c.prior_called) return [2.5, 0]; const k = keyDate(c); if (!k || k.state === "nf") return [1, 0]; return k.state === "past" ? [2, -k.x.t] : [0, k.x.t]; };
+    // 11/2 (Amy): pinned → court date within 7 days → newest filing first (reach trustees before other brokers) → called earlier → called today
+    const fts = (c) => { const t = Date.parse(c.filed || ""); return isNaN(t) ? 0 : t; };
+    const rank = (c) => { if (callDone(c)) return [3, 0]; if (c.pin) return [-1, +c.pin || 0]; if (c.prior_called) return [2.5, 0]; const k = keyDate(c); if (k && k.state === "soon") return [0, k.x.t]; return [1, -fts(c)]; };
     return list.map((c, i) => ({ c, i, r: rank(c) })).sort((a, b) => a.r[0] - b.r[0] || a.r[1] - b.r[1] || a.i - b.i).map((o) => o.c);
   }
   function md(text) {
@@ -447,7 +449,7 @@
       (c.signal ? '<div class="cline csig"><b>🚩 ' + esc(c.signal) + (c.signal_date ? " · " + esc(c.signal_date) : "") + ':</b> ' + esc(c.signal_detail || "") +
         (c.source_url ? ' <a href="' + esc(c.source_url) + '" target="_blank" rel="noopener">source ↗</a>' : "") + (c.city_state ? '<br>📍 ' + esc(c.city_state) : "") + '</div>' : "") +
       (c.why && !c.signal ? '<div class="cline"><b>Why:</b> ' + esc(c.why) + '</div>' : "") +
-      kdLine(c) + (c.fit ? '<div class="cline cfit"><b>Buyer fit:</b> ' + esc(c.fit) + (c.fit_why ? ' · ' + esc(c.fit_why) : "") + '</div>' : "") +
+      kdLine(c) + (c.fit ? '<div class="cline cfit"><b>Buyer fit:</b> ' + esc(c.fit) + (c.fit_why ? ' · ' + esc(c.fit_why) : "") + (c.employees ? ' · <b>Employees:</b> ' + esc(c.employees) : "") + (c.emp_badge ? ' <span class="badge kd soon">' + esc(c.emp_badge) + '</span>' : "") + '</div>' : (c.employees ? '<div class="cline cfit"><b>Employees:</b> ' + esc(c.employees) + (c.emp_badge ? ' <span class="badge kd soon">' + esc(c.emp_badge) + '</span>' : "") + '</div>' : "")) +
       (c.payout ? '<div class="cline cpay"><b>💰 Your payout (est.):</b> ' + String(c.payout).split(' || ').map(esc).join('<br>') + '</div>' : "") +
       (c.company_range ? '<div class="cline crange"><b>🏢</b> ' + esc(c.company_range) + '</div>' : "") +
       (c.other_avenues ? '<div class="cline cav"><b>Other avenues:</b> ' + esc(c.other_avenues) + '</div>' : "") + '<div class="cline crec"><b>Records to mention:</b> ' + esc(recMention(c)) + '</div>' +
@@ -840,7 +842,7 @@
           const sub = s.includes("·") ? s.split("·").slice(1).join("·").trim() : "";
           ex += (sub ? '<div class="csec">' + esc(sub) + "</div>" : "") + g.map(callHtml).join(""); exN += g.length; continue;
         }
-        h += '<div class="csec">' + esc(s) + "</div>" + (isCh7 ? '<div class="cline ckd">Pinned first, then soonest court date. Undated next, past dates after, called on an earlier day and already-called at the bottom.</div>' : "") + (isCh7 ? ch7Div(ch7Sort(g)) : g.map(callHtml).join(""));
+        h += '<div class="csec">' + esc(s) + "</div>" + (isCh7 ? '<div class="cline ckd">Pinned first, then court dates in the next 7 days, then newest filings first (beat other brokers to the trustee). Called on an earlier day and already-called at the bottom.</div>' : "") + (isCh7 ? ch7Div(ch7Sort(g)) : g.map(callHtml).join(""));
       }
       if (exN) h += '<details id="extra-det"' + (extraOpen ? " open" : "") + '><summary class="csec">Extra – only if on a roll (' + exN + ")</summary>" + ex + "</details>";
     }
