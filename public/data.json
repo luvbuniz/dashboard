@@ -1,38 +1,48 @@
 {
-  "updated": "2026-11-02T07:19:09-05:00",
-  "heading": "Monday, Nov 2",
+  "updated": "2026-11-03T07:23:20-05:00",
+  "heading": "Tuesday, Nov 3",
   "kicker": "Kid week through Fri 11/6",
-  "message": "New week. Calls first, then Friday's follow-up emails, then Mercor hours before pickup.",
+  "message": "Calls first, then Friday's follow-up emails. Afternoon is the right time for referral nudges, then tutoring at 4:45.",
   "frog": {
-    "id": "d1102-calls",
+    "id": "d1103-calls",
     "text": "Calls first, from the Call leads card",
-    "note": "Start with the pre-bankruptcy block at the top. Jenny Kasen (ClickEnroll) was out until today 🐸"
+    "note": "Goal is 20 calls · check-in at 2:15 PM 🐸"
   },
   "today": [
     {
-      "id": "d1102-calls",
+      "id": "d1103-calls",
       "text": "1. Calls (Call leads card)",
-      "note": "Morning block · pre-bankruptcy block first · check-in 2:15 PM"
+      "note": "Morning block · check-in 2:15 PM"
     },
     {
-      "id": "d1102-lunch",
-      "text": "2. Lunch",
-      "note": "Quick one"
-    },
-    {
-      "id": "d1102-followups",
-      "text": "3. Friday's call follow-up emails",
+      "id": "d1103-followups",
+      "text": "2. Friday's call follow-up emails",
       "note": "Carolyn Dye (trustee@cadye.com), Beau Butler via pat.lowe.law@gmail.com, Brian Shapiro (brian@trusteeshapiro.com), plus Peter Mastan's OK to submit"
     },
     {
-      "id": "d1102-mercor",
-      "text": "4. Mercor hours (Odin)",
+      "id": "d1103-lunch",
+      "text": "3. Lunch",
+      "note": "Quick one"
+    },
+    {
+      "id": "d1103-printing",
+      "text": "4. Printing Research: check for Areya's reply",
+      "note": "Around 2 PM · Tuesday afternoon is your nudge window, check Mercor's progress bar first"
+    },
+    {
+      "id": "d1103-mercor",
+      "text": "5. Mercor hours (Odin)",
       "note": "Before school pickup"
     },
     {
-      "id": "d1102-kids",
-      "text": "5. Kids after school",
-      "note": "Your week through Fri 11/6 · Treats for Troops candy at Witt this week · no-screens trial still on"
+      "id": "d1103-tutoring",
+      "text": "6. Pickup, then math tutoring with Heidi",
+      "note": "4:45–6:45 PM, Rocky Bluff Library · Leo and Fiona back to back · $100 (cash, Venmo or Zelle)"
+    },
+    {
+      "id": "d1103-trash",
+      "text": "7. Trash out after 5 PM",
+      "note": "Tuesday is a trash night · 2 bags max"
     }
   ],
   "quick": [
@@ -51,14 +61,19 @@
       "tag": "TOP PRIORITY",
       "tasks": [
         {
-          "id": "d1102-calls-lane",
+          "id": "d1103-calls-lane",
           "text": "Calls first",
           "note": "On the Call leads card · check-in at 2:15 PM"
         },
         {
-          "id": "d1102-followups-lane",
+          "id": "d1103-followups-lane",
           "text": "Send Friday's call follow-up emails",
           "note": "Carolyn Dye, Beau Butler (via Pat Lowe), Brian Shapiro; Peter Mastan OK'd submitting Bruce's Entertainment"
+        },
+        {
+          "id": "d1103-printing-lane",
+          "text": "Printing Research: check for Areya's reply",
+          "note": "Around 2 PM today"
         },
         {
           "id": "d1030-storj",
@@ -83,7 +98,7 @@
       "facts": [
         "LinkedIn attorney outreach routine runs around 10:30 AM",
         "Kari Bowyer (Orinove trustee) call: Fri 11/6, 12 PM ET (prep notes in Upcoming meetings)",
-        "Mercor referrals in: Cyber-Dive (sale hearing 11/19) and Printing Research (Areya reply check Tue)"
+        "Mercor referrals in: Cyber-Dive (sale hearing 11/19) and Printing Research (Areya reply check today ~2 PM)"
       ]
     },
     {
@@ -110,11 +125,16 @@
           "id": "d1030-etsy-lea",
           "text": "Reply to Lea Cathey's Etsy message (Honeybun Threads)",
           "note": "Custom order question from 10/28"
+        },
+        {
+          "id": "d1103-claude-credit",
+          "text": "Use the Claude free credit before it expires",
+          "note": "Expires Thu 11/5"
         }
       ],
       "facts": [
         "Running in the background: Mac Downloads moving to the Seagate drive",
-        "Trash: out after 5 PM, Sun–Thu, 2 bags max. Tonight is a trash night (Monday)."
+        "Trash: out after 5 PM, Sun–Thu, 2 bags max. Tonight is a trash night (Tuesday)."
       ]
     },
     {
@@ -221,40 +241,32 @@
       "name": "Kids & calendar",
       "tasks": [],
       "facts": [
-        "Kids with you through Fri 11/6 · no-screens trial still on",
+        "Kids with you through Fri 11/6 · no-screens trial runs through Mon 11/9",
         "Mon 11/2–Fri 11/6 · Treats for Troops candy collection at Witt",
-        "Tue 11/3 · Math tutoring with Heidi, 4:45 PM, Rocky Bluff Library",
+        "Tue 11/3 (today) · Math tutoring with Heidi, 4:45 PM, Rocky Bluff Library (every other week, custody weeks)",
+        "Mon 11/9 · Endodontics, 1 PM, Lakewood Ranch Endodontics (tooth #21)",
         "Thu 11/19 · Fiona's school meeting, 10 AM (on the calendar)"
       ]
     }
   ],
   "week": [
     {
-      "day": "Mon",
-      "date": "11/2",
+      "day": "Tue",
+      "date": "11/3",
       "items": [
         "Calls",
-        "Treats for Troops starts",
-        "La Sombra AAA renewal window"
+        "Printing Research reply check",
+        "Math tutoring 4:45 PM"
       ],
       "trash": true,
       "today": true
     },
     {
-      "day": "Tue",
-      "date": "11/3",
-      "items": [
-        "Printing Research reply check",
-        "Math tutoring 4:45 PM"
-      ],
-      "trash": true,
-      "today": false
-    },
-    {
       "day": "Wed",
       "date": "11/4",
       "items": [
-        "Call about the $780 HOA check"
+        "Call about the $780 HOA check",
+        "Anthropic IPO check"
       ],
       "trash": true,
       "today": false
@@ -272,7 +284,7 @@
       "day": "Fri",
       "date": "11/6",
       "items": [
-        "Kari Bowyer call 12 PM",
+        "Kari Bowyer call 12 PM (prep 11:45)",
         "Kid week ends"
       ],
       "today": false
@@ -281,6 +293,13 @@
       "day": "Sat",
       "date": "11/7",
       "items": [],
+      "today": false
+    },
+    {
+      "day": "Sun",
+      "date": "11/8",
+      "items": [],
+      "trash": true,
       "today": false
     }
   ],
