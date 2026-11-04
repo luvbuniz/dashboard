@@ -1,51 +1,57 @@
 {
-  "updated": "2026-11-03T07:23:20-05:00",
-  "heading": "Tuesday, Nov 3",
+  "updated": "2026-11-04T07:25:00-05:00",
+  "heading": "Wednesday, Nov 4",
   "kicker": "Kid week through Fri 11/6",
-  "message": "Calls first, then Friday's follow-up emails. Afternoon is the right time for referral nudges, then tutoring at 4:45.",
+  "message": "Calls first, then the 10 AM call about the $780 HOA check. Catch up on any of yesterday's follow-up emails after lunch, and use the Claude credit before it expires tomorrow.",
   "frog": {
-    "id": "d1103-calls",
+    "id": "d1104-calls",
     "text": "Calls first, from the Call leads card",
     "note": "Goal is 20 calls · check-in at 2:15 PM 🐸"
   },
   "today": [
     {
-      "id": "d1103-calls",
+      "id": "d1104-calls",
       "text": "1. Calls (Call leads card)",
       "note": "Morning block · check-in 2:15 PM"
     },
     {
-      "id": "d1103-followups",
-      "text": "2. Friday's call follow-up emails",
-      "note": "Carolyn Dye (trustee@cadye.com), Beau Butler via pat.lowe.law@gmail.com, Brian Shapiro (brian@trusteeshapiro.com), plus Peter Mastan's OK to submit"
+      "id": "d1104-hoa780",
+      "text": "2. Call about the $780 HOA check (Nevada's Finest)",
+      "note": "10 AM"
     },
     {
-      "id": "d1103-lunch",
+      "id": "d1104-lunch",
       "text": "3. Lunch",
-      "note": "Quick one"
+      "note": "Optional: ChatGPT Ads Holiday Playbook webinar, 12–12:30 PM (Buni calendar)"
     },
     {
-      "id": "d1103-printing",
-      "text": "4. Printing Research: check for Areya's reply",
-      "note": "Around 2 PM · Tuesday afternoon is your nudge window, check Mercor's progress bar first"
+      "id": "d1104-followups",
+      "text": "4. Any of Friday's follow-up emails still unsent",
+      "note": "Carolyn Dye, Beau Butler via Pat Lowe, Brian Shapiro, plus Peter Mastan's OK to submit"
     },
     {
-      "id": "d1103-mercor",
-      "text": "5. Mercor hours (Odin)",
-      "note": "Before school pickup"
+      "id": "d1104-printing",
+      "text": "5. Printing Research: see if Areya replied",
+      "note": "Nudge only after checking Mercor's progress bar"
     },
     {
-      "id": "d1103-tutoring",
-      "text": "6. Pickup, then math tutoring with Heidi",
-      "note": "4:45–6:45 PM, Rocky Bluff Library · Leo and Fiona back to back · $100 (cash, Venmo or Zelle)"
+      "id": "d1104-claude",
+      "text": "6. Use the Claude free credit",
+      "note": "Expires tomorrow, Thu 11/5"
     },
     {
-      "id": "d1103-trash",
-      "text": "7. Trash out after 5 PM",
-      "note": "Tuesday is a trash night · 2 bags max"
+      "id": "d1104-pickup",
+      "text": "7. School pickup, kids time",
+      "note": "Kid week"
+    },
+    {
+      "id": "d1104-trash",
+      "text": "8. Trash out after 5 PM",
+      "note": "Wednesday is a trash night · 2 bags max"
     }
   ],
   "quick": [
+    "Use the Claude free credit before it expires tomorrow (10 min)",
     "Reply to Lea Cathey's Etsy message (10 min)",
     "Check if the micro1 robotics gig is still open (5 min)",
     "Clear the kitchen counters (15 min)",
@@ -61,19 +67,19 @@
       "tag": "TOP PRIORITY",
       "tasks": [
         {
-          "id": "d1103-calls-lane",
+          "id": "d1104-calls-lane",
           "text": "Calls first",
           "note": "On the Call leads card · check-in at 2:15 PM"
         },
         {
-          "id": "d1103-followups-lane",
-          "text": "Send Friday's call follow-up emails",
+          "id": "d1104-followups-lane",
+          "text": "Send Friday's call follow-up emails (if not done)",
           "note": "Carolyn Dye, Beau Butler (via Pat Lowe), Brian Shapiro; Peter Mastan OK'd submitting Bruce's Entertainment"
         },
         {
-          "id": "d1103-printing-lane",
+          "id": "d1104-printing-lane",
           "text": "Printing Research: check for Areya's reply",
-          "note": "Around 2 PM today"
+          "note": "Carried over from Tue"
         },
         {
           "id": "d1030-storj",
@@ -97,8 +103,8 @@
       ],
       "facts": [
         "LinkedIn attorney outreach routine runs around 10:30 AM",
-        "Kari Bowyer (Orinove trustee) call: Fri 11/6, 12 PM ET (prep notes in Upcoming meetings)",
-        "Mercor referrals in: Cyber-Dive (sale hearing 11/19) and Printing Research (Areya reply check today ~2 PM)"
+        "Kari Bowyer (Orinove trustee) call: Fri 11/6, 12 PM ET (prep 11:45, notes on the Buni calendar)",
+        "Mercor referrals in: Cyber-Dive (sale hearing 11/19, status check Tue 11/10) and Printing Research"
       ]
     },
     {
@@ -106,6 +112,11 @@
       "emoji": "🗂️",
       "name": "Admin",
       "tasks": [
+        {
+          "id": "d1104-hoa780-lane",
+          "text": "Call about the $780 HOA check (Nevada's Finest)",
+          "note": "Today, 10 AM"
+        },
         {
           "id": "d1102-flex-check",
           "text": "Check the Flex first payment went through",
@@ -129,12 +140,12 @@
         {
           "id": "d1103-claude-credit",
           "text": "Use the Claude free credit before it expires",
-          "note": "Expires Thu 11/5"
+          "note": "Expires tomorrow, Thu 11/5"
         }
       ],
       "facts": [
         "Running in the background: Mac Downloads moving to the Seagate drive",
-        "Trash: out after 5 PM, Sun–Thu, 2 bags max. Tonight is a trash night (Tuesday)."
+        "Trash: out after 5 PM, Sun–Thu, 2 bags max. Tonight is a trash night (Wednesday)."
       ]
     },
     {
@@ -172,7 +183,7 @@
         }
       ],
       "facts": [
-        "Mercor cut the Odin cap to 2 hours",
+        "Mercor Project Odin is paused (as of 11/3) · open to other Mercor AI training jobs",
         "micro1 Voice Coach not certified — Voice Recording interview still open"
       ]
     },
@@ -241,35 +252,25 @@
       "name": "Kids & calendar",
       "tasks": [],
       "facts": [
-        "Kids with you through Fri 11/6 · no-screens trial runs through Mon 11/9",
+        "Kids with you through Fri 11/6 · no-screens trial runs through Mon 11/9 (review Tue 11/10)",
         "Mon 11/2–Fri 11/6 · Treats for Troops candy collection at Witt",
-        "Tue 11/3 (today) · Math tutoring with Heidi, 4:45 PM, Rocky Bluff Library (every other week, custody weeks)",
         "Mon 11/9 · Endodontics, 1 PM, Lakewood Ranch Endodontics (tooth #21)",
+        "Tue 11/10 · Women's Intro to Handguns, 10 AM–1:30 PM, Shoot Straight Sarasota ($175 balance due)",
         "Thu 11/19 · Fiona's school meeting, 10 AM (on the calendar)"
       ]
     }
   ],
   "week": [
     {
-      "day": "Tue",
-      "date": "11/3",
-      "items": [
-        "Calls",
-        "Printing Research reply check",
-        "Math tutoring 4:45 PM"
-      ],
-      "trash": true,
-      "today": true
-    },
-    {
       "day": "Wed",
       "date": "11/4",
       "items": [
-        "Call about the $780 HOA check",
+        "Calls",
+        "Call about the $780 HOA check 10 AM",
         "Anthropic IPO check"
       ],
       "trash": true,
-      "today": false
+      "today": true
     },
     {
       "day": "Thu",
@@ -299,6 +300,16 @@
       "day": "Sun",
       "date": "11/8",
       "items": [],
+      "trash": true,
+      "today": false
+    },
+    {
+      "day": "Mon",
+      "date": "11/9",
+      "items": [
+        "Endodontics 1 PM",
+        "No-screens trial ends"
+      ],
       "trash": true,
       "today": false
     }
