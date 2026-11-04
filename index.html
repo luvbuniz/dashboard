@@ -173,6 +173,33 @@
       .spanel.collapsed .sp-body { display:block; }
       .sp-toggle { display:none; }
     }
+    /* 📱 One-at-a-time focus mode + phone layout (11/4) */
+    .fmbar { display:flex; gap:8px; align-items:center; justify-content:space-between; margin:8px 0; }
+    .fmtoggle { background:var(--copper); color:#fff; border:0; border-radius:999px; font:inherit; font-size:15px; font-weight:600; padding:10px 16px; min-height:44px; cursor:pointer; }
+    .fmtoggle.off { background:var(--elev); color:var(--ink); border:1px solid var(--line); }
+    .fmpos { font-size:15px; color:var(--muted); } .fmpos b { color:var(--ink); }
+    .asktag { margin:8px 0 4px; padding:10px 12px; border-radius:10px; background:var(--ok); color:#fff; font-weight:700; font-size:17px; letter-spacing:.02em; }
+    .asktag.none { background:var(--elev); color:var(--muted); font-weight:500; font-size:14px; }
+    .fmnav { position:sticky; bottom:0; z-index:20; display:flex; gap:10px; padding:10px 0 calc(10px + env(safe-area-inset-bottom)); background:var(--bg); border-top:1px solid var(--line); margin-top:12px; }
+    .fmnav button { flex:1; min-height:60px; font:inherit; font-size:20px; font-weight:700; border-radius:14px; border:1px solid var(--line); background:var(--elev); color:var(--ink); cursor:pointer; -webkit-tap-highlight-color:transparent; }
+    .fmnav button.nx { background:var(--copper); border-color:var(--copper); color:#fff; }
+    .fmnav button:disabled { opacity:.4; }
+    .focus .call { cursor:default; }
+    .focus .tel { display:flex; justify-content:center; width:100%; box-sizing:border-box; font-size:20px; min-height:64px; border-radius:16px; margin:4px 0; }
+    .focus .tel.sm { min-height:48px; font-size:16px; }
+    .focus .outs .out[data-out="voicemail"], .focus .outs .out[data-out="answered"], .focus .outs .out[data-out="no_answer"] { flex:1 1 30%; min-height:56px; font-size:16px; font-weight:600; }
+    .focus .spanel { order:0; margin-top:12px; }
+    @media (max-width:480px) {
+      .call { padding:14px 12px; }
+      .tel { width:100%; justify-content:center; box-sizing:border-box; font-size:18px; min-height:56px; }
+      .tel.sm { width:auto; }
+      .out, .skipbtn { min-height:48px; font-size:15px; }
+      .cname { font-size:19px; }
+      .stext { font-size:17px; }
+      .stabs { flex-wrap:nowrap; overflow-x:auto; -webkit-overflow-scrolling:touch; }
+      .stab { flex:0 0 auto; min-height:40px; }
+      .badge { font-size:12px; }
+    }
     footer { margin-top:32px; font-size:11px; color:var(--faint); }
     @media print {
       :root { --bg:#fff; --panel:#fff; --ink:#000; --muted:#333; --faint:#555; --line:#ccc; --copper:#000; --copper-dim:transparent; }
@@ -445,7 +472,7 @@
       (isSkipped(c.id) ? '<div class="cline cskip"><b>Skip reason:</b> ' + (skips[c.id] ? esc(skips[c.id]) : '<i>' + (skips[c.id] === "" ? "none given" : "saved on another device (Riley has it)") + '</i>') + '</div>' : "") +
       (tr ? whoHtml : '<div class="phones">' + (big ? '<a class="tel" href="' + esc(telHref(big)) + '">📞 Call ' + esc(big) + (c.direct_phone ? " · direct" : "") + '</a>' : '<span class="cline">No phone on file</span>') +
         (small ? '<a class="tel sm" href="' + esc(telHref(small)) + '">📞 Call main office ' + esc(small) + '</a>' : "") + '</div>' +
-      (c.email ? '<div class="cmail">✉ ' + esc(c.email) + '</div>' : "")) +
+      (c.email ? '<div class="cmail">✉ ' + esc(c.email) + '</div>' : "")) + (focusMode ? askLine(c) : "") +
       (c.signal ? '<div class="cline csig"><b>🚩 ' + esc(c.signal) + (c.signal_date ? " · " + esc(c.signal_date) : "") + ':</b> ' + esc(c.signal_detail || "") +
         (c.source_url ? ' <a href="' + esc(c.source_url) + '" target="_blank" rel="noopener">source ↗</a>' : "") + (c.city_state ? '<br>📍 ' + esc(c.city_state) : "") + '</div>' : "") +
       (c.why && !c.signal ? '<div class="cline"><b>Why:</b> ' + esc(c.why) + '</div>' : "") +
@@ -804,6 +831,50 @@
     const nt = list.filter((c) => todayRank[c.id]).length;
     return list.slice(0, k).map(callHtml).join("") + '<div class="csec" style="color:#1f7a3a">✓ Called today (' + nt + ')' + (list.length - k > nt ? " and earlier" : "") + '</div>' + list.slice(k).map(callHtml).join("");
   }
+  // ── 📱 One-at-a-time focus mode (11/4): big tap-to-call, ask tag + script under the number, sticky Prev/Next.
+  const FM_KEY = "amy-day-v2-focus", FMI_KEY = "amy-day-v2-focusid";
+  let focusMode = (() => { const v = localStorage.getItem(FM_KEY); return v == null ? window.matchMedia("(max-width:480px)").matches : v === "1"; })();
+  let focusId = localStorage.getItem(FMI_KEY) || "", focusOrder = null, focusOrderTab = "";
+  const ASK_RE = /PERMISSION ASKED|MICRO1 LINK SENT|CALL ASKED/i;
+  function askLine(c) {
+    const t = (Array.isArray(c.tags) ? c.tags : []).filter((x) => ASK_RE.test(x));
+    return t.length ? '<div class="asktag">✉ ' + t.map(esc).join(" · ") + '</div>' : '<div class="asktag none">No email ask sent yet</div>';
+  }
+  function focusList(calls) {   // pinned first (ch7Sort), same section order as the list; "Extra" sections last
+    const order = [], groups = {};
+    for (const c of calls) { const s = c.section || "Calls"; if (!groups[s]) { groups[s] = []; order.push(s); } groups[s].push(c); }
+    const main = [], extra = [];
+    for (const s of order) (/^Extra/.test(s) ? extra : main).push(...groups[s]);
+    return [...ch7Sort(main), ...ch7Sort(extra)];
+  }
+  function focusHtml(sd, calls) {
+    // Freeze the order while she works through it so marking an outcome doesn't reshuffle Next/Prev.
+    const ids = new Set(calls.map((c) => c.id));
+    if (!focusOrder || focusOrderTab !== listTab || focusOrder.some((id) => !ids.has(id)) || calls.some((c) => !focusOrder.includes(c.id))) {
+      focusOrder = focusList(calls).map((c) => c.id); focusOrderTab = listTab;
+    }
+    if (!focusOrder.length) return '<div class="empty">No calls in this list.</div>';
+    let i = focusOrder.indexOf(focusId);
+    if (i < 0) { i = focusOrder.findIndex((id) => !callDone(calls.find((c) => c.id === id))); if (i < 0) i = 0; }
+    const c = calls.find((x) => x.id === focusOrder[i]); focusId = c.id;
+    if (spCall !== c.id) {
+      spCall = c.id; spWho = c.trustee && c.trustee.status === "verified" ? "trustee" : "";
+      const kind = leadKind(c); setTab(kind === "link" ? "link" : kind + (/_vm$/.test(spTab) ? "_vm" : "_live"));
+    }
+    const left = focusOrder.filter((id) => !callDone(calls.find((x) => x.id === id))).length;
+    const keep = spCollapsed; spCollapsed = false; const panel = panelHtml(sd, calls); spCollapsed = keep;
+    return '<div class="focus"><div class="fmpos">Lead <b>' + (i + 1) + '</b> of ' + focusOrder.length + ' · ' + left + ' not called yet' + (c.pin ? ' · 📌 pinned' : "") + '</div>' +
+      callHtml(c) + panel +
+      '<div class="fmnav"><button type="button" data-fmgo="-1"' + (i === 0 ? " disabled" : "") + '>◀ Prev</button><button type="button" class="nx" data-fmgo="1"' + (i === focusOrder.length - 1 ? " disabled" : "") + '>Next ▶</button></div></div>';
+  }
+  document.addEventListener("click", (e) => {
+    const t = e.target.closest && e.target.closest("#fmtoggle, [data-fmgo]"); if (!t) return;
+    if (t.id === "fmtoggle") { focusMode = !focusMode; localStorage.setItem(FM_KEY, focusMode ? "1" : "0"); renderCalls(); window.scrollTo(0, document.getElementById("calls-sec").offsetTop); return; }
+    if (!focusOrder) return;
+    const i = focusOrder.indexOf(focusId), j = Math.max(0, Math.min(focusOrder.length - 1, i + +t.dataset.fmgo));
+    focusId = focusOrder[j]; localStorage.setItem(FMI_KEY, focusId);
+    renderCalls(); window.scrollTo(0, document.getElementById("calls-sec").offsetTop);
+  });
   function renderCalls() {
     const box = document.getElementById("calls");
     if (!box || !data) return;
@@ -827,12 +898,20 @@
     if (!allCalls.length) h += '<div class="empty">No calls today. 🎉 When there\'s a call list, Riley puts it here at 7am.</div>';
     else {
       const n = calls.length, d = calls.filter(callDone).length;
-      h += meetHtml(sd) + refHtml(sd) + sessHtml() + todayCallsHtml(allCalls);
+      h += focusMode ? '<details class="fmextra"><summary class="csec">Meetings, referrals &amp; today\'s stats</summary>' + meetHtml(sd) + refHtml(sd) + todayCallsHtml(allCalls) + '</details>' + sessHtml()
+        : meetHtml(sd) + refHtml(sd) + sessHtml() + todayCallsHtml(allCalls);
       if (pbCalls.length) h += '<div class="ltabs">' + [["main", "Chapter 7 & main", mainCalls], ["prebk", "Pre-bankruptcy (ABC / receivership)", pbCalls]].map(([k, l, g]) =>
         '<button type="button" class="ltab' + (k === listTab ? " on" : "") + '" data-ltab="' + k + '">' + esc(l) + " (" + g.filter(callDone).length + "/" + g.length + ")</button>").join("") + "</div>";
       h += '<div class="calls-top"><span class="calls-prog"><b>' + d + " of " + n + "</b> called</span>" +
         (calls.some((c) => c.chapter === "Ch 7") ? '<span class="tag">CHAPTER 7 FIRST</span>' : "") + '</div>' +
-        '<div class="pbar"><i style="width:' + Math.round((d / n) * 100) + '%"></i></div>';
+        '<div class="pbar"><i style="width:' + Math.round((d / n) * 100) + '%"></i></div>' +
+        '<div class="fmbar"><button type="button" id="fmtoggle" class="fmtoggle' + (focusMode ? "" : " off") + '">' + (focusMode ? "☰ Show full list" : "📱 One at a time") + '</button></div>';
+      if (focusMode) {
+        h += focusHtml(sd, calls);
+        if (lockState === "ok") h += '<button type="button" class="linkbtn" id="calllock">🔒 Lock call list on this device</button>';
+        document.getElementById("calls-sec").classList.remove("split");
+        box.innerHTML = h; return;
+      }
       const order = [], groups = {};
       for (const c of calls) { const s = c.section || "Calls"; if (!groups[s]) { groups[s] = []; order.push(s); } groups[s].push(c); }
       let ex = "", exN = 0;
