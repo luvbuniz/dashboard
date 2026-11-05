@@ -219,6 +219,26 @@
       .focus.land .call { padding:10px; } .focus.land .badge { font-size:11px; }
       .focus.land .fmpos { font-size:13px; }
     }
+    /* 📞 Separate call page (#calls) + top-bar Prev/Next (11/4 late) */
+    .startcall { display:flex; justify-content:center; align-items:center; gap:8px; background:var(--copper); color:#fff !important; text-decoration:none; font-weight:700; font-size:18px; border-radius:14px; min-height:56px; margin:8px 0 12px; }
+    body.callpage .wrap > *:not(#calls-sec) { display:none !important; }
+    body.callpage #calls-sec > h2, body.callpage .startcall, body.callpage .fmextra, body.callpage .fmbar { display:none; }
+    body.callpage .wrap { padding-top:0; }
+    .fmtop { position:sticky; top:0; z-index:60; display:flex; align-items:center; gap:8px; padding:6px 0; background:var(--bg); border-bottom:1px solid var(--line); margin-bottom:8px; }
+    .fmtop .fmpos { flex:1; min-width:0; font-size:14px; line-height:1.2; }
+    .fmtop a.home { color:var(--muted); text-decoration:none; font-size:22px; padding:0 6px; min-height:52px; display:flex; align-items:center; }
+    .fmtop button { min-width:96px; min-height:52px; font:inherit; font-size:18px; font-weight:700; border-radius:12px; border:1px solid var(--line); background:var(--elev); color:var(--ink); cursor:pointer; -webkit-tap-highlight-color:transparent; }
+    .fmtop button.nx { background:var(--copper); border-color:var(--copper); color:#fff; min-width:120px; }
+    .fmtop button:disabled { opacity:.4; }
+    .sp-wsd summary { cursor:pointer; font-size:13px; color:var(--muted); margin:4px 0; } .sp-wsd .sp-links { font-size:13px; }
+    @media (orientation:landscape) and (max-height:520px) {
+      .fmtop { padding:4px 0; margin-bottom:6px; } .fmtop button { min-height:46px; }
+      body.callpage #pomo, body.callpage .calls-top, body.callpage #calls .pbar { display:none; }
+      body.callpage .ltab { min-height:32px; padding:4px 10px; font-size:13px; } body.callpage .ltabs { margin:4px 0; }
+      .focus.land .fmL, .focus.land .fmR { top:62px; max-height:calc(100vh - 66px); }
+      .focus.land .stext { font-size:16px; line-height:1.45; } .focus.land .spanel { padding:8px 10px; }
+      .focus.land .sp-h { display:none; } .focus.land .stabs { margin:4px 0; }
+    }
     footer { margin-top:32px; font-size:11px; color:var(--faint); }
     @media print {
       :root { --bg:#fff; --panel:#fff; --ink:#000; --muted:#333; --faint:#555; --line:#ccc; --copper:#000; --copper-dim:transparent; }
@@ -259,6 +279,7 @@
 
   <section id="calls-sec">
     <h2>Call leads</h2>
+    <a class="startcall" href="#calls">📞 Start calling (call page)</a>
     <div id="pomo"></div>
     <div class="card" id="calls"></div>
   </section>
@@ -600,7 +621,7 @@
     const c = spCall ? calls.find((x) => x.id === spCall) : null;
     return '<aside class="spanel' + (spCollapsed ? " collapsed" : "") + '" id="spanel"><div class="sp-h"><b>📜 Call script</b>' +
       '<button type="button" class="sp-toggle" id="sptoggle">' + (spCollapsed ? "Show script ▾" : "Hide script ▴") + '</button></div>' +
-      '<div class="sp-body">' + (cs.buyer_links && cs.buyer_links.text ? '<div class="sp-links">' + md(cs.buyer_links.text) + '</div>' : "") + '<div class="stabs">' + tabs.map(([k, l]) => '<button type="button" class="stab' + (k === spTab ? " on" : "") + '" data-stab="' + esc(k) + '">' + esc(l) + '</button>').join("") + '</div>' +
+      '<div class="sp-body">' + (cs.buyer_links && cs.buyer_links.text ? (focusMode ? '<details class="sp-wsd"><summary>📎 Worksheets &amp; links</summary><div class="sp-links">' + md(cs.buyer_links.text) + '</div></details>' : '<div class="sp-links">' + md(cs.buyer_links.text) + '</div>') : "") + '<div class="stabs">' + tabs.map(([k, l]) => '<button type="button" class="stab' + (k === spTab ? " on" : "") + '" data-stab="' + esc(k) + '">' + esc(l) + '</button>').join("") + '</div>' +
       (c ? '<div class="sp-for">For: <b>' + esc(spWhoLabel(c)) + '</b>' + (c.company && c.name ? " · " + esc(shortCo(c.company)) : "") + ' <button type="button" id="spclear">clear</button></div>'
          : (calls.length ? '<div class="sp-for">Tap a lead to switch to its script and fill in the name, company and records.</div>' : "")) +
       '<div class="sp-title">' + esc(t[2]) + '</div><div class="stext">' + fillScript(md(t[3]), c) + '</div></div></aside>';
@@ -858,9 +879,19 @@
     const els = [...card.querySelectorAll(":scope > .outs, :scope > .cskipbox, :scope > .cnote")];
     els.reverse().forEach((el) => R.insertBefore(el, R.firstChild));   // outcomes on top, script below
   }
-  function fmScroll() { const f = LAND.matches && document.querySelector(".focus.land"); window.scrollTo(0, f ? f.getBoundingClientRect().top + scrollY - 4 : document.getElementById("calls-sec").offsetTop); }
+  function fmScroll() { const f = LAND.matches && document.querySelector(".focus.land"); window.scrollTo(0, callPage ? 0 : (f ? f.getBoundingClientRect().top + scrollY - 66 : document.getElementById("calls-sec").offsetTop)); }
+  let callPage = false;
+  function route() {
+    const was = callPage; callPage = /^#calls/.test(location.hash);
+    document.body.classList.toggle("callpage", callPage);
+    document.title = callPage ? "📞 Calls" : "Amy — today";
+    if (callPage) focusMode = true; else if (was) { const v = localStorage.getItem(FM_KEY); focusMode = v == null ? window.matchMedia("(max-width:480px), (orientation:landscape) and (max-height:520px)").matches : v === "1"; }
+    if (was !== callPage) { renderCalls(); window.scrollTo(0, 0); }
+  }
+  window.addEventListener("hashchange", route);
   const FM_KEY = "amy-day-v2-focus", FMI_KEY = "amy-day-v2-focusid";
   let focusMode = (() => { const v = localStorage.getItem(FM_KEY); return v == null ? window.matchMedia("(max-width:480px), (orientation:landscape) and (max-height:520px)").matches : v === "1"; })();
+  setTimeout(route, 0);
   let focusId = localStorage.getItem(FMI_KEY) || "", focusOrder = null, focusOrderTab = "";
   const ASK_RE = /PERMISSION ASKED|MICRO1 LINK SENT|CALL ASKED/i;
   function askLine(c) {
@@ -890,9 +921,10 @@
     }
     const left = focusOrder.filter((id) => !callDone(calls.find((x) => x.id === id))).length;
     const keep = spCollapsed; spCollapsed = false; const panel = panelHtml(sd, calls); spCollapsed = keep;
-    return '<div class="focus' + (LAND.matches ? " land" : "") + '"><div class="fmL"><div class="fmpos">Lead <b>' + (i + 1) + '</b> of ' + focusOrder.length + ' · ' + left + ' not called yet' + (c.pin ? ' · 📌 pinned' : "") + '</div>' +
-      callHtml(c) + (LAND.matches ? "" : panel) +
-      '<div class="fmnav"><button type="button" data-fmgo="-1"' + (i === 0 ? " disabled" : "") + '>◀ Prev</button><button type="button" class="nx" data-fmgo="1"' + (i === focusOrder.length - 1 ? " disabled" : "") + '>Next ▶</button></div></div>' + (LAND.matches ? '<div class="fmR">' + panel + '</div>' : "") + '</div>';
+    const top = '<div class="fmtop">' + (callPage ? '<a class="home" href="#" title="Back to dashboard">🏠</a>' : "") + '<div class="fmpos">Lead <b>' + (i + 1) + '</b> of ' + focusOrder.length + '<br>' + left + ' left' + (c.pin ? ' · 📌' : "") + '</div>' +
+      '<button type="button" data-fmgo="-1"' + (i === 0 ? " disabled" : "") + '>◀ Prev</button><button type="button" class="nx" data-fmgo="1"' + (i === focusOrder.length - 1 ? " disabled" : "") + '>Next ▶</button></div>';
+    return top + '<div class="focus' + (LAND.matches ? " land" : "") + '"><div class="fmL">' +
+      callHtml(c) + (LAND.matches ? "" : panel) + '</div>' + (LAND.matches ? '<div class="fmR">' + panel + '</div>' : "") + '</div>';
   }
   document.addEventListener("click", (e) => {
     const t = e.target.closest && e.target.closest("#fmtoggle, [data-fmgo]"); if (!t) return;
@@ -938,7 +970,7 @@
         h += focusHtml(sd, calls);
         if (lockState === "ok") h += '<button type="button" class="linkbtn" id="calllock">🔒 Lock call list on this device</button>';
         document.getElementById("calls-sec").classList.remove("split");
-        box.innerHTML = h; landMove(box); document.body.classList.add("fm-on"); return;
+        box.innerHTML = h; landMove(box); if (callPage) { const tb = box.querySelector(".fmtop"); if (tb) box.prepend(tb); } document.body.classList.add("fm-on"); return;
       }
       const order = [], groups = {};
       for (const c of calls) { const s = c.section || "Calls"; if (!groups[s]) { groups[s] = []; order.push(s); } groups[s].push(c); }
