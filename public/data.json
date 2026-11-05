@@ -1,63 +1,61 @@
 {
-  "updated": "2026-11-04T07:25:00-05:00",
-  "heading": "Wednesday, Nov 4",
-  "kicker": "Kid week through Fri 11/6",
-  "message": "Calls first, then the 10 AM call about the $780 HOA check. Catch up on any of yesterday's follow-up emails after lunch, and use the Claude credit before it expires tomorrow.",
+  "updated": "2026-11-05T07:16:48-05:00",
+  "heading": "Thursday, Nov 5",
+  "kicker": "Kid week through Fri 11/6 · working from Panera",
+  "message": "Tax and admin first (Unique pay + ShareFile e-sign), use the Claude credit before it expires today, then calls from the Call leads card. Kari Bowyer is tomorrow at noon.",
   "frog": {
-    "id": "d1104-calls",
-    "text": "Calls first, from the Call leads card",
-    "note": "Goal is 20 calls · check-in at 2:15 PM 🐸"
+    "id": "d1105-unique",
+    "text": "Unique Accounting: pay $1,525 + ShareFile e-sign",
+    "note": "Invoices #43494 $400 + #43493 $1,125 via MX Merchant · PIN 36287 · personal IRS ~$1,031 after filing 🐸"
   },
   "today": [
     {
-      "id": "d1104-calls",
-      "text": "1. Calls (Call leads card)",
-      "note": "Morning block · check-in 2:15 PM"
+      "id": "d1105-unique",
+      "text": "1. Unique Accounting: pay invoices + e-sign 2025 returns",
+      "note": "$1,525 MX Merchant · ShareFile PIN 36287 · then download finals when released"
     },
     {
-      "id": "d1104-hoa780",
-      "text": "2. Call about the $780 HOA check (Nevada's Finest)",
-      "note": "10 AM"
+      "id": "d1105-claude",
+      "text": "2. Use the Claude free credit",
+      "note": "Expires today, Thu 11/5"
     },
     {
-      "id": "d1104-lunch",
-      "text": "3. Lunch",
-      "note": "Optional: ChatGPT Ads Holiday Playbook webinar, 12–12:30 PM (Buni calendar)"
+      "id": "d1105-calls",
+      "text": "3. Calls (Call leads card)",
+      "note": "After tax/admin · check-in 2:15 PM · goal 20"
     },
     {
-      "id": "d1104-followups",
+      "id": "d1105-followups",
       "text": "4. Any of Friday's follow-up emails still unsent",
       "note": "Carolyn Dye, Beau Butler via Pat Lowe, Brian Shapiro, plus Peter Mastan's OK to submit"
     },
     {
-      "id": "d1104-printing",
-      "text": "5. Printing Research: see if Areya replied",
-      "note": "Nudge only after checking Mercor's progress bar"
+      "id": "d1105-hoa780",
+      "text": "5. Call about the $780 HOA check (Nevada's Finest)",
+      "note": "Carried from Wed · Stephanie Bills"
     },
     {
-      "id": "d1104-claude",
-      "text": "6. Use the Claude free credit",
-      "note": "Expires tomorrow, Thu 11/5"
+      "id": "d1105-printing",
+      "text": "6. Printing Research: see if Areya replied",
+      "note": "Check Mercor's progress bar first"
     },
     {
-      "id": "d1104-pickup",
+      "id": "d1105-pickup",
       "text": "7. School pickup, kids time",
-      "note": "Kid week"
+      "note": "Kid week · last full day Fri"
     },
     {
-      "id": "d1104-trash",
+      "id": "d1105-trash",
       "text": "8. Trash out after 5 PM",
-      "note": "Wednesday is a trash night · 2 bags max"
+      "note": "Thursday is a trash night · 2 bags max"
     }
   ],
   "quick": [
-    "Use the Claude free credit before it expires tomorrow (10 min)",
+    "Use the Claude free credit before it expires today (10 min)",
     "Reply to Lea Cathey's Etsy message (10 min)",
     "Check if the micro1 robotics gig is still open (5 min)",
-    "Clear the kitchen counters (15 min)",
-    "Dishes, one load (15 min)",
-    "Bathroom sink and mirror (10 min)",
-    "Pick up the floor in one room (15 min)"
+    "Handshake Project Chromium: say yes or no (5 min)",
+    "Skim Kari Bowyer / Orinove intake notes for tomorrow (10 min)"
   ],
   "lanes": [
     {
@@ -67,19 +65,19 @@
       "tag": "TOP PRIORITY",
       "tasks": [
         {
-          "id": "d1104-calls-lane",
-          "text": "Calls first",
+          "id": "d1105-calls-lane",
+          "text": "Calls after tax/admin",
           "note": "On the Call leads card · check-in at 2:15 PM"
         },
         {
-          "id": "d1104-followups-lane",
+          "id": "d1105-followups-lane",
           "text": "Send Friday's call follow-up emails (if not done)",
           "note": "Carolyn Dye, Beau Butler (via Pat Lowe), Brian Shapiro; Peter Mastan OK'd submitting Bruce's Entertainment"
         },
         {
-          "id": "d1104-printing-lane",
+          "id": "d1105-printing-lane",
           "text": "Printing Research: check for Areya's reply",
-          "note": "Carried over from Tue"
+          "note": "Carried over"
         },
         {
           "id": "d1030-storj",
@@ -89,7 +87,7 @@
         {
           "id": "d1030-chromium",
           "text": "Handshake Project Chromium: say yes or no",
-          "note": "$80/hr, 10+ hrs a week, starts this week"
+          "note": "$80/hr, 10+ hrs a week"
         },
         {
           "id": "d1030-patent-nudge",
@@ -113,9 +111,14 @@
       "name": "Admin",
       "tasks": [
         {
-          "id": "d1104-hoa780-lane",
+          "id": "d1105-unique-lane",
+          "text": "Unique Accounting: pay $1,525 + ShareFile e-sign",
+          "note": "Invoices #43494 + #43493 · PIN 36287 · IRS personal ~$1,031 after filing"
+        },
+        {
+          "id": "d1105-hoa780-lane",
           "text": "Call about the $780 HOA check (Nevada's Finest)",
-          "note": "Today, 10 AM"
+          "note": "Carried from Wed 11/4"
         },
         {
           "id": "d1102-flex-check",
@@ -138,14 +141,14 @@
           "note": "Custom order question from 10/28"
         },
         {
-          "id": "d1103-claude-credit",
+          "id": "d1105-claude-credit",
           "text": "Use the Claude free credit before it expires",
-          "note": "Expires tomorrow, Thu 11/5"
+          "note": "Expires today, Thu 11/5"
         }
       ],
       "facts": [
-        "Running in the background: Mac Downloads moving to the Seagate drive",
-        "Trash: out after 5 PM, Sun–Thu, 2 bags max. Tonight is a trash night (Wednesday)."
+        "Working from Panera for a few days (master toilet; maintenance won't come while she's home)",
+        "Trash: out after 5 PM, Sun–Thu, 2 bags max. Tonight is a trash night (Thursday)."
       ]
     },
     {
@@ -212,7 +215,7 @@
         {
           "id": "home-strip-bed",
           "text": "Strip the bed, sheets in the washer",
-          "note": "10 min"
+          "note": "10 min · when back at the apartment"
         },
         {
           "id": "home-counters",
@@ -256,30 +259,21 @@
         "Mon 11/2–Fri 11/6 · Treats for Troops candy collection at Witt",
         "Mon 11/9 · Endodontics, 1 PM, Lakewood Ranch Endodontics (tooth #21)",
         "Tue 11/10 · Women's Intro to Handguns, 10 AM–1:30 PM, Shoot Straight Sarasota ($175 balance due)",
+        "Wed 11/11 · Rubino Check Up, 10:30 AM",
         "Thu 11/19 · Fiona's school meeting, 10 AM (on the calendar)"
       ]
     }
   ],
   "week": [
     {
-      "day": "Wed",
-      "date": "11/4",
-      "items": [
-        "Calls",
-        "Call about the $780 HOA check 10 AM",
-        "Anthropic IPO check"
-      ],
-      "trash": true,
-      "today": true
-    },
-    {
       "day": "Thu",
       "date": "11/5",
       "items": [
-        "Claude free credit expires"
+        "Unique tax/admin + Claude credit expires",
+        "Calls after"
       ],
       "trash": true,
-      "today": false
+      "today": true
     },
     {
       "day": "Fri",
@@ -311,6 +305,15 @@
         "No-screens trial ends"
       ],
       "trash": true,
+      "today": false
+    },
+    {
+      "day": "Tue",
+      "date": "11/10",
+      "items": [
+        "Women's Intro to Handguns 10 AM–1:30 PM",
+        "Screen-trial review"
+      ],
       "today": false
     }
   ],
