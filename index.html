@@ -200,6 +200,25 @@
       .stab { flex:0 0 auto; min-height:40px; }
       .badge { font-size:12px; }
     }
+    /* 📱 Landscape phone: two panels (11/4 pm) — left contact/call, right script + outcomes */
+    @media (orientation:landscape) and (max-height:520px) {
+      body.fm-on #pomo { position:static; padding:3px 10px; margin:2px 0 6px; box-shadow:none; }
+      body.fm-on #pomo .pclk { font-size:1.1rem; } body.fm-on #pomo button { min-height:30px; padding:4px 10px; }
+      body.fm-on #pomo .pmsg, body.fm-on #pomo .psm, body.fm-on #pomo details { display:none; }
+      .focus.land { display:grid; grid-template-columns:minmax(0,44%) minmax(0,56%); gap:12px; align-items:start; }
+      .focus.land .fmL, .focus.land .fmR { position:sticky; top:4px; max-height:calc(100vh - 8px); overflow:auto; overscroll-behavior:contain; }
+      .focus.land .fmR .spanel { margin-top:0; }
+      .focus.land .fmR .outs { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+      .focus.land .fmR .outs .out[data-out] { min-height:60px; font-size:17px; }
+      .focus.land .fmnav { margin-top:8px; padding-bottom:6px; }
+      .focus.land .fmnav button { min-height:52px; }
+      .focus.land .tel { min-height:56px; font-size:18px; }
+      .focus.land .fmR .outs { margin-top:0; }
+      .focus.land .fmR .stabs { flex-wrap:nowrap; overflow-x:auto; -webkit-overflow-scrolling:touch; }
+      .focus.land .fmR .stab { flex:0 0 auto; }
+      .focus.land .call { padding:10px; } .focus.land .badge { font-size:11px; }
+      .focus.land .fmpos { font-size:13px; }
+    }
     footer { margin-top:32px; font-size:11px; color:var(--faint); }
     @media print {
       :root { --bg:#fff; --panel:#fff; --ink:#000; --muted:#333; --faint:#555; --line:#ccc; --copper:#000; --copper-dim:transparent; }
@@ -832,8 +851,16 @@
     return list.slice(0, k).map(callHtml).join("") + '<div class="csec" style="color:#1f7a3a">✓ Called today (' + nt + ')' + (list.length - k > nt ? " and earlier" : "") + '</div>' + list.slice(k).map(callHtml).join("");
   }
   // ── 📱 One-at-a-time focus mode (11/4): big tap-to-call, ask tag + script under the number, sticky Prev/Next.
+  const LAND = window.matchMedia("(orientation:landscape) and (max-height:520px)");
+  LAND.addEventListener && LAND.addEventListener("change", () => { if (focusMode) renderCalls(); });
+  function landMove(box) {   // landscape: move outcome buttons + skip/email/notes from the contact card into the script panel
+    const R = box.querySelector(".focus.land .fmR"), card = box.querySelector(".focus.land .fmL .call"); if (!R || !card) return;
+    const els = [...card.querySelectorAll(":scope > .outs, :scope > .cskipbox, :scope > .cnote")];
+    els.reverse().forEach((el) => R.insertBefore(el, R.firstChild));   // outcomes on top, script below
+  }
+  function fmScroll() { const f = LAND.matches && document.querySelector(".focus.land"); window.scrollTo(0, f ? f.getBoundingClientRect().top + scrollY - 4 : document.getElementById("calls-sec").offsetTop); }
   const FM_KEY = "amy-day-v2-focus", FMI_KEY = "amy-day-v2-focusid";
-  let focusMode = (() => { const v = localStorage.getItem(FM_KEY); return v == null ? window.matchMedia("(max-width:480px)").matches : v === "1"; })();
+  let focusMode = (() => { const v = localStorage.getItem(FM_KEY); return v == null ? window.matchMedia("(max-width:480px), (orientation:landscape) and (max-height:520px)").matches : v === "1"; })();
   let focusId = localStorage.getItem(FMI_KEY) || "", focusOrder = null, focusOrderTab = "";
   const ASK_RE = /PERMISSION ASKED|MICRO1 LINK SENT|CALL ASKED/i;
   function askLine(c) {
@@ -863,19 +890,20 @@
     }
     const left = focusOrder.filter((id) => !callDone(calls.find((x) => x.id === id))).length;
     const keep = spCollapsed; spCollapsed = false; const panel = panelHtml(sd, calls); spCollapsed = keep;
-    return '<div class="focus"><div class="fmpos">Lead <b>' + (i + 1) + '</b> of ' + focusOrder.length + ' · ' + left + ' not called yet' + (c.pin ? ' · 📌 pinned' : "") + '</div>' +
-      callHtml(c) + panel +
-      '<div class="fmnav"><button type="button" data-fmgo="-1"' + (i === 0 ? " disabled" : "") + '>◀ Prev</button><button type="button" class="nx" data-fmgo="1"' + (i === focusOrder.length - 1 ? " disabled" : "") + '>Next ▶</button></div></div>';
+    return '<div class="focus' + (LAND.matches ? " land" : "") + '"><div class="fmL"><div class="fmpos">Lead <b>' + (i + 1) + '</b> of ' + focusOrder.length + ' · ' + left + ' not called yet' + (c.pin ? ' · 📌 pinned' : "") + '</div>' +
+      callHtml(c) + (LAND.matches ? "" : panel) +
+      '<div class="fmnav"><button type="button" data-fmgo="-1"' + (i === 0 ? " disabled" : "") + '>◀ Prev</button><button type="button" class="nx" data-fmgo="1"' + (i === focusOrder.length - 1 ? " disabled" : "") + '>Next ▶</button></div></div>' + (LAND.matches ? '<div class="fmR">' + panel + '</div>' : "") + '</div>';
   }
   document.addEventListener("click", (e) => {
     const t = e.target.closest && e.target.closest("#fmtoggle, [data-fmgo]"); if (!t) return;
-    if (t.id === "fmtoggle") { focusMode = !focusMode; localStorage.setItem(FM_KEY, focusMode ? "1" : "0"); renderCalls(); window.scrollTo(0, document.getElementById("calls-sec").offsetTop); return; }
+    if (t.id === "fmtoggle") { focusMode = !focusMode; localStorage.setItem(FM_KEY, focusMode ? "1" : "0"); renderCalls(); fmScroll(); return; }
     if (!focusOrder) return;
     const i = focusOrder.indexOf(focusId), j = Math.max(0, Math.min(focusOrder.length - 1, i + +t.dataset.fmgo));
     focusId = focusOrder[j]; localStorage.setItem(FMI_KEY, focusId);
-    renderCalls(); window.scrollTo(0, document.getElementById("calls-sec").offsetTop);
+    renderCalls(); fmScroll();
   });
   function renderCalls() {
+    document.body.classList.remove("fm-on");
     const box = document.getElementById("calls");
     if (!box || !data) return;
     if (lockState === "loading") { box.innerHTML = '<div class="empty">Loading calls…</div>'; return; }
@@ -910,7 +938,7 @@
         h += focusHtml(sd, calls);
         if (lockState === "ok") h += '<button type="button" class="linkbtn" id="calllock">🔒 Lock call list on this device</button>';
         document.getElementById("calls-sec").classList.remove("split");
-        box.innerHTML = h; return;
+        box.innerHTML = h; landMove(box); document.body.classList.add("fm-on"); return;
       }
       const order = [], groups = {};
       for (const c of calls) { const s = c.section || "Calls"; if (!groups[s]) { groups[s] = []; order.push(s); } groups[s].push(c); }
