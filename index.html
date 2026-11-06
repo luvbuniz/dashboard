@@ -74,6 +74,7 @@
     .call { border:1px solid var(--line); border-radius:10px; padding:12px; margin:8px 0; background:var(--panel); }
     .call.urgent { border-left:4px solid var(--copper); }
     .call.done { background:var(--elev); }
+    .call.archived { border-style:dashed; }
     .call.done .cname { color:var(--muted); }
     .call-h { display:flex; flex-wrap:wrap; gap:4px 8px; align-items:baseline; }
     .ctime { font-weight:600; font-size:14px; color:var(--muted); }
@@ -317,7 +318,8 @@
 
   <footer id="foot"></footer>
 </div>
-<script>
+<script type="module">
+import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./src/call-attempts.js";
 (() => {
   const API = "https://amy-dashboard-ticks.sullivanamy75.workers.dev";
   const DONE_KEY = "amy-day-v2-done", OUT_KEY = "amy-day-v2-outbox";
@@ -425,6 +427,8 @@
   const emlLabel = (em, note) => { em = em.trim().slice(0, 200); note = note.trim().replace(/\s+/g, " "); return (em + "|" + note).slice(0, 200); };
   const isSkipped = (cid) => !!done["call:" + cid + ":skip"];
   const callDone = (c) => isSkipped(c.id) || OUTCOMES.some(([k]) => done["call:" + c.id + ":" + k]);
+  const meetingsNow = () => (secret && Array.isArray(secret.meetings) ? secret.meetings : []);
+  const isArchivedAttempt = (c) => attemptArchived(c, done, meetingsNow());
   // ---- court dates (341 / hearings / bar dates) ----
   const ETZ = "America/New_York";
   function kdEvents(c) {
@@ -512,7 +516,7 @@
       (co ? '<div class="who wc"><div class="wlab"><span class="k">2 · Then</span>Counsel: <b>' + esc(co.name) + '</b>' + (co.role ? ' <span class="crole">' + esc(co.role) + '</span>' : "") + '</div>' +
         (co.phone ? '<a class="tel c2" data-who="counsel" href="' + esc(telHref(co.phone)) + '">📞 Call Counsel · ' + esc(co.phone) + '</a>' : "") +
         (co.email ? '<div class="cmail">✉ ' + esc(co.email) + '</div>' : "") + '</div>' : "") : "";
-    return '<div class="call' + (urgent ? " urgent" : "") + (isDone ? " done" : "") + (c.id === spCall ? " active" : "") + '" data-call="' + esc(c.id) + '">' +
+    return '<div class="call' + (urgent ? " urgent" : "") + (isDone ? " done" : "") + (isArchivedAttempt(c) ? " archived" : "") + (c.id === spCall ? " active" : "") + '" data-call="' + esc(c.id) + '">' +
       '<div class="call-h">' + (c.time ? '<span class="ctime">' + esc(c.time) + '</span>' : "") +
         '<span class="cname">' + esc(c.name || c.company || "") + '</span>' + (c.role ? '<span class="crole">' + esc(c.role) + '</span>' : "") + '</div>' +
       (c.company && c.name ? '<div class="ccomp">' + esc(c.company) + '</div>' : "") +
@@ -521,7 +525,7 @@
         (c.big_upside ? '<span class="badge ok">Big upside</span>' : "") +
         (c.fit ? '<span class="badge fit fit-' + esc(String(c.fit).toLowerCase()) + '">Fit: ' + esc(c.fit) + '</span>' : "") +
         (c.script_tag ? '<span class="badge">' + esc(c.script_tag) + '</span>' : "") +
-        (c.attempt ? '<span class="badge">' + esc(c.attempt) + '</span>' : "") +
+        ((ab, note) => (ab ? '<span class="badge att">' + esc(ab) + '</span>' : "") + (note ? '<span class="badge">' + esc(note) + '</span>' : "") + (isArchivedAttempt(c) ? '<span class="badge skp">Archived · 3 attempts</span>' : ""))(attemptBadgeText(c, done), attemptNote(c)) +
         (tr ? '<span class="badge urg">CALL TRUSTEE FIRST</span>' : trNF ? '<span class="badge tnf">trustee: not found</span>' : "") +
         ((rf) => rf ? '<span class="badge em">🤝 Referred: ' + esc(rf.buyer) + '</span>' : "")(refFor(secret || {}, c.id)) + (Array.isArray(c.tags) ? c.tags.map((t) => '<span class="badge em">' + (/^emailed/i.test(t) ? "✉ " : "") + esc(t) + '</span>').join("") : "") +
         meetFor(secret || {}, c.id).map((m) => '<span class="badge mtg">📅 Meeting ' + esc(m.label || m.start) + '</span>').join("") +
@@ -678,7 +682,10 @@
     listTab = b.dataset.ltab; try { localStorage.setItem(LTAB_KEY, listTab); } catch {}
     renderCalls();
   });
-  document.addEventListener("toggle", (e) => { if (e.target && e.target.id === "extra-det") extraOpen = e.target.open; }, true);
+  document.addEventListener("toggle", (e) => {
+    if (e.target && e.target.id === "extra-det") extraOpen = e.target.open;
+    if (e.target && e.target.id === "arch-det") archiveBrowse = e.target.open;
+  }, true);
   // ── Call-session timer: ticks "callsession:YYYYMMDD:N:start|stop" (opaque), label = ISO time. Mirrored in localStorage.
   const SESS_KEY = "amy-day-v2-callsess";
   let sessAt = load(SESS_KEY, {});
@@ -954,7 +961,7 @@
     const shown = hits.slice(0, 40);
     box.innerHTML = shown.map((c, i) => {
       const name = c.name || c.company || "Lead", co = c.company && c.name && callFold(c.company) !== callFold(c.name) ? c.company : "";
-      const where = c.tab === "prebk" ? "Pre-bankruptcy" : "";
+      const where = [c.tab === "prebk" ? "Pre-bankruptcy" : "", isArchivedAttempt(c) ? "Archived" : ""].filter(Boolean).join(" · ");
       return '<button type="button" class="callhit' + (i === callPick ? " on" : "") + '" role="option" id="callhit-' + i + '" data-jump="' + esc(c.id) + '" aria-selected="' + (i === callPick ? "true" : "false") + '"><span class="qn">' + esc(name) + (where ? " · " + where : "") + "</span>" + (co ? '<span class="qco">' + esc(co) + "</span>" : "") + "</button>";
     }).join("") + (hits.length > shown.length ? '<div class="callnone">Showing ' + shown.length + " of " + hits.length + ". Keep typing to narrow.</div>" : "");
     if (callPick >= 0) input.setAttribute("aria-activedescendant", "callhit-" + callPick); else input.removeAttribute("aria-activedescendant");
@@ -969,6 +976,7 @@
     const tab = c.tab === "prebk" ? "prebk" : "main";
     if (listTab !== tab) { listTab = tab; try { localStorage.setItem(LTAB_KEY, listTab); } catch {} }
     focusId = c.id; try { localStorage.setItem(FMI_KEY, focusId); } catch {}
+    archiveBrowse = false;
     callQuery = ""; callPick = -1; callHitsOpen = false;
     renderCalls(); fmScroll();
   }
@@ -988,17 +996,22 @@
     for (const s of order) (/^Extra/.test(s) ? extra : main).push(...groups[s]);
     return [...ch7Sort(main), ...ch7Sort(extra)];
   }
+  let archiveBrowse = false;
   function focusHtml(sd, calls) {
-    // Freeze the order while she works through it so marking an outcome doesn't reshuffle Next/Prev.
-    const ids = new Set(calls.map((c) => c.id));
-    if (!focusOrder || focusOrderTab !== listTab || focusOrder.some((id) => !ids.has(id)) || calls.some((c) => !focusOrder.includes(c.id))) {
-      focusOrder = focusList(calls).map((c) => c.id); focusOrderTab = listTab;
+    // Active queue excludes 3-attempt archives. Freeze that order so an outcome tap doesn't reshuffle Next/Prev.
+    const active = calls.filter((c) => !isArchivedAttempt(c));
+    const ids = new Set(active.map((c) => c.id));
+    if (!focusOrder || focusOrderTab !== listTab || focusOrder.some((id) => !ids.has(id)) || active.some((c) => !focusOrder.includes(c.id))) {
+      focusOrder = focusList(active).map((c) => c.id); focusOrderTab = listTab;
     }
-    if (!focusOrder.length) return '<div class="empty">No calls in this list.</div>';
+    const picked = calls.find((x) => x.id === focusId);
+    const showingArchive = !!(picked && isArchivedAttempt(picked));
+    if (!focusOrder.length && !showingArchive && !archiveBrowse) return '<div class="empty">No calls in this list.</div>';
     let i = focusOrder.indexOf(focusId);
-    if (i < 0) { i = focusOrder.findIndex((id) => !callDone(calls.find((c) => c.id === id))); if (i < 0) i = 0; }
-    const c = calls.find((x) => x.id === focusOrder[i]); focusId = c.id;
-    if (spCall !== c.id) {
+    if (!showingArchive && i < 0 && focusOrder.length) { i = focusOrder.findIndex((id) => !callDone(calls.find((c) => c.id === id))); if (i < 0) i = 0; focusId = focusOrder[i]; }
+    const c = showingArchive ? picked : calls.find((x) => x.id === focusOrder[i]);
+    if (!c && !archiveBrowse) return '<div class="empty">No calls in this list.</div>';
+    if (c && spCall !== c.id) {
       spCall = c.id; spWho = c.trustee && c.trustee.status === "verified" ? "trustee" : "";
       const kind = leadKind(c); setTab(kind === "link" ? "link" : kind + (/_vm$/.test(spTab) ? "_vm" : "_live"));
     }
@@ -1008,15 +1021,28 @@
       '<input id="callq" type="search" enterkeyhint="search" inputmode="search" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Search company or contact" aria-autocomplete="list" aria-controls="callhits" aria-expanded="false" value="' + esc(callQuery) + '">' +
       '<button type="button" class="qclear" id="callqclear"' + (String(callQuery).trim() ? "" : " hidden") + '>Clear</button>' +
       '<div id="callhits" class="callhits" role="listbox" hidden></div></div>';
-    const top = '<div class="fmtop">' + find + '<div class="fmtop-nav">' + (callPage ? '<a class="home" href="#" title="Back to dashboard">🏠</a>' : "") + '<div class="fmpos">Lead <b>' + (i + 1) + '</b> of ' + focusOrder.length + '<br>' + left + ' left' + (c.pin ? ' · 📌' : "") + '</div>' +
-      '<button type="button" data-fmgo="-1"' + (i === 0 ? " disabled" : "") + '>◀ Prev</button><button type="button" class="nx" data-fmgo="1"' + (i === focusOrder.length - 1 ? " disabled" : "") + '>Next ▶</button></div></div>';
+    const archN = calls.filter(isArchivedAttempt).length;
+    const pos = showingArchive
+      ? '<div class="fmpos">Archived · <b>' + attemptTotal(c, done) + '</b> attempts<br>Off the calling queue</div>'
+      : '<div class="fmpos">Lead <b>' + (i + 1) + '</b> of ' + focusOrder.length + '<br>' + left + ' left' + (c && c.pin ? ' · 📌' : "") + '</div>';
+    const top = '<div class="fmtop">' + find + '<div class="fmtop-nav">' + (callPage ? '<a class="home" href="#" title="Back to dashboard">🏠</a>' : "") + pos +
+      (archN ? '<button type="button" id="archbtn"' + (archiveBrowse ? ' class="nx"' : "") + '>Archive (' + archN + ')</button>' : "") +
+      '<button type="button" data-fmgo="-1"' + (!focusOrder.length || (!showingArchive && i === 0) ? " disabled" : "") + '>◀ Prev</button><button type="button" class="nx" data-fmgo="1"' + (!focusOrder.length || (!showingArchive && i === focusOrder.length - 1) ? " disabled" : "") + '>Next ▶</button></div></div>';
+    if (archiveBrowse) {
+      const rows = calls.filter(isArchivedAttempt);
+      return top + '<div class="card"><div class="csec">Archived · 3 attempts (' + rows.length + ')</div><div class="cline">Off the calling queue. Open one to read the notes, meetings, and outcomes. Search still finds them.</div>' +
+        (rows.length ? rows.map((r) => '<button type="button" class="callhit" data-jump="' + esc(r.id) + '"><span class="qn">' + esc(r.name || r.company || r.id) + '</span>' + (r.company && r.name ? '<span class="qco">' + esc(r.company) + '</span>' : "") + '</button>').join("") : '<div class="cline">None in this list.</div>') + '</div>';
+    }
+    if (!c) return top + '<div class="empty">No calls left in the active queue.</div>';
     return top + '<div class="focus' + (LAND.matches ? " land" : "") + '"><div class="fmL">' +
       callHtml(c) + (LAND.matches ? "" : panel) + '</div>' + (LAND.matches ? '<div class="fmR">' + panel + '</div>' : "") + '</div>';
   }
   document.addEventListener("click", (e) => {
-    const t = e.target.closest && e.target.closest("#fmtoggle, [data-fmgo]"); if (!t) return;
+    const t = e.target.closest && e.target.closest("#fmtoggle, #archbtn, [data-fmgo]"); if (!t) return;
     if (t.id === "fmtoggle") { focusMode = !focusMode; localStorage.setItem(FM_KEY, focusMode ? "1" : "0"); renderCalls(); fmScroll(); return; }
-    if (!focusOrder) return;
+    if (t.id === "archbtn") { archiveBrowse = !archiveBrowse; renderCalls(); fmScroll(); return; }
+    if (!focusOrder || !focusOrder.length) return;
+    archiveBrowse = false;
     const i = focusOrder.indexOf(focusId), j = Math.max(0, Math.min(focusOrder.length - 1, i + +t.dataset.fmgo));
     focusId = focusOrder[j]; localStorage.setItem(FMI_KEY, focusId);
     renderCalls(); fmScroll();
@@ -1063,7 +1089,9 @@
     // Tabs (10/29): calls with tab:"prebk" (ABC / receivership leads) get their own tab; everything else is the main list.
     const pbCalls = allCalls.filter((c) => c.tab === "prebk"), mainCalls = allCalls.filter((c) => c.tab !== "prebk");
     if (!pbCalls.length) listTab = "main";
-    const calls = listTab === "prebk" ? pbCalls : mainCalls;
+    const tabCalls = listTab === "prebk" ? pbCalls : mainCalls;
+    const calls = tabCalls.filter((c) => !isArchivedAttempt(c));
+    const archivedCalls = tabCalls.filter(isArchivedAttempt);
     allCalls.forEach((c) => { labels["call:" + c.id] = { label: [c.name, c.company].filter(Boolean).join(" · "), lane: "calls" }; });
     const spOld = document.getElementById("spanel"), spScroll = spOld ? spOld.scrollTop : 0;
     let h = "";
@@ -1072,14 +1100,17 @@
       const n = calls.length, d = calls.filter(callDone).length;
       h += focusMode ? '<details class="fmextra"><summary class="csec">Meetings, referrals &amp; today\'s stats</summary>' + meetHtml(sd) + refHtml(sd) + todayCallsHtml(allCalls) + '</details>' + sessHtml()
         : meetHtml(sd) + refHtml(sd) + sessHtml() + todayCallsHtml(allCalls);
-      if (pbCalls.length) h += '<div class="ltabs">' + [["main", "Chapter 7 & main", mainCalls], ["prebk", "Pre-bankruptcy (ABC / receivership)", pbCalls]].map(([k, l, g]) =>
-        '<button type="button" class="ltab' + (k === listTab ? " on" : "") + '" data-ltab="' + k + '">' + esc(l) + " (" + g.filter(callDone).length + "/" + g.length + ")</button>").join("") + "</div>";
+      if (pbCalls.length) h += '<div class="ltabs">' + [["main", "Chapter 7 & main", mainCalls], ["prebk", "Pre-bankruptcy (ABC / receivership)", pbCalls]].map(([k, l, g]) => {
+        const q = g.filter((c) => !isArchivedAttempt(c));
+        return '<button type="button" class="ltab' + (k === listTab ? " on" : "") + '" data-ltab="' + k + '">' + esc(l) + " (" + q.filter(callDone).length + "/" + q.length + ")</button>";
+      }).join("") + "</div>";
       h += '<div class="calls-top"><span class="calls-prog"><b>' + d + " of " + n + "</b> called</span>" +
+        (archivedCalls.length ? '<span class="tag"> ' + archivedCalls.length + " archived</span>" : "") +
         (calls.some((c) => c.chapter === "Ch 7") ? '<span class="tag">CHAPTER 7 FIRST</span>' : "") + '</div>' +
-        '<div class="pbar"><i style="width:' + Math.round((d / n) * 100) + '%"></i></div>' +
+        '<div class="pbar"><i style="width:' + Math.round((n ? d / n : 0) * 100) + '%"></i></div>' +
         '<div class="fmbar"><button type="button" id="fmtoggle" class="fmtoggle' + (focusMode ? "" : " off") + '">' + (focusMode ? "☰ Show full list" : "📱 One at a time") + '</button></div>';
       if (focusMode) {
-        h += focusHtml(sd, calls);
+        h += focusHtml(sd, tabCalls);
         if (lockState === "ok") h += '<button type="button" class="linkbtn" id="calllock">🔒 Lock call list on this device</button>';
         document.getElementById("calls-sec").classList.remove("split");
         box.innerHTML = h; landMove(box); if (callPage) { const tb = box.querySelector(".fmtop"); if (tb) box.prepend(tb); } document.body.classList.add("fm-on");
@@ -1099,6 +1130,7 @@
         h += '<div class="csec">' + esc(s) + "</div>" + (isCh7 ? '<div class="cline ckd">Pinned first, then court dates in the next 7 days, then newest filings first (beat other brokers to the trustee). Called on an earlier day and already-called at the bottom.</div>' : "") + (isCh7 ? ch7Div(ch7Sort(g)) : g.map(callHtml).join(""));
       }
       if (exN) h += '<details id="extra-det"' + (extraOpen ? " open" : "") + '><summary class="csec">Extra – only if on a roll (' + exN + ")</summary>" + ex + "</details>";
+      if (archivedCalls.length) h += '<details id="arch-det"' + (archiveBrowse ? " open" : "") + '><summary class="csec">Archived · 3 attempts (' + archivedCalls.length + ')</summary><div class="cline">Off the calling queue. Notes, meetings, and outcomes stay on the card. Search still finds them.</div>' + archivedCalls.map(callHtml).join("") + "</details>";
     }
     if (lockState === "ok") h += '<button type="button" class="linkbtn" id="calllock">🔒 Lock call list on this device</button>';
     const panel = panelHtml(sd, allCalls);
