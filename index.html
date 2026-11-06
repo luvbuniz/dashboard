@@ -224,18 +224,35 @@
     body.callpage .wrap > *:not(#calls-sec) { display:none !important; }
     body.callpage #calls-sec > h2, body.callpage .startcall, body.callpage .fmextra, body.callpage .fmbar { display:none; }
     body.callpage .wrap { padding-top:0; }
-    .fmtop { position:sticky; top:0; z-index:60; display:flex; align-items:center; gap:8px; padding:6px 0; background:var(--bg); border-bottom:1px solid var(--line); margin-bottom:8px; }
+    .fmtop { position:sticky; top:0; z-index:60; display:flex; flex-wrap:wrap; align-items:center; gap:8px; padding:6px 0; background:var(--bg); border-bottom:1px solid var(--line); margin-bottom:8px; }
+    .fmtop-nav { flex:1 1 100%; display:flex; align-items:center; gap:8px; min-width:0; }
     .fmtop .fmpos { flex:1; min-width:0; font-size:14px; line-height:1.2; }
     .fmtop a.home { color:var(--muted); text-decoration:none; font-size:22px; padding:0 6px; min-height:52px; display:flex; align-items:center; }
-    .fmtop button { min-width:96px; min-height:52px; font:inherit; font-size:18px; font-weight:700; border-radius:12px; border:1px solid var(--line); background:var(--elev); color:var(--ink); cursor:pointer; -webkit-tap-highlight-color:transparent; }
-    .fmtop button.nx { background:var(--copper); border-color:var(--copper); color:#fff; min-width:120px; }
-    .fmtop button:disabled { opacity:.4; }
+    .fmtop-nav button { min-width:96px; min-height:52px; font:inherit; font-size:18px; font-weight:700; border-radius:12px; border:1px solid var(--line); background:var(--elev); color:var(--ink); cursor:pointer; -webkit-tap-highlight-color:transparent; }
+    .fmtop-nav button.nx { background:var(--copper); border-color:var(--copper); color:#fff; min-width:120px; }
+    .fmtop-nav button:disabled { opacity:.4; }
+    .callfind { position:relative; flex:1 1 100%; display:flex; align-items:center; gap:8px; min-width:0; }
+    .callfind label { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
+    .callfind input { flex:1; min-width:0; min-height:48px; font:inherit; font-size:16px; border-radius:12px; border:2px solid var(--copper); background:var(--elev); color:var(--ink); padding:8px 12px; }
+    .callfind input::placeholder { color:var(--muted); }
+    .callfind input:focus { outline:2px solid var(--copper); outline-offset:1px; }
+    .callfind .qclear { flex:none; min-height:48px; min-width:76px; padding:0 12px; font:inherit; font-size:16px; font-weight:700; border-radius:12px; border:1px solid var(--line); background:var(--elev); color:var(--ink); cursor:pointer; -webkit-tap-highlight-color:transparent; }
+    .callfind .qclear[hidden] { display:none; }
+    .callhits { position:absolute; left:0; right:0; top:calc(100% + 4px); z-index:80; max-height:min(46vh, 280px); overflow:auto; overscroll-behavior:contain; background:var(--panel); border:1px solid var(--copper); border-radius:12px; box-shadow:0 8px 24px rgba(0,0,0,.35); }
+    .callhits[hidden] { display:none; }
+    .callhit { display:flex; flex-direction:column; align-items:flex-start; justify-content:center; gap:1px; width:100%; text-align:left; min-height:48px; padding:8px 12px; background:none; border:0; border-bottom:1px solid var(--line); color:inherit; font:inherit; font-size:16px; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+    .callhit:last-child { border-bottom:0; }
+    .callhit .qco { color:var(--muted); font-size:14px; }
+    .callhit.on, .callhit:focus { background:var(--copper-dim); outline:none; }
+    .callnone { padding:12px; color:var(--muted); font-size:15px; }
     .sp-wsd summary { cursor:pointer; font-size:13px; color:var(--muted); margin:4px 0; } .sp-wsd .sp-links { font-size:13px; }
     @media (orientation:landscape) and (max-height:520px) {
-      .fmtop { padding:4px 0; margin-bottom:6px; } .fmtop button { min-height:46px; }
+      .fmtop { padding:4px 0; margin-bottom:6px; } .fmtop-nav button { min-height:46px; }
+      .callfind input, .callfind .qclear { min-height:44px; }
+      .callhits { max-height:calc(100vh - 120px); }
       body.callpage #pomo, body.callpage .calls-top, body.callpage #calls .pbar { display:none; }
       body.callpage .ltab { min-height:32px; padding:4px 10px; font-size:13px; } body.callpage .ltabs { margin:4px 0; }
-      .focus.land .fmL, .focus.land .fmR { top:62px; max-height:calc(100vh - 66px); }
+      .focus.land .fmL, .focus.land .fmR { top:calc(var(--fmtop-h, 100px) + 4px); max-height:calc(100vh - var(--fmtop-h, 100px) - 8px); }
       .focus.land .stext { font-size:16px; line-height:1.45; } .focus.land .spanel { padding:8px 10px; }
       .focus.land .sp-h { display:none; } .focus.land .stabs { margin:4px 0; }
     }
@@ -893,6 +910,72 @@
   let focusMode = (() => { const v = localStorage.getItem(FM_KEY); return v == null ? window.matchMedia("(max-width:480px), (orientation:landscape) and (max-height:520px)").matches : v === "1"; })();
   setTimeout(route, 0);
   let focusId = localStorage.getItem(FMI_KEY) || "", focusOrder = null, focusOrderTab = "";
+  // Find a lead (11/6): match company or contact name, any word order. Navigates the existing list only.
+  let callQuery = "", callPick = -1, callHitsOpen = false;
+  const callFold = (s) => String(s || "").toLowerCase().replace(/&/g, " and ").replace(/[^a-z0-9]+/g, " ").trim();
+  const callTokens = (q) => callFold(q).split(/\s+/).filter(Boolean);
+  const callParts = (c) => ({ name: callFold(c && c.name), co: callFold(c && c.company) });
+  function callMatch(c, q) {
+    const tokens = callTokens(q);
+    if (!tokens.length || !c) return false;
+    const p = callParts(c), hay = (p.name + " " + p.co).trim(), tight = hay.replace(/ /g, "");
+    return tokens.every((t) => hay.includes(t) || tight.includes(t));
+  }
+  function scoreCall(c, q) {
+    const tokens = callTokens(q), p = callParts(c), phrase = tokens.join(" "), rev = tokens.slice().reverse().join(" ");
+    let s = 0;
+    if (p.co === phrase || p.co === rev || p.name === phrase || p.name === rev) s += 100;
+    else if (p.co.includes(phrase) || p.co.includes(rev) || p.name.includes(phrase) || p.name.includes(rev)) s += 60;
+    if (tokens.every((t) => p.co.includes(t))) s += 40;
+    if (tokens.every((t) => p.name.includes(t))) s += 30;
+    return s;
+  }
+  function searchableCalls() {
+    return (secret && Array.isArray(secret.calls) ? secret.calls : []).filter((c) => c && c.id);
+  }
+  function callHitList() {
+    if (!callTokens(callQuery).length) return [];
+    return searchableCalls().map((c, i) => ({ c, i, s: scoreCall(c, callQuery) })).filter((o) => callMatch(o.c, callQuery)).sort((a, b) => b.s - a.s || a.i - b.i).map((o) => o.c);
+  }
+  function paintCallHits(scrollOn) {
+    const box = document.getElementById("callhits"), input = document.getElementById("callq"), clr = document.getElementById("callqclear");
+    if (!box || !input) return;
+    if (clr) clr.hidden = !String(callQuery || "").trim();
+    const hits = callHitList(), open = callHitsOpen && callTokens(callQuery).length > 0;
+    input.setAttribute("aria-expanded", open ? "true" : "false");
+    if (!open) { box.hidden = true; box.innerHTML = ""; input.removeAttribute("aria-activedescendant"); return; }
+    box.hidden = false;
+    if (!hits.length) {
+      box.innerHTML = '<div class="callnone">No matching leads for “' + esc(String(callQuery).trim()) + '”. Search checks company and contact names already on this list.</div>';
+      input.removeAttribute("aria-activedescendant");
+      return;
+    }
+    if (callPick >= hits.length) callPick = hits.length - 1;
+    const shown = hits.slice(0, 40);
+    box.innerHTML = shown.map((c, i) => {
+      const name = c.name || c.company || "Lead", co = c.company && c.name && callFold(c.company) !== callFold(c.name) ? c.company : "";
+      const where = c.tab === "prebk" ? "Pre-bankruptcy" : "";
+      return '<button type="button" class="callhit' + (i === callPick ? " on" : "") + '" role="option" id="callhit-' + i + '" data-jump="' + esc(c.id) + '" aria-selected="' + (i === callPick ? "true" : "false") + '"><span class="qn">' + esc(name) + (where ? " · " + where : "") + "</span>" + (co ? '<span class="qco">' + esc(co) + "</span>" : "") + "</button>";
+    }).join("") + (hits.length > shown.length ? '<div class="callnone">Showing ' + shown.length + " of " + hits.length + ". Keep typing to narrow.</div>" : "");
+    if (callPick >= 0) input.setAttribute("aria-activedescendant", "callhit-" + callPick); else input.removeAttribute("aria-activedescendant");
+    const on = scrollOn && box.querySelector(".callhit.on");
+    if (on && on.parentElement) {
+      const p = on.parentElement, top = on.offsetTop, bot = top + on.offsetHeight;
+      if (top < p.scrollTop) p.scrollTop = top; else if (bot > p.scrollTop + p.clientHeight) p.scrollTop = bot - p.clientHeight;
+    }
+  }
+  function jumpToCall(id) {
+    const c = searchableCalls().find((x) => x.id === id); if (!c) return;
+    const tab = c.tab === "prebk" ? "prebk" : "main";
+    if (listTab !== tab) { listTab = tab; try { localStorage.setItem(LTAB_KEY, listTab); } catch {} }
+    focusId = c.id; try { localStorage.setItem(FMI_KEY, focusId); } catch {}
+    callQuery = ""; callPick = -1; callHitsOpen = false;
+    renderCalls(); fmScroll();
+  }
+  function sizeCallBar() {
+    const tb = document.querySelector(".fmtop");
+    if (tb) document.documentElement.style.setProperty("--fmtop-h", tb.offsetHeight + "px");
+  }
   const ASK_RE = /PERMISSION ASKED|MICRO1 LINK SENT|CALL ASKED/i;
   function askLine(c) {
     const t = (Array.isArray(c.tags) ? c.tags : []).filter((x) => ASK_RE.test(x));
@@ -921,8 +1004,12 @@
     }
     const left = focusOrder.filter((id) => !callDone(calls.find((x) => x.id === id))).length;
     const keep = spCollapsed; spCollapsed = false; const panel = panelHtml(sd, calls); spCollapsed = keep;
-    const top = '<div class="fmtop">' + (callPage ? '<a class="home" href="#" title="Back to dashboard">🏠</a>' : "") + '<div class="fmpos">Lead <b>' + (i + 1) + '</b> of ' + focusOrder.length + '<br>' + left + ' left' + (c.pin ? ' · 📌' : "") + '</div>' +
-      '<button type="button" data-fmgo="-1"' + (i === 0 ? " disabled" : "") + '>◀ Prev</button><button type="button" class="nx" data-fmgo="1"' + (i === focusOrder.length - 1 ? " disabled" : "") + '>Next ▶</button></div>';
+    const find = '<div class="callfind" role="search"><label for="callq">Search company or contact</label>' +
+      '<input id="callq" type="search" enterkeyhint="search" inputmode="search" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Search company or contact" aria-autocomplete="list" aria-controls="callhits" aria-expanded="false" value="' + esc(callQuery) + '">' +
+      '<button type="button" class="qclear" id="callqclear"' + (String(callQuery).trim() ? "" : " hidden") + '>Clear</button>' +
+      '<div id="callhits" class="callhits" role="listbox" hidden></div></div>';
+    const top = '<div class="fmtop">' + find + '<div class="fmtop-nav">' + (callPage ? '<a class="home" href="#" title="Back to dashboard">🏠</a>' : "") + '<div class="fmpos">Lead <b>' + (i + 1) + '</b> of ' + focusOrder.length + '<br>' + left + ' left' + (c.pin ? ' · 📌' : "") + '</div>' +
+      '<button type="button" data-fmgo="-1"' + (i === 0 ? " disabled" : "") + '>◀ Prev</button><button type="button" class="nx" data-fmgo="1"' + (i === focusOrder.length - 1 ? " disabled" : "") + '>Next ▶</button></div></div>';
     return top + '<div class="focus' + (LAND.matches ? " land" : "") + '"><div class="fmL">' +
       callHtml(c) + (LAND.matches ? "" : panel) + '</div>' + (LAND.matches ? '<div class="fmR">' + panel + '</div>' : "") + '</div>';
   }
@@ -934,7 +1021,32 @@
     focusId = focusOrder[j]; localStorage.setItem(FMI_KEY, focusId);
     renderCalls(); fmScroll();
   });
+  document.addEventListener("input", (e) => {
+    if (!e.target || e.target.id !== "callq") return;
+    callQuery = e.target.value; callPick = 0; callHitsOpen = true; paintCallHits();
+  });
+  document.addEventListener("focusin", (e) => {
+    if (!e.target || e.target.id !== "callq" || !callTokens(callQuery).length) return;
+    callHitsOpen = true; paintCallHits();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (!e.target || e.target.id !== "callq") return;
+    const hits = callHitList();
+    if (e.key === "ArrowDown") { e.preventDefault(); callHitsOpen = true; callPick = callPick < 0 ? 0 : Math.min(Math.max(hits.length - 1, 0), callPick + 1); paintCallHits(true); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); callHitsOpen = true; callPick = Math.max(0, callPick - 1); paintCallHits(true); }
+    else if (e.key === "Enter") { e.preventDefault(); const hit = hits[callPick >= 0 ? callPick : 0]; if (hit) jumpToCall(hit.id); }
+    else if (e.key === "Escape") { e.preventDefault(); callQuery = ""; callPick = -1; callHitsOpen = false; e.target.value = ""; paintCallHits(); }
+  });
+  document.addEventListener("click", (e) => {
+    const clr = e.target.closest && e.target.closest("#callqclear");
+    if (clr) { callQuery = ""; callPick = -1; callHitsOpen = false; const inp = document.getElementById("callq"); if (inp) { inp.value = ""; inp.focus(); } paintCallHits(); return; }
+    const hit = e.target.closest && e.target.closest("[data-jump]");
+    if (hit) { jumpToCall(hit.dataset.jump); return; }
+    if (callHitsOpen && (!e.target.closest || !e.target.closest(".callfind"))) { callHitsOpen = false; paintCallHits(); }
+  });
   function renderCalls() {
+    const qEl = document.getElementById("callq"), qFocus = !!(qEl && document.activeElement === qEl);
+    const qSel = qEl ? [qEl.selectionStart, qEl.selectionEnd] : null;
     document.body.classList.remove("fm-on");
     const box = document.getElementById("calls");
     if (!box || !data) return;
@@ -970,7 +1082,10 @@
         h += focusHtml(sd, calls);
         if (lockState === "ok") h += '<button type="button" class="linkbtn" id="calllock">🔒 Lock call list on this device</button>';
         document.getElementById("calls-sec").classList.remove("split");
-        box.innerHTML = h; landMove(box); if (callPage) { const tb = box.querySelector(".fmtop"); if (tb) box.prepend(tb); } document.body.classList.add("fm-on"); return;
+        box.innerHTML = h; landMove(box); if (callPage) { const tb = box.querySelector(".fmtop"); if (tb) box.prepend(tb); } document.body.classList.add("fm-on");
+        paintCallHits(); sizeCallBar();
+        if (qFocus) { const n = document.getElementById("callq"); if (n) { n.focus(); if (qSel) try { n.setSelectionRange(qSel[0], qSel[1]); } catch {} } }
+        return;
       }
       const order = [], groups = {};
       for (const c of calls) { const s = c.section || "Calls"; if (!groups[s]) { groups[s] = []; order.push(s); } groups[s].push(c); }
