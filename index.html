@@ -135,6 +135,14 @@
     .badge.emailed { background:#e8f6ee; color:#1f6b45; border-color:#b7e0c7; }
     .badge.notemailed { background:var(--elev); color:var(--muted); border-style:dashed; }
     .badge.bounced { background:#fdecea; color:#a12622; border-color:#f5c2c0; }
+    .badge.st { background:#eef2f7; color:#334155; border-color:#d0d7e2; font-variant:normal; letter-spacing:.04em; }
+    .badge.st.wc { background:#e8f0ff; color:#2456c8; border-color:#c5d6f5; }
+    .statebar { display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin:8px 0 4px; }
+    .statebar .slabel { font-size:12px; color:var(--muted); font-weight:600; margin-right:2px; }
+    .schip { background:var(--elev); color:var(--ink); border:1px solid var(--line); border-radius:999px; font:inherit; font-size:13px; padding:6px 12px; min-height:34px; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+    .schip.on { background:var(--copper); border-color:var(--copper); color:#fff; font-weight:600; }
+    .schip.wc.on { background:#2456c8; border-color:#2456c8; }
+    .statebar select { font:inherit; font-size:13px; padding:6px 10px; min-height:34px; border-radius:999px; border:1px solid var(--line); background:var(--elev); color:var(--ink); }
     .cdur { font-weight:600; margin-left:6px; }
     .tel.sm { background:none; color:var(--copper); font-size:14px; font-weight:500; padding:6px 0; min-height:0; text-decoration:underline; }
     .cmail { font-size:13px; color:var(--muted); word-break:break-all; }
@@ -494,6 +502,22 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
     if (es.state === "not_emailed") return '<span class="badge notemailed">Not emailed</span>';
     return "";
   }
+  const WEST_COAST = new Set(["CA","OR","WA","NV","AZ","ID","UT","HI","AK"]);
+  function leadState(c) {
+    const s = String((c && c.state) || "").trim().toUpperCase();
+    return /^[A-Z]{2}$/.test(s) ? s : "";
+  }
+  function stateBadge(c) {
+    const s = leadState(c);
+    if (!s) return "";
+    return '<span class="badge st' + (WEST_COAST.has(s) ? " wc" : "") + '">' + esc(s) + '</span>';
+  }
+  function stateMatchesFilter(c) {
+    if (!stateFilter || stateFilter === "all") return true;
+    const s = leadState(c);
+    if (stateFilter === "west") return WEST_COAST.has(s);
+    return s === stateFilter;
+  }
   function kdBadge(c) {
 
     const k = keyDate(c); if (!k) return "";
@@ -559,7 +583,7 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
       '<div class="call-h">' + (c.time ? '<span class="ctime">' + esc(c.time) + '</span>' : "") +
         '<span class="cname">' + esc(c.name || c.company || "") + '</span>' + (c.role ? '<span class="crole">' + esc(c.role) + '</span>' : "") + '</div>' +
       (c.company && c.name ? '<div class="ccomp">' + esc(c.company) + '</div>' : "") +
-      '<div class="badges">' + kdBadge(c) + emailStatusBadge(c) + (urgent ? '<span class="badge urg">URGENT</span>' : "") +
+      '<div class="badges">' + kdBadge(c) + stateBadge(c) + emailStatusBadge(c) + (urgent ? '<span class="badge urg">URGENT</span>' : "") +
         (c.chapter ? '<span class="badge ch">' + esc(c.chapter) + '</span>' : "") +
         (c.big_upside ? '<span class="badge ok">Big upside</span>' : "") +
         (c.fit ? '<span class="badge fit fit-' + esc(String(c.fit).toLowerCase()) + '">Fit: ' + esc(c.fit) + '</span>' : "") +
@@ -695,6 +719,13 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
   }
   function setTab(k) { spTab = k; try { localStorage.setItem(SP_TAB_KEY, k); } catch {} }
   document.addEventListener("click", (e) => {
+    const stBtn = e.target.closest && e.target.closest("[data-state]");
+    if (stBtn) {
+      stateFilter = stBtn.dataset.state || "all";
+      try { localStorage.setItem(STATE_KEY, stateFilter); } catch {}
+      renderCalls();
+      return;
+    }
     const hotCard = e.target.closest && e.target.closest(".hot[data-hot]");
     if (hotCard && !e.target.closest("button, a, textarea, input, summary, details, label")) {
       const hid = hotCard.dataset.hot || hotCard.dataset.call;
@@ -724,6 +755,13 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
   let extraOpen = false;
   const LTAB_KEY = "amy-day-v2-listtab";
   let listTab = localStorage.getItem(LTAB_KEY) || "main";
+  document.addEventListener("change", (e) => {
+    if (!e.target || e.target.id !== "statesel") return;
+    const v = e.target.value || "all";
+    stateFilter = v;
+    try { localStorage.setItem(STATE_KEY, stateFilter); } catch {}
+    renderCalls();
+  });
   document.addEventListener("click", (e) => {
     const b = e.target.closest && e.target.closest("[data-ltab]"); if (!b) return;
     listTab = b.dataset.ltab; try { localStorage.setItem(LTAB_KEY, listTab); } catch {}
@@ -926,6 +964,26 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
   // Call buttons log dials (and share opaque lead_id with daily cards when present); no tel: links (Phone Link on Windows).
   // Tap a hot card to expand the same detail fields regular leads show (company type, records, follow-up history).
   let hotOpenId = null;
+  function stateBarHtml(calls) {
+    const present = new Set();
+    for (const c of calls || []) { const s = leadState(c); if (s) present.add(s); }
+    for (const h of hotLeadsList(secret || {})) { const s = leadState(h); if (s) present.add(s); }
+    const states = [...present].sort();
+    const westN = [...present].filter((s) => WEST_COAST.has(s)).length;
+    let h = '<div class="statebar" role="toolbar" aria-label="Filter by state"><span class="slabel">State</span>';
+    h += '<button type="button" class="schip' + (stateFilter === "all" ? " on" : "") + '" data-state="all">All</button>';
+    h += '<button type="button" class="schip wc' + (stateFilter === "west" ? " on" : "") + '" data-state="west">West Coast' + (westN ? " · " + westN : "") + '</button>';
+    h += '<select id="statesel" aria-label="State">' +
+      '<option value="all"' + (stateFilter === "all" || stateFilter === "west" ? "" : "") + '>Pick state…</option>' +
+      states.map((s) => '<option value="' + esc(s) + '"' + (stateFilter === s ? " selected" : "") + '>' + esc(s) + '</option>').join("") +
+      '</select>';
+    if (stateFilter && stateFilter !== "all") {
+      const n = (calls || []).filter(stateMatchesFilter).length;
+      h += '<span class="cline" style="margin:0">' + (stateFilter === "west" ? "West Coast" : esc(stateFilter)) + ': ' + n + ' lead' + (n === 1 ? "" : "s") + '</span>';
+    }
+    h += '</div>';
+    return h;
+  }
   function hotLeadId(h) {
     const lid = String((h && h.lead_id) || "").trim();
     if (lid) return lid;
@@ -1047,8 +1105,8 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
     return bits.join("");
   }
   function hotLeadsHtml(sd) {
-    const L = hotLeadsList(sd);
-    if (!L.length) return "";
+    const L = hotLeadsList(sd).filter((h) => stateMatchesFilter(h));
+    if (!L.length) return stateFilter && stateFilter !== "all" ? '<section class="meets hots"><h3 class="meets-h">🔥 Hot leads · ongoing</h3><div class="cline">No hot leads in this state filter.</div></section>' : "";
     const buyerClass = (b) => {
       const s = String(b || "").toLowerCase();
       if (s === "mercor") return "mercor";
@@ -1106,9 +1164,10 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
       const fuBadge = fuStatus ? '<div class="cline"><span class="hot-buyer ' + (/awaiting|drafted/i.test(fuStatus) ? "potential" : (/skip/i.test(fuStatus) ? "potential" : "micro1")) + '">✉ ' + esc(fuStatus) + '</span></div>' : "";
       const calledBadge = isDone ? '<span class="badge ok">✓ Called</span>' : "";
       const emailBadge = emailStatusBadge(h);
+      const stBadge = stateBadge(h);
       const tog = '<div class="hot-tog">' + (isOpen ? "▾ Hide details" : "▸ Tap for records, company type & follow-ups") + '</div>';
       const detail = isOpen ? '<div class="hot-detail">' + hotDetailHtml(h) + '</div>' : "";
-      return '<div class="meet hot' + (isDone ? " done" : "") + (isOpen ? " open" : "") + '" data-call="' + esc(cid) + '" data-hot="' + esc(cid) + '"><b>' + esc(h.company || "") + '</b><span class="hot-buyer ' + buyerClass(h.buyer) + '">' + esc(buyer) + '</span>' + calledBadge + emailBadge +
+      return '<div class="meet hot' + (isDone ? " done" : "") + (isOpen ? " open" : "") + '" data-call="' + esc(cid) + '" data-hot="' + esc(cid) + '"><b>' + esc(h.company || "") + '</b><span class="hot-buyer ' + buyerClass(h.buyer) + '">' + esc(buyer) + '</span>' + calledBadge + stBadge + emailBadge +
         '<div class="cline">' + esc([h.contact, h.role].filter(Boolean).join(" · ")) + '</div>' +
         phoneBlock + acts + outs + emlBox + skipBox + noteBox +
         (h.cc ? '<div class="cline">cc: ' + esc(h.cc) + '</div>' : "") +
@@ -1171,6 +1230,8 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
   let focusId = localStorage.getItem(FMI_KEY) || "", focusOrder = null, focusOrderTab = "";
   // Find a lead (11/6): match company or contact name, any word order. Navigates the existing list only.
   let callQuery = "", callPick = -1, callHitsOpen = false;
+  const STATE_KEY = "amy-day-v2-statefilter";
+  let stateFilter = localStorage.getItem(STATE_KEY) || "all";
   const callFold = (s) => String(s || "").toLowerCase().replace(/&/g, " and ").replace(/[^a-z0-9]+/g, " ").trim();
   const callTokens = (q) => callFold(q).split(/\s+/).filter(Boolean);
   const callParts = (c) => ({ name: callFold(c && c.name), co: callFold(c && c.company) });
@@ -1251,10 +1312,10 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
   let archiveBrowse = false;
   function focusHtml(sd, calls) {
     // Active queue excludes 3-attempt archives. Freeze that order so an outcome tap doesn't reshuffle Next/Prev.
-    const active = calls.filter((c) => !isArchivedAttempt(c));
+    const active = calls.filter((c) => !isArchivedAttempt(c) && stateMatchesFilter(c));
     const ids = new Set(active.map((c) => c.id));
-    if (!focusOrder || focusOrderTab !== listTab || focusOrder.some((id) => !ids.has(id)) || active.some((c) => !focusOrder.includes(c.id))) {
-      focusOrder = focusList(active).map((c) => c.id); focusOrderTab = listTab;
+    if (!focusOrder || focusOrderTab !== listTab + "|" + stateFilter || focusOrder.some((id) => !ids.has(id)) || active.some((c) => !focusOrder.includes(c.id))) {
+      focusOrder = focusList(active).map((c) => c.id); focusOrderTab = listTab + "|" + stateFilter;
     }
     const picked = calls.find((x) => x.id === focusId);
     const showingArchive = !!(picked && isArchivedAttempt(picked));
@@ -1342,8 +1403,8 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
     const pbCalls = allCalls.filter((c) => c.tab === "prebk"), mainCalls = allCalls.filter((c) => c.tab !== "prebk");
     if (!pbCalls.length) listTab = "main";
     const tabCalls = listTab === "prebk" ? pbCalls : mainCalls;
-    const calls = tabCalls.filter((c) => !isArchivedAttempt(c));
-    const archivedCalls = tabCalls.filter(isArchivedAttempt);
+    const calls = tabCalls.filter((c) => !isArchivedAttempt(c) && stateMatchesFilter(c));
+    const archivedCalls = tabCalls.filter((c) => isArchivedAttempt(c) && stateMatchesFilter(c));
     allCalls.forEach((c) => { labels["call:" + c.id] = { label: [c.name, c.company].filter(Boolean).join(" · "), lane: "calls" }; });
     for (const h of hotLeadsList(sd)) {
       const hc = hotAsCall(h); if (!hc) continue;
@@ -1364,7 +1425,8 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
         (archivedCalls.length ? '<span class="tag"> ' + archivedCalls.length + " archived</span>" : "") +
         (calls.some((c) => c.chapter === "Ch 7") ? '<span class="tag">CHAPTER 7 FIRST</span>' : "") + '</div>' +
         '<div class="pbar"><i style="width:' + Math.round((n ? d / n : 0) * 100) + '%"></i></div>' +
-        '<div class="fmbar"><button type="button" id="fmtoggle" class="fmtoggle' + (focusMode ? "" : " off") + '">' + (focusMode ? "☰ Show full list" : "📱 One at a time") + '</button></div>';
+        '<div class="fmbar"><button type="button" id="fmtoggle" class="fmtoggle' + (focusMode ? "" : " off") + '">' + (focusMode ? "☰ Show full list" : "📱 One at a time") + '</button></div>' +
+        stateBarHtml(tabCalls.filter((c) => !isArchivedAttempt(c)));
       if (focusMode) {
         h += focusHtml(sd, tabCalls);
         if (lockState === "ok") h += '<button type="button" class="linkbtn" id="calllock">🔒 Lock call list on this device</button>';
