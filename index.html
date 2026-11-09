@@ -703,29 +703,31 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
   }
   function resolveSpCall(calls) {
     if (!spCall) return null;
-    const fromCalls = (calls || []).find((x) => x && x.id === spCall);
-    if (fromCalls) return fromCalls;
-    // Hot leads (and any synthetic rows) share opaque lead ids with daily cards when present.
+    const fromCalls = (calls || []).find((x) => x && x.id === spCall) || null;
+    // Always attach hot-lead detail when this id is in the pinned hot list, so the right pane can show it.
+    let hot = null;
     for (const h of hotLeadsList(secret || {})) {
-      const hc = hotAsCall(h);
-      if (hc && hc.id === spCall) {
-        const matched = hotMatchedCall(h);
-        if (matched) return matched;
-        // Merge hot detail fields so script fill-ins (records_mention etc.) still work.
-        const m = hotMerged(h);
-        return Object.assign({}, hc, {
-          records: m.records,
-          records_mention: m.records_mention,
-          chapter: m.chapter,
-          employees: m.employees,
-          fit: m.fit,
-          fit_why: m.fit_why,
-          company_range: m.company_range,
-          industry: m.industry,
-          hot: true,
-          _hot: h,
-        });
-      }
+      if (hotLeadId(h) === spCall) { hot = h; break; }
+    }
+    if (fromCalls) {
+      if (!hot) return fromCalls;
+      return Object.assign({}, fromCalls, { hot: true, _hot: hot });
+    }
+    if (hot) {
+      const hc = hotAsCall(hot);
+      const m = hotMerged(hot);
+      return Object.assign({}, hc, {
+        records: m.records,
+        records_mention: m.records_mention,
+        chapter: m.chapter,
+        employees: m.employees,
+        fit: m.fit,
+        fit_why: m.fit_why,
+        company_range: m.company_range,
+        industry: m.industry,
+        hot: true,
+        _hot: hot,
+      });
     }
     return null;
   }
@@ -1573,9 +1575,15 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
         return;
       }
       // Keep split pane while searching: filter left list; right pane keeps selection or first match.
+      // Include hot leads in the selection pool so tapping a hot card is not overwritten by the first daily lead.
       const hotHits = hotLeadsList(sd).filter((hh) => stateMatchesFilter(hh) && (!qOn || callMatch(hotAsCall(hh) || { name: hh.contact, company: hh.company }, callQuery)))
         .map((hh) => hotMatchedCall(hh) || hotAsCall(hh)).filter(Boolean);
-      const selectPool = calls.length ? calls : (hotHits.length ? hotHits : calls);
+      const selectPool = [];
+      const seenSel = new Set();
+      for (const row of hotHits.concat(calls)) {
+        if (!row || !row.id || seenSel.has(row.id)) continue;
+        seenSel.add(row.id); selectPool.push(row);
+      }
       ensureSpInFilter(selectPool);
       const matchN = calls.length + (qOn ? hotHits.filter((hc) => !calls.some((c) => c.id === hc.id)).length : 0);
       h = listSearchHtml() + (qOn ? '<div class="cline">Showing ' + matchN + ' match' + (matchN === 1 ? "" : "es") + ' for “' + esc(String(callQuery).trim()) + '”.</div>' : "") + h;
