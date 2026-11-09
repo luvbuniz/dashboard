@@ -120,7 +120,9 @@
     }
     .hot-status { font-size:13px; color:var(--muted); margin-top:4px; line-height:1.35; }
     .hot { cursor:pointer; -webkit-tap-highlight-color:transparent; }
-    .hot.open { background:var(--elev); border-radius:10px; padding:10px 12px; margin:6px -4px; }
+    .hot.open, .hot.active { background:var(--elev); border-radius:10px; padding:10px 12px; margin:6px -4px; outline:2px solid var(--copper); outline-offset:1px; }
+    .sp-hotdetail { margin:8px 0 12px; padding:10px 12px; background:var(--bg); border:1px solid var(--line); border-radius:10px; }
+    .sp-hotdetail .hot-detail { margin-top:0; padding-top:0; border-top:0; }
     .hot-tog { font-size:12px; color:var(--copper); margin-top:6px; font-weight:600; }
     .hot-detail { margin-top:8px; padding-top:8px; border-top:1px dashed var(--line); }
     .hot-detail .badges { margin:4px 0 6px; }
@@ -267,6 +269,8 @@
     .fmtop-nav button { min-width:96px; min-height:52px; font:inherit; font-size:18px; font-weight:700; border-radius:12px; border:1px solid var(--line); background:var(--elev); color:var(--ink); cursor:pointer; -webkit-tap-highlight-color:transparent; }
     .fmtop-nav button.nx { background:var(--copper); border-color:var(--copper); color:#fff; min-width:120px; }
     .fmtop-nav button:disabled { opacity:.4; }
+    .clist-find { margin:0 0 10px; }
+    .clist-find .callfind { flex:1 1 auto; }
     .callfind { position:relative; flex:1 1 100%; display:flex; align-items:center; gap:8px; min-width:0; }
     .callfind label { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
     .callfind input { flex:1; min-width:0; min-height:48px; font:inherit; font-size:16px; border-radius:12px; border:2px solid var(--copper); background:var(--elev); color:var(--ink); padding:8px 12px; }
@@ -697,18 +701,48 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
     for (const [ph, v] of Object.entries(rep)) if (v) html = html.split(esc(ph)).join("<mark>" + esc(v) + "</mark>");
     return html;
   }
+  function resolveSpCall(calls) {
+    if (!spCall) return null;
+    const fromCalls = (calls || []).find((x) => x && x.id === spCall);
+    if (fromCalls) return fromCalls;
+    // Hot leads (and any synthetic rows) share opaque lead ids with daily cards when present.
+    for (const h of hotLeadsList(secret || {})) {
+      const hc = hotAsCall(h);
+      if (hc && hc.id === spCall) {
+        const matched = hotMatchedCall(h);
+        if (matched) return matched;
+        // Merge hot detail fields so script fill-ins (records_mention etc.) still work.
+        const m = hotMerged(h);
+        return Object.assign({}, hc, {
+          records: m.records,
+          records_mention: m.records_mention,
+          chapter: m.chapter,
+          employees: m.employees,
+          fit: m.fit,
+          fit_why: m.fit_why,
+          company_range: m.company_range,
+          industry: m.industry,
+          hot: true,
+          _hot: h,
+        });
+      }
+    }
+    return null;
+  }
   function panelHtml(sd, calls) {
     const cs = sd.callScripts && typeof sd.callScripts === "object" ? sd.callScripts : {};
     const tabs = scriptTabs(cs);
     if (!tabs.length) return "";
     if (!tabs.some((t) => t[0] === spTab)) spTab = tabs[0][0];
     const t = tabs.find((x) => x[0] === spTab);
-    const c = spCall ? calls.find((x) => x.id === spCall) : null;
+    const c = resolveSpCall(calls);
+    const hotExtra = (c && c._hot) ? '<div class="sp-hotdetail"><div class="cline"><b>Hot lead detail</b></div><div class="hot-detail">' + hotDetailHtml(c._hot) + '</div></div>' : "";
     return '<aside class="spanel' + (spCollapsed ? " collapsed" : "") + '" id="spanel"><div class="sp-h"><b>📜 Call script</b>' +
       '<button type="button" class="sp-toggle" id="sptoggle">' + (spCollapsed ? "Show script ▾" : "Hide script ▴") + '</button></div>' +
       '<div class="sp-body">' + (cs.buyer_links && cs.buyer_links.text ? (focusMode ? '<details class="sp-wsd"><summary>📎 Worksheets &amp; links</summary><div class="sp-links">' + md(cs.buyer_links.text) + '</div></details>' : '<div class="sp-links">' + md(cs.buyer_links.text) + '</div>') : "") + '<div class="stabs">' + tabs.map(([k, l]) => '<button type="button" class="stab' + (k === spTab ? " on" : "") + '" data-stab="' + esc(k) + '">' + esc(l) + '</button>').join("") + '</div>' +
       (c ? '<div class="sp-for">For: <b>' + esc(spWhoLabel(c)) + '</b>' + (c.company && c.name ? " · " + esc(shortCo(c.company)) : "") + ' <button type="button" id="spclear">clear</button></div>'
          : (calls.length ? '<div class="sp-for">Tap a lead to switch to its script and fill in the name, company and records.</div>' : "")) +
+      hotExtra +
       '<div class="sp-title">' + esc(t[2]) + '</div><div class="stext">' + fillScript(md(t[3]), c) + '</div></div></aside>';
   }
   function spWhoLabel(c) {
@@ -729,14 +763,30 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
     const hotCard = e.target.closest && e.target.closest(".hot[data-hot]");
     if (hotCard && !e.target.closest("button, a, textarea, input, summary, details, label")) {
       const hid = hotCard.dataset.hot || hotCard.dataset.call;
-      hotOpenId = (hotOpenId === hid) ? null : hid;
+      // Desktop split: open detail + script in the right pane. Mobile focus can still expand inline.
+      if (hid && spCall === hid && hotOpenId === hid) {
+        hotOpenId = null;
+      } else {
+        hotOpenId = hid || null;
+        if (hid) {
+          spCall = hid;
+          spWho = "";
+          const h = hotLeadsList(secret || {}).find((x) => hotLeadId(x) === hid);
+          const c = (h && hotMatchedCall(h)) || (h && hotAsCall(h)) || ((secret && secret.calls) || []).find((x) => x && x.id === hid);
+          if (c) {
+            const kind = leadKind(c);
+            setTab(kind === "link" ? "link" : kind + (/_vm$/.test(spTab) ? "_vm" : "_live"));
+          }
+        }
+      }
       renderCalls();
+      const sp = document.getElementById("spanel"); if (sp) sp.scrollTop = 0;
       return;
     }
     const tb = e.target.closest("[data-stab]");
     if (tb) { setTab(tb.dataset.stab); renderCalls(); const sp = document.getElementById("spanel"); if (sp) sp.scrollTop = 0; return; }
     if (e.target.id === "sptoggle") { spCollapsed = !spCollapsed; renderCalls(); return; }
-    if (e.target.id === "spclear") { spCall = null; renderCalls(); return; }
+    if (e.target.id === "spclear") { spCall = null; hotOpenId = null; renderCalls(); return; }
     if (e.target.closest("textarea,input,[data-savenote]")) return; // don't re-render while typing a note
     const card = e.target.closest(".call[data-call]");
     if (!card) return;
@@ -747,6 +797,7 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
     spWho = newWho;
     if (card.dataset.call === spCall) { renderCalls(); return; }
     spCall = c.id;
+    if (hotOpenId && hotOpenId !== c.id) hotOpenId = null;
     const kind = leadKind(c), vmMode = /_vm$/.test(spTab);
     setTab(kind === "link" ? "link" : kind + (vmMode ? "_vm" : "_live"));
     renderCalls();
@@ -1105,8 +1156,17 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
     return bits.join("");
   }
   function hotLeadsHtml(sd) {
-    const L = hotLeadsList(sd).filter((h) => stateMatchesFilter(h));
-    if (!L.length) return stateFilter && stateFilter !== "all" ? '<section class="meets hots"><h3 class="meets-h">🔥 Hot leads · ongoing</h3><div class="cline">No hot leads in this state filter.</div></section>' : "";
+    const qOn = callTokens(callQuery).length > 0;
+    const L = hotLeadsList(sd).filter((h) => {
+      if (!stateMatchesFilter(h)) return false;
+      if (!qOn) return true;
+      const hc = hotAsCall(h) || { name: h.contact, company: h.company };
+      return callMatch(hc, callQuery);
+    });
+    if (!L.length) {
+      if (qOn) return '<section class="meets hots"><h3 class="meets-h">🔥 Hot leads · ongoing</h3><div class="cline">No hot leads match “' + esc(String(callQuery).trim()) + '”.</div></section>';
+      return stateFilter && stateFilter !== "all" ? '<section class="meets hots"><h3 class="meets-h">🔥 Hot leads · ongoing</h3><div class="cline">No hot leads in this state filter.</div></section>' : "";
+    }
     const buyerClass = (b) => {
       const s = String(b || "").toLowerCase();
       if (s === "mercor") return "mercor";
@@ -1126,7 +1186,11 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
       const email = (h.email || "").trim();
       const buyer = buyerLabel(h.buyer);
       const isDone = cid && callDone({ id: cid });
-      const isOpen = cid && hotOpenId === cid;
+      const isActive = !!(cid && spCall === cid);
+      // Inline expand on narrow/stacked layouts; on desktop split, detail goes in the right pane.
+      const splitOn = !!(document.getElementById("calls-sec") && document.getElementById("calls-sec").classList.contains("split"))
+        || window.matchMedia("(min-width:1000px)").matches;
+      const isOpen = !!(cid && hotOpenId === cid && !splitOn);
       let phoneBlock = "";
       if (phone) {
         phoneBlock = '<div class="hot-phone"><span class="num">' + esc(phone) + '</span>';
@@ -1165,9 +1229,9 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
       const calledBadge = isDone ? '<span class="badge ok">✓ Called</span>' : "";
       const emailBadge = emailStatusBadge(h);
       const stBadge = stateBadge(h);
-      const tog = '<div class="hot-tog">' + (isOpen ? "▾ Hide details" : "▸ Tap for records, company type & follow-ups") + '</div>';
+      const tog = '<div class="hot-tog">' + (isActive && splitOn ? "▸ Details in script panel →" : (isOpen ? "▾ Hide details" : "▸ Tap for records, company type & follow-ups")) + '</div>';
       const detail = isOpen ? '<div class="hot-detail">' + hotDetailHtml(h) + '</div>' : "";
-      return '<div class="meet hot' + (isDone ? " done" : "") + (isOpen ? " open" : "") + '" data-call="' + esc(cid) + '" data-hot="' + esc(cid) + '"><b>' + esc(h.company || "") + '</b><span class="hot-buyer ' + buyerClass(h.buyer) + '">' + esc(buyer) + '</span>' + calledBadge + stBadge + emailBadge +
+      return '<div class="meet hot' + (isDone ? " done" : "") + (isOpen ? " open" : "") + (isActive ? " active" : "") + '" data-call="' + esc(cid) + '" data-hot="' + esc(cid) + '"><b>' + esc(h.company || "") + '</b><span class="hot-buyer ' + buyerClass(h.buyer) + '">' + esc(buyer) + '</span>' + calledBadge + stBadge + emailBadge +
         '<div class="cline">' + esc([h.contact, h.role].filter(Boolean).join(" · ")) + '</div>' +
         phoneBlock + acts + outs + emlBox + skipBox + noteBox +
         (h.cc ? '<div class="cline">cc: ' + esc(h.cc) + '</div>' : "") +
@@ -1209,6 +1273,17 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
   // ── 📱 One-at-a-time focus mode (11/4): big tap-to-call, ask tag + script under the number, sticky Prev/Next.
   const LAND = window.matchMedia("(orientation:landscape) and (max-height:520px)");
   LAND.addEventListener && LAND.addEventListener("change", () => { if (focusMode) renderCalls(); });
+  const DESKTOP_MQ = window.matchMedia("(min-width:1000px)");
+  DESKTOP_MQ.addEventListener && DESKTOP_MQ.addEventListener("change", () => {
+    if (!callPage) return;
+    if (DESKTOP_MQ.matches) {
+      const v = localStorage.getItem(FM_KEY);
+      focusMode = v === "1";
+    } else {
+      focusMode = true;
+    }
+    renderCalls();
+  });
   function landMove(box) {   // landscape: move outcome buttons + skip/email/notes from the contact card into the script panel
     const R = box.querySelector(".focus.land .fmR"), card = box.querySelector(".focus.land .fmL .call"); if (!R || !card) return;
     const els = [...card.querySelectorAll(":scope > .outs, :scope > .cskipbox, :scope > .cnote")];
@@ -1220,7 +1295,19 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
     const was = callPage; callPage = /^#calls/.test(location.hash);
     document.body.classList.toggle("callpage", callPage);
     document.title = callPage ? "📞 Calls" : "Amy — today";
-    if (callPage) focusMode = true; else if (was) { const v = localStorage.getItem(FM_KEY); focusMode = v == null ? window.matchMedia("(max-width:480px), (orientation:landscape) and (max-height:520px)").matches : v === "1"; }
+    // Desktop (≥1000px): keep split-pane list+script. Mobile/small: one-at-a-time on the call page.
+    const desk = window.matchMedia("(min-width:1000px)").matches;
+    if (callPage) {
+      if (desk) {
+        const v = localStorage.getItem(FM_KEY);
+        focusMode = v === "1"; // only if Amy explicitly chose one-at-a-time
+      } else {
+        focusMode = true;
+      }
+    } else if (was) {
+      const v = localStorage.getItem(FM_KEY);
+      focusMode = v == null ? window.matchMedia("(max-width:480px), (orientation:landscape) and (max-height:520px)").matches : v === "1";
+    }
     if (was !== callPage) { renderCalls(); window.scrollTo(0, 0); }
   }
   window.addEventListener("hashchange", route);
@@ -1251,7 +1338,33 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
     return s;
   }
   function searchableCalls() {
-    return (secret && Array.isArray(secret.calls) ? secret.calls : []).filter((c) => c && c.id);
+    const out = [], seen = new Set();
+    for (const c of (secret && Array.isArray(secret.calls) ? secret.calls : [])) {
+      if (!c || !c.id || seen.has(c.id)) continue;
+      seen.add(c.id); out.push(c);
+    }
+    for (const h of hotLeadsList(secret || {})) {
+      const hc = hotAsCall(h); if (!hc || seen.has(hc.id)) continue;
+      const matched = hotMatchedCall(h);
+      seen.add(hc.id); out.push(matched || hc);
+    }
+    return out;
+  }
+  function listSearchHtml() {
+    const home = callPage ? '<a class="home" href="#" title="Back to dashboard" style="font-size:22px;text-decoration:none;color:var(--muted);padding:0 6px">🏠</a>' : "";
+    return '<div class="clist-find fmtop" style="position:sticky;top:0;z-index:60">' + home + '<div class="callfind" role="search"><label for="callq">Search company or contact</label>' +
+      '<input id="callq" type="search" enterkeyhint="search" inputmode="search" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Search company or contact" aria-autocomplete="list" aria-controls="callhits" aria-expanded="false" value="' + esc(callQuery) + '">' +
+      '<button type="button" class="qclear" id="callqclear"' + (String(callQuery).trim() ? "" : " hidden") + '>Clear</button>' +
+      '<div id="callhits" class="callhits" role="listbox" hidden></div></div></div>';
+  }
+  function ensureSpInFilter(filtered) {
+    if (!filtered.length) return;
+    if (spCall && filtered.some((c) => c.id === spCall)) return;
+    const first = filtered[0];
+    spCall = first.id;
+    spWho = first.trustee && first.trustee.status === "verified" ? "trustee" : "";
+    const kind = leadKind(first);
+    setTab(kind === "link" ? "link" : kind + (/_vm$/.test(spTab) ? "_vm" : "_live"));
   }
   function callHitList() {
     if (!callTokens(callQuery).length) return [];
@@ -1290,8 +1403,15 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
     if (listTab !== tab) { listTab = tab; try { localStorage.setItem(LTAB_KEY, listTab); } catch {} }
     focusId = c.id; try { localStorage.setItem(FMI_KEY, focusId); } catch {}
     archiveBrowse = false;
-    callQuery = ""; callPick = -1; callHitsOpen = false;
+    spCall = c.id;
+    spWho = c.trustee && c.trustee.status === "verified" ? "trustee" : "";
+    const kind = leadKind(c);
+    setTab(kind === "link" ? "link" : kind + (/_vm$/.test(spTab) ? "_vm" : "_live"));
+    // Keep the typed query in split/list mode so the left pane stays filtered; clear only in one-at-a-time.
+    if (focusMode) { callQuery = ""; callPick = -1; callHitsOpen = false; }
+    else { callHitsOpen = false; callPick = -1; }
     renderCalls(); fmScroll();
+    const sp = document.getElementById("spanel"); if (sp) sp.scrollTop = 0;
   }
   function sizeCallBar() {
     const tb = document.querySelector(".fmtop");
@@ -1362,7 +1482,10 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
   });
   document.addEventListener("input", (e) => {
     if (!e.target || e.target.id !== "callq") return;
-    callQuery = e.target.value; callPick = 0; callHitsOpen = true; paintCallHits();
+    callQuery = e.target.value; callPick = 0; callHitsOpen = true;
+    if (focusMode) { paintCallHits(); return; }
+    // Split/list mode: filter the left pane in place and keep the script pane.
+    renderCalls();
   });
   document.addEventListener("focusin", (e) => {
     if (!e.target || e.target.id !== "callq" || !callTokens(callQuery).length) return;
@@ -1374,11 +1497,23 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
     if (e.key === "ArrowDown") { e.preventDefault(); callHitsOpen = true; callPick = callPick < 0 ? 0 : Math.min(Math.max(hits.length - 1, 0), callPick + 1); paintCallHits(true); }
     else if (e.key === "ArrowUp") { e.preventDefault(); callHitsOpen = true; callPick = Math.max(0, callPick - 1); paintCallHits(true); }
     else if (e.key === "Enter") { e.preventDefault(); const hit = hits[callPick >= 0 ? callPick : 0]; if (hit) jumpToCall(hit.id); }
-    else if (e.key === "Escape") { e.preventDefault(); callQuery = ""; callPick = -1; callHitsOpen = false; e.target.value = ""; paintCallHits(); }
+    else if (e.key === "Escape") {
+      e.preventDefault(); callQuery = ""; callPick = -1; callHitsOpen = false; e.target.value = "";
+      if (focusMode) paintCallHits(); else renderCalls();
+    }
   });
   document.addEventListener("click", (e) => {
     const clr = e.target.closest && e.target.closest("#callqclear");
-    if (clr) { callQuery = ""; callPick = -1; callHitsOpen = false; const inp = document.getElementById("callq"); if (inp) { inp.value = ""; inp.focus(); } paintCallHits(); return; }
+    if (clr) {
+      callQuery = ""; callPick = -1; callHitsOpen = false;
+      if (focusMode) {
+        const inp = document.getElementById("callq"); if (inp) { inp.value = ""; inp.focus(); } paintCallHits();
+      } else {
+        renderCalls();
+        const inp = document.getElementById("callq"); if (inp) { inp.focus(); }
+      }
+      return;
+    }
     const hit = e.target.closest && e.target.closest("[data-jump]");
     if (hit) { jumpToCall(hit.dataset.jump); return; }
     if (callHitsOpen && (!e.target.closest || !e.target.closest(".callfind"))) { callHitsOpen = false; paintCallHits(); }
@@ -1403,8 +1538,9 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
     const pbCalls = allCalls.filter((c) => c.tab === "prebk"), mainCalls = allCalls.filter((c) => c.tab !== "prebk");
     if (!pbCalls.length) listTab = "main";
     const tabCalls = listTab === "prebk" ? pbCalls : mainCalls;
-    const calls = tabCalls.filter((c) => !isArchivedAttempt(c) && stateMatchesFilter(c));
-    const archivedCalls = tabCalls.filter((c) => isArchivedAttempt(c) && stateMatchesFilter(c));
+    const qOn = callTokens(callQuery).length > 0;
+    const calls = tabCalls.filter((c) => !isArchivedAttempt(c) && stateMatchesFilter(c) && (!qOn || callMatch(c, callQuery)));
+    const archivedCalls = tabCalls.filter((c) => isArchivedAttempt(c) && stateMatchesFilter(c) && (!qOn || callMatch(c, callQuery)));
     allCalls.forEach((c) => { labels["call:" + c.id] = { label: [c.name, c.company].filter(Boolean).join(" · "), lane: "calls" }; });
     for (const h of hotLeadsList(sd)) {
       const hc = hotAsCall(h); if (!hc) continue;
@@ -1436,6 +1572,13 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
         if (qFocus) { const n = document.getElementById("callq"); if (n) { n.focus(); if (qSel) try { n.setSelectionRange(qSel[0], qSel[1]); } catch {} } }
         return;
       }
+      // Keep split pane while searching: filter left list; right pane keeps selection or first match.
+      const hotHits = hotLeadsList(sd).filter((hh) => stateMatchesFilter(hh) && (!qOn || callMatch(hotAsCall(hh) || { name: hh.contact, company: hh.company }, callQuery)))
+        .map((hh) => hotMatchedCall(hh) || hotAsCall(hh)).filter(Boolean);
+      const selectPool = calls.length ? calls : (hotHits.length ? hotHits : calls);
+      ensureSpInFilter(selectPool);
+      const matchN = calls.length + (qOn ? hotHits.filter((hc) => !calls.some((c) => c.id === hc.id)).length : 0);
+      h = listSearchHtml() + (qOn ? '<div class="cline">Showing ' + matchN + ' match' + (matchN === 1 ? "" : "es") + ' for “' + esc(String(callQuery).trim()) + '”.</div>' : "") + h;
       const order = [], groups = {};
       for (const c of calls) { const s = c.section || "Calls"; if (!groups[s]) { groups[s] = []; order.push(s); } groups[s].push(c); }
       let ex = "", exN = 0;
@@ -1455,6 +1598,11 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
     document.getElementById("calls-sec").classList.toggle("split", !!panel);
     box.innerHTML = panel ? '<div class="csplit"><div class="clist">' + h + "</div>" + panel + "</div>" : h;
     const spNew = document.getElementById("spanel"); if (spNew && spScroll) spNew.scrollTop = spScroll;
+    paintCallHits();
+    if (qFocus) {
+      const n = document.getElementById("callq");
+      if (n) { n.focus(); if (qSel) try { n.setSelectionRange(qSel[0], qSel[1]); } catch {} }
+    }
   }
   document.addEventListener("submit", (e) => {
     if (e.target.id !== "unlock") return;
