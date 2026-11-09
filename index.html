@@ -132,6 +132,9 @@
     .hot-hist .hline:first-of-type { border-top:0; }
     .hot-hist .hwhen { color:var(--ink); font-weight:600; margin-right:4px; }
     .badge.mtg { background:var(--copper); color:#fff; }
+    .badge.emailed { background:#e8f6ee; color:#1f6b45; border-color:#b7e0c7; }
+    .badge.notemailed { background:var(--elev); color:var(--muted); border-style:dashed; }
+    .badge.bounced { background:#fdecea; color:#a12622; border-color:#f5c2c0; }
     .cdur { font-weight:600; margin-left:6px; }
     .tel.sm { background:none; color:var(--copper); font-size:14px; font-weight:500; padding:6px 0; min-height:0; text-decoration:underline; }
     .cmail { font-size:13px; color:var(--muted); word-break:break-all; }
@@ -480,7 +483,19 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
     if (up.length) return { x: up[0], state: kdDays(up[0]) <= 7 ? "soon" : "up" };
     return { x: ev[ev.length - 1], state: "past" };
   }
+  function emailStatusBadge(c) {
+    const es = (c && c.email_status) || null;
+    if (!es || !es.state) return "";
+    if (es.state === "emailed") {
+      const lab = es.label || ("Emailed" + (es.date ? " " + String(es.date).slice(5).replace(/^0/,"").replace("-","/").replace(/^0/, "") : ""));
+      return '<span class="badge emailed">✉ ' + esc(lab) + '</span>';
+    }
+    if (es.state === "bounced") return '<span class="badge bounced">Bounced</span>';
+    if (es.state === "not_emailed") return '<span class="badge notemailed">Not emailed</span>';
+    return "";
+  }
   function kdBadge(c) {
+
     const k = keyDate(c); if (!k) return "";
     if (k.state === "nf") return '<span class="badge kd nf">📅 date: not found</span>';
     const e = k.x.e, days = kdDays(k.x);
@@ -544,7 +559,7 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
       '<div class="call-h">' + (c.time ? '<span class="ctime">' + esc(c.time) + '</span>' : "") +
         '<span class="cname">' + esc(c.name || c.company || "") + '</span>' + (c.role ? '<span class="crole">' + esc(c.role) + '</span>' : "") + '</div>' +
       (c.company && c.name ? '<div class="ccomp">' + esc(c.company) + '</div>' : "") +
-      '<div class="badges">' + kdBadge(c) + (urgent ? '<span class="badge urg">URGENT</span>' : "") +
+      '<div class="badges">' + kdBadge(c) + emailStatusBadge(c) + (urgent ? '<span class="badge urg">URGENT</span>' : "") +
         (c.chapter ? '<span class="badge ch">' + esc(c.chapter) + '</span>' : "") +
         (c.big_upside ? '<span class="badge ok">Big upside</span>' : "") +
         (c.fit ? '<span class="badge fit fit-' + esc(String(c.fit).toLowerCase()) + '">Fit: ' + esc(c.fit) + '</span>' : "") +
@@ -1090,9 +1105,10 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
       const fuNote = (fu.note || h.note_summary || "").trim();
       const fuBadge = fuStatus ? '<div class="cline"><span class="hot-buyer ' + (/awaiting|drafted/i.test(fuStatus) ? "potential" : (/skip/i.test(fuStatus) ? "potential" : "micro1")) + '">✉ ' + esc(fuStatus) + '</span></div>' : "";
       const calledBadge = isDone ? '<span class="badge ok">✓ Called</span>' : "";
+      const emailBadge = emailStatusBadge(h);
       const tog = '<div class="hot-tog">' + (isOpen ? "▾ Hide details" : "▸ Tap for records, company type & follow-ups") + '</div>';
       const detail = isOpen ? '<div class="hot-detail">' + hotDetailHtml(h) + '</div>' : "";
-      return '<div class="meet hot' + (isDone ? " done" : "") + (isOpen ? " open" : "") + '" data-call="' + esc(cid) + '" data-hot="' + esc(cid) + '"><b>' + esc(h.company || "") + '</b><span class="hot-buyer ' + buyerClass(h.buyer) + '">' + esc(buyer) + '</span>' + calledBadge +
+      return '<div class="meet hot' + (isDone ? " done" : "") + (isOpen ? " open" : "") + '" data-call="' + esc(cid) + '" data-hot="' + esc(cid) + '"><b>' + esc(h.company || "") + '</b><span class="hot-buyer ' + buyerClass(h.buyer) + '">' + esc(buyer) + '</span>' + calledBadge + emailBadge +
         '<div class="cline">' + esc([h.contact, h.role].filter(Boolean).join(" · ")) + '</div>' +
         phoneBlock + acts + outs + emlBox + skipBox + noteBox +
         (h.cc ? '<div class="cline">cc: ' + esc(h.cc) + '</div>' : "") +
