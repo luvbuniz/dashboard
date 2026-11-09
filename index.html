@@ -107,6 +107,14 @@
     .rsteps { display:flex; gap:4px; flex-wrap:wrap; margin:4px 0; } .rstep { font-size:11px; padding:2px 7px; border-radius:10px; border:1px solid var(--line); color:var(--muted); } .rstep.on { border-color:var(--copper); color:var(--ink); }
     .meets .cline { color:var(--muted); font-size:14px; } .meets details { font-size:14px; color:var(--muted); margin-top:4px; } .meets summary { cursor:pointer; color:var(--ink); padding:4px 0; }
     .mwhen { font-size:15px; font-weight:600; color:var(--copper); margin-bottom:2px; } .nocall { color:var(--faint); font-style:italic; font-size:13px; }
+    .pipe { border-left-color:#4cc38a; }
+    .pipe-tot { font-size:15px; color:var(--muted); margin:2px 0 8px; }
+    .pipe-tot b { font-size:28px; color:#4cc38a; margin-left:6px; }
+    .pipe-sub { font-size:13px; color:var(--muted); margin:0 0 8px; }
+    .pipe-badge { display:inline-block; font-size:11px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:2px 8px; border-radius:999px; margin-left:6px; vertical-align:middle; }
+    .pipe-badge.potential { background:#fff4e0; color:#9a5b00; }
+    .pipe-badge.sent { background:#e8f6ee; color:#1f6b45; }
+    .pipe-badge.submitted { background:#e8f0ff; color:#2456c8; }
     .hots { border-left-color:#30d158; } .hot-buyer { display:inline-block; font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; padding:2px 8px; border-radius:999px; margin-left:6px; vertical-align:middle; }
     .hot-buyer.mercor { background:#e8f0ff; color:#2456c8; } .hot-buyer.micro1 { background:#e8f6ee; color:#1f6b45; } .hot-buyer.potential { background:#fff4e0; color:#9a5b00; }
     .hot-actions { display:flex; flex-wrap:wrap; gap:8px; margin:8px 0 4px; align-items:center; }
@@ -963,8 +971,13 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
     }
     rows.sort((a, b) => a.first < b.first ? -1 : 1);
     todayRank = {}; rows.forEach((r, i) => { todayRank[r.c.id] = i + 1; });
-    return '<div style="font-size:2rem;font-weight:800;margin:6px 0">📞 ' + rows.length + ' call' + (rows.length === 1 ? "" : "s") + ' today</div>' + avgHtml(calls) + '<details class="cline"><summary><b>Today: ' + rows.length + ' call' + (rows.length === 1 ? "" : "s") + '</b></summary>' +
-      (rows.length ? rows.map((r) => '<div>' + esc(hhmm(r.first)) + " · " + esc(r.c.name || r.c.id) + (r.c.company ? " · " + esc(r.c.company) : "") + " — " + esc(r.outs.join(", ")) + "</div>").join("") : "<div>No outcomes ticked yet today.</div>") + "</details>";
+    const adj = callTallyAdjust(secret || {});
+    const shown = rows.length + (adj ? (adj.extra || 0) : 0);
+    const adjNote = adj ? '<div class="cline">Includes ' + adj.extra + ' untracked call' + (adj.extra === 1 ? "" : "s") + ' Amy confirmed (ticks missed). ' + esc(adj.note || "") + '</div>' : "";
+    return '<div style="font-size:2rem;font-weight:800;margin:6px 0">📞 ' + shown + ' call' + (shown === 1 ? "" : "s") + ' today</div>' + adjNote + avgHtml(calls) + '<details class="cline"><summary><b>Today: ' + shown + ' call' + (shown === 1 ? "" : "s") + '</b>' + (adj ? ' <span class="cline">(' + rows.length + ' ticked + ' + adj.extra + ' untracked)</span>' : "") + '</summary>' +
+      (rows.length ? rows.map((r) => '<div>' + esc(hhmm(r.first)) + " · " + esc(r.c.name || r.c.id) + (r.c.company ? " · " + esc(r.c.company) : "") + " — " + esc(r.outs.join(", ")) + "</div>").join("") : "<div>No outcomes ticked yet today.</div>") +
+      (adj ? '<div style="margin-top:6px;color:var(--muted)">+ ' + adj.extra + ' untracked (leads not identified)</div>' : "") +
+      "</details>";
   }
   document.addEventListener("click", (e) => {   // Call button: log dial only (no tel: / Phone Link)
     const a = e.target.closest && e.target.closest("button.tel, a.tel"); if (!a) return;
@@ -984,9 +997,13 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
       '<div class="cline nocall">No dialing here. Call happens at the meeting time.</div>' +
       (m.prep_notes ? '<details><summary>Prep notes</summary><div class="stext">' + md(m.prep_notes) + '</div></details>' : "") + '</div>').join("") + '</section>';
   }
-  // Referrals tracker (10/30): sd.referrals {buyers:{name:{stages,slots,portal}}, referrals:[{buyer,lead_id,company,listing,submitted,up_to,paid,stage,contact,note}]}
+  // Referrals tracker (10/30) + Pipeline / potential earnings (11/9 PM).
+  // Dollar figures come only from encrypted sd.pipeline / sd.referrals — never data.json.
   const refFor = (sd, cid) => ((sd.referrals && sd.referrals.referrals) || []).find((r) => r.lead_id === cid);
   function refHtml(sd) {
+    const P = sd.pipeline || null;
+    if (P && (P.mercor || P.micro1)) return pipelineHtml(sd);
+    // Fallback: legacy referrals-only panel
     const R = sd.referrals || {}, B = R.buyers || {}, L = Array.isArray(R.referrals) ? R.referrals : [];
     const names = [...new Set(Object.keys(B).concat(L.map((r) => r.buyer)))]; if (!names.length) return "";
     const $ = (n) => "$" + Math.round(n || 0).toLocaleString("en-US");
@@ -1013,6 +1030,63 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
         }).join("") : '<div class="cline">No ' + esc(b) + ' referrals yet</div>') + '</div>';
     }).join("") + '</section>';
   }
+  function pipelineHtml(sd) {
+    const P = sd.pipeline || {}, M = P.mercor || {}, m1 = P.micro1 || {};
+    const $ = (n) => "$" + Math.round(n || 0).toLocaleString("en-US");
+    const mercorTot = M.potential_earnings != null ? M.potential_earnings
+      : (M.rows || []).reduce((a, r) => a + (r.up_to || 0), 0);
+    const m1Note = m1.payout_short || m1.payout_note || "varies, % of deal";
+    const totLine = '<div class="pipe-tot">Total potential: <b>' + $(mercorTot) + '</b>' +
+      ' <span class="pipe-sub">Mercor confirmed max</span></div>' +
+      '<div class="pipe-sub">+ micro1: ' + esc(m1Note) + ' (no fixed $ until a deal signs)</div>';
+    // Mercor section
+    const mRows = Array.isArray(M.rows) ? M.rows : [];
+    const mSum = (M.referred != null ? M.referred : mRows.length) + " referred · " +
+      $(M.paid || 0) + " paid · " + (M.open != null ? M.open : mRows.length) + " open";
+    let mercor = '<div class="refb"><div class="refbh"><b>Mercor</b> <span class="cline">' + esc(mSum) +
+      (mercorTot ? " · Potential " + $(mercorTot) : "") + '</span>' +
+      (M.portal ? ' <a href="' + esc(M.portal) + '" target="_blank" rel="noopener">Portal ↗</a>' : "") + '</div>';
+    mercor += mRows.length ? mRows.map((r) => {
+      const d = r.submitted ? new Date(r.submitted + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "";
+      return '<div class="meet ref"><b>' + esc(r.company || "") + '</b>' +
+        '<span class="pipe-badge submitted">' + esc(r.status || "Submitted") + '</span>' +
+        '<div class="cline">' + esc([r.listing, d, r.up_to && ("Up to " + $(r.up_to))].filter(Boolean).join(" · ")) + '</div>' +
+        (r.past_payouts ? '<div class="cline refup">Past payouts on this listing: ' + esc(r.past_payouts) + '</div>' : "") +
+        ((r.contact || r.note) ? '<div class="cline">' + esc([r.contact, r.note].filter(Boolean).join(" · ")) + '</div>' : "") +
+        '</div>';
+    }).join("") : '<div class="cline">No Mercor referrals yet</div>';
+    mercor += '</div>';
+    // micro1 section
+    const dRows = Array.isArray(m1.deals) ? m1.deals : [];
+    let micro = '<div class="refb"><div class="refbh"><b>micro1</b> <span class="cline">' +
+      dRows.length + " deal" + (dRows.length === 1 ? "" : "s") + " in progress · payout " + esc(m1Note) + '</span></div>';
+    if (m1.payout_note && m1.payout_note !== m1Note) {
+      micro += '<div class="cline refup">' + esc(m1.payout_note) + '</div>';
+    }
+    micro += dRows.length ? dRows.map((r) => {
+      const st = (r.status || "").toLowerCase();
+      const badgeCls = st.indexOf("potential") >= 0 ? "potential" : "sent";
+      const d = r.started ? new Date(r.started + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "";
+      return '<div class="meet ref"><b>' + esc(r.company || "") + '</b>' +
+        '<span class="pipe-badge ' + badgeCls + '">' + esc(r.status || "in progress") + '</span>' +
+        '<div class="cline">' + esc([r.contact, r.role, r.listing, d].filter(Boolean).join(" · ")) + '</div>' +
+        (r.status_detail ? '<div class="cline">' + esc(r.status_detail) + '</div>' : "") +
+        '</div>';
+    }).join("") : '<div class="cline">No micro1 deals in progress</div>';
+    micro += '</div>';
+    // Legacy stage steppers for Mercor rows that also live in referrals (optional detail)
+    return '<section class="meets refs pipe"><h3 class="meets-h">Pipeline / potential earnings</h3>' +
+      totLine + mercor + micro +
+      '<div class="cline" style="margin-top:8px">Private — payout figures stay in the encrypted call list. Never say dollar amounts on a call or put them in email.</div>' +
+      '</section>';
+  }
+  function callTallyAdjust(sd) {
+    const a = (sd && sd.pipeline && sd.pipeline.call_tally_adjust) || null;
+    if (!a || !a.date || !a.extra) return null;
+    if (String(a.date) !== etYmd(Date.now())) return null;
+    return a;
+  }
+
   // Hot leads / ongoing (11/9): sd.hot_leads from encrypted payload; pinned above daily list; survives refresh via hot-leads.json.
   // Call buttons log dials (and share opaque lead_id with daily cards when present); no tel: links (Phone Link on Windows).
   // Tap a hot card to expand the same detail fields regular leads show (company type, records, follow-up history).
