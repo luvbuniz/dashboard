@@ -119,6 +119,18 @@
       .hot-phone .alt { font-size:20px; }
     }
     .hot-status { font-size:13px; color:var(--muted); margin-top:4px; line-height:1.35; }
+    .hot { cursor:pointer; -webkit-tap-highlight-color:transparent; }
+    .hot.open { background:var(--elev); border-radius:10px; padding:10px 12px; margin:6px -4px; }
+    .hot-tog { font-size:12px; color:var(--copper); margin-top:6px; font-weight:600; }
+    .hot-detail { margin-top:8px; padding-top:8px; border-top:1px dashed var(--line); }
+    .hot-detail .badges { margin:4px 0 6px; }
+    .hot-detail .crec { margin-top:6px; }
+    .hot-detail details { font-size:14px; color:var(--muted); margin-top:4px; }
+    .hot-detail summary { cursor:pointer; color:var(--ink); padding:4px 0; }
+    .hot-hist { margin-top:8px; }
+    .hot-hist .hline { font-size:13px; color:var(--muted); padding:3px 0; border-top:1px solid var(--line); }
+    .hot-hist .hline:first-of-type { border-top:0; }
+    .hot-hist .hwhen { color:var(--ink); font-weight:600; margin-right:4px; }
     .badge.mtg { background:var(--copper); color:#fff; }
     .cdur { font-weight:600; margin-left:6px; }
     .tel.sm { background:none; color:var(--copper); font-size:14px; font-weight:500; padding:6px 0; min-height:0; text-decoration:underline; }
@@ -668,6 +680,13 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
   }
   function setTab(k) { spTab = k; try { localStorage.setItem(SP_TAB_KEY, k); } catch {} }
   document.addEventListener("click", (e) => {
+    const hotCard = e.target.closest && e.target.closest(".hot[data-hot]");
+    if (hotCard && !e.target.closest("button, a, textarea, input, summary, details, label")) {
+      const hid = hotCard.dataset.hot || hotCard.dataset.call;
+      hotOpenId = (hotOpenId === hid) ? null : hid;
+      renderCalls();
+      return;
+    }
     const tb = e.target.closest("[data-stab]");
     if (tb) { setTab(tb.dataset.stab); renderCalls(); const sp = document.getElementById("spanel"); if (sp) sp.scrollTop = 0; return; }
     if (e.target.id === "sptoggle") { spCollapsed = !spCollapsed; renderCalls(); return; }
@@ -890,6 +909,8 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
   }
   // Hot leads / ongoing (11/9): sd.hot_leads from encrypted payload; pinned above daily list; survives refresh via hot-leads.json.
   // Call buttons log dials (and share opaque lead_id with daily cards when present); no tel: links (Phone Link on Windows).
+  // Tap a hot card to expand the same detail fields regular leads show (company type, records, follow-up history).
+  let hotOpenId = null;
   function hotLeadId(h) {
     const lid = String((h && h.lead_id) || "").trim();
     if (lid) return lid;
@@ -915,6 +936,101 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
       hot: true,
     };
   }
+  function hotMatchedCall(h) {
+    const lid = String((h && h.lead_id) || "").trim();
+    if (!lid || !secret || !Array.isArray(secret.calls)) return null;
+    return secret.calls.find((c) => c && c.id === lid) || null;
+  }
+  function hotMerged(h) {
+    // Prefer hot-leads.json detail (survives daily refresh); fill gaps from matching daily card.
+    const c = hotMatchedCall(h) || {};
+    const pick = (...keys) => {
+      for (const k of keys) {
+        const v = h[k] != null && String(h[k]).trim() !== "" ? h[k] : null;
+        if (v != null) return v;
+      }
+      for (const k of keys) {
+        const v = c[k] != null && String(c[k]).trim() !== "" ? c[k] : null;
+        if (v != null) return v;
+      }
+      return "";
+    };
+    return {
+      industry: pick("industry", "mercor_industry"),
+      chapter: pick("chapter") || (c.chapter || ""),
+      case: pick("case"),
+      court: pick("court"),
+      filed: pick("filed"),
+      records: pick("records"),
+      records_mention: pick("records_mention"),
+      employees: pick("employees"),
+      years: pick("years"),
+      fit: pick("fit"),
+      fit_why: pick("fit_why"),
+      mercor_industry: pick("mercor_industry"),
+      buyer: pick("buyer") || (h.buyer || ""),
+      company_range: pick("company_range"),
+      events: Array.isArray(h.events) ? h.events : [],
+      last_call: h.last_call || null,
+      status: h.status || "",
+      follow_up_email: h.follow_up_email || {},
+      note_summary: h.note_summary || "",
+    };
+  }
+  function hotDetailHtml(h) {
+    const m = hotMerged(h);
+    const bits = [];
+    const badges = [];
+    if (m.chapter) badges.push('<span class="badge ch">' + esc(m.chapter) + '</span>');
+    if (m.fit) badges.push('<span class="badge fit fit-' + esc(String(m.fit).toLowerCase()) + '">Fit: ' + esc(m.fit) + '</span>');
+    if (m.buyer && !/^potential$/i.test(m.buyer)) badges.push('<span class="badge em">Buyer: ' + esc(m.buyer) + '</span>');
+    if (badges.length) bits.push('<div class="badges">' + badges.join("") + '</div>');
+    if (m.industry) bits.push('<div class="cline"><b>Company:</b> ' + esc(m.industry) + '</div>');
+    const caseBits = [];
+    if (m.chapter) caseBits.push(m.chapter);
+    if (m.case) caseBits.push(m.case);
+    if (m.court) caseBits.push(m.court);
+    if (m.filed) caseBits.push('filed ' + m.filed);
+    if (caseBits.length) bits.push('<div class="cline"><b>Case:</b> ' + esc(caseBits.join(" · ")) + '</div>');
+    if (m.fit || m.fit_why || m.employees || m.years) {
+      let line = '';
+      if (m.fit) line += '<b>Buyer fit:</b> ' + esc(m.fit) + (m.fit_why ? ' · ' + esc(m.fit_why) : '');
+      if (m.employees) line += (line ? ' · ' : '') + '<b>Employees:</b> ' + esc(m.employees);
+      if (m.years) line += (line ? ' · ' : '') + '<b>Years:</b> ' + esc(m.years);
+      bits.push('<div class="cline cfit">' + line + '</div>');
+    }
+    if (m.company_range) bits.push('<div class="cline crange"><b>🏢</b> ' + esc(m.company_range) + '</div>');
+    const mention = String(m.records_mention || "").trim();
+    const records = String(m.records || "").trim();
+    if (mention) bits.push('<div class="cline crec"><b>Records to mention:</b> ' + esc(mention) + '</div>');
+    if (records) bits.push('<details><summary>Records they could sell</summary>' + esc(records) + '</details>');
+    // Follow-up history: events (newest first), else last_call + follow_up_email + status
+    const hist = [];
+    const evs = (m.events || []).slice().reverse();
+    for (const e of evs) {
+      if (!e) continue;
+      const when = [e.date, e.time_et].filter(Boolean).join(" ");
+      const kind = e.type || e.outcome || "update";
+      const note = e.note || "";
+      if (!when && !note) continue;
+      hist.push('<div class="hline"><span class="hwhen">' + esc(when || "") + '</span> ' + esc(kind) + (note ? ' — ' + esc(note) : "") + '</div>');
+    }
+    if (!hist.length) {
+      if (m.last_call) {
+        const lc = m.last_call;
+        const when = [lc.date, lc.time_et].filter(Boolean).join(" ");
+        hist.push('<div class="hline"><span class="hwhen">' + esc(when) + '</span> call' + (lc.outcome ? ' · ' + esc(lc.outcome) : "") + (lc.note ? ' — ' + esc(lc.note) : "") + '</div>');
+      }
+      const fu = m.follow_up_email || {};
+      if (fu.status || fu.note) {
+        hist.push('<div class="hline"><span class="hwhen">email</span> ' + esc(fu.status || "") + (fu.note ? ' — ' + esc(fu.note) : "") + '</div>');
+      }
+      if (m.note_summary) hist.push('<div class="hline">' + esc(m.note_summary) + '</div>');
+    }
+    if (hist.length) bits.push('<div class="hot-hist"><div class="cline"><b>Follow-ups:</b></div>' + hist.join("") + '</div>');
+    if (!bits.length) return '<div class="cline">No extra detail on file yet.</div>';
+    return bits.join("");
+  }
   function hotLeadsHtml(sd) {
     const L = hotLeadsList(sd);
     if (!L.length) return "";
@@ -930,13 +1046,14 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
       if (/^potential$/i.test(s)) return "Potential";
       return s;
     };
-    return '<section class="meets hots"><h3 class="meets-h">🔥 Hot leads · ongoing</h3><div class="cline">Pinned — stays here every day. Numbers shown big for manual dial; Call logs the attempt (no Phone Link).</div>' + L.map((h) => {
+    return '<section class="meets hots"><h3 class="meets-h">🔥 Hot leads · ongoing</h3><div class="cline">Pinned — stays here every day. Tap a card for records, company type, and follow-ups. Numbers shown big for manual dial; Call logs the attempt (no Phone Link).</div>' + L.map((h) => {
       const cid = hotLeadId(h);
       const phone = (h.phone || h.direct_phone || "").trim();
       const alt = (h.phone_alt || "").trim();
       const email = (h.email || "").trim();
       const buyer = buyerLabel(h.buyer);
       const isDone = cid && callDone({ id: cid });
+      const isOpen = cid && hotOpenId === cid;
       let phoneBlock = "";
       if (phone) {
         phoneBlock = '<div class="hot-phone"><span class="num">' + esc(phone) + '</span>';
@@ -973,13 +1090,16 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
       const fuNote = (fu.note || h.note_summary || "").trim();
       const fuBadge = fuStatus ? '<div class="cline"><span class="hot-buyer ' + (/awaiting|drafted/i.test(fuStatus) ? "potential" : (/skip/i.test(fuStatus) ? "potential" : "micro1")) + '">✉ ' + esc(fuStatus) + '</span></div>' : "";
       const calledBadge = isDone ? '<span class="badge ok">✓ Called</span>' : "";
-      return '<div class="meet hot' + (isDone ? " done" : "") + '" data-call="' + esc(cid) + '"><b>' + esc(h.company || "") + '</b><span class="hot-buyer ' + buyerClass(h.buyer) + '">' + esc(buyer) + '</span>' + calledBadge +
+      const tog = '<div class="hot-tog">' + (isOpen ? "▾ Hide details" : "▸ Tap for records, company type & follow-ups") + '</div>';
+      const detail = isOpen ? '<div class="hot-detail">' + hotDetailHtml(h) + '</div>' : "";
+      return '<div class="meet hot' + (isDone ? " done" : "") + (isOpen ? " open" : "") + '" data-call="' + esc(cid) + '" data-hot="' + esc(cid) + '"><b>' + esc(h.company || "") + '</b><span class="hot-buyer ' + buyerClass(h.buyer) + '">' + esc(buyer) + '</span>' + calledBadge +
         '<div class="cline">' + esc([h.contact, h.role].filter(Boolean).join(" · ")) + '</div>' +
         phoneBlock + acts + outs + emlBox + skipBox + noteBox +
         (h.cc ? '<div class="cline">cc: ' + esc(h.cc) + '</div>' : "") +
         (h.status ? '<div class="hot-status">' + esc(h.status) + '</div>' : "") +
         fuBadge +
-        (fuNote ? '<div class="hot-status">Follow-up: ' + esc(fuNote) + '</div>' : "") +
+        (fuNote && !isOpen ? '<div class="hot-status">Follow-up: ' + esc(fuNote) + '</div>' : "") +
+        tog + detail +
         '</div>';
     }).join("") + '</section>';
   }
