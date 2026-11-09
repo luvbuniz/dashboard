@@ -111,6 +111,13 @@
     .hot-buyer.mercor { background:#e8f0ff; color:#2456c8; } .hot-buyer.micro1 { background:#e8f6ee; color:#1f6b45; } .hot-buyer.potential { background:#fff4e0; color:#9a5b00; }
     .hot-actions { display:flex; flex-wrap:wrap; gap:8px; margin:8px 0 4px; align-items:center; }
     .hot-actions .mail { display:inline-flex; align-items:center; gap:6px; background:var(--elev); color:var(--ink); border:1px solid var(--line); text-decoration:none; font-weight:600; font-size:14px; padding:8px 14px; border-radius:999px; min-height:40px; }
+    .hot-phone { font-size:22px; font-weight:800; letter-spacing:.02em; color:var(--ink); margin:6px 0 2px; font-variant-numeric:tabular-nums; line-height:1.2; }
+    .hot-phone a { color:inherit; text-decoration:none; }
+    .hot-phone .alt { display:block; font-size:18px; font-weight:700; color:var(--muted); margin-top:4px; }
+    @media (max-width:480px) {
+      .hot-phone { font-size:26px; }
+      .hot-phone .alt { font-size:20px; }
+    }
     .hot-status { font-size:13px; color:var(--muted); margin-top:4px; line-height:1.35; }
     .badge.mtg { background:var(--copper); color:#fff; }
     .cdur { font-weight:600; margin-left:6px; }
@@ -516,10 +523,10 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
     const tr = c.trustee && c.trustee.status === "verified" ? c.trustee : null, trNF = c.trustee && c.trustee.status === "not_found";
     const co = c.counsel || null;
     const whoHtml = tr ? '<div class="who wt"><div class="wlab"><span class="k">1 · Call first</span>Trustee: <b>' + esc(tr.name) + '</b></div>' +
-        (tr.phone ? '<a class="tel" data-who="trustee" href="' + esc(telHref(tr.phone)) + '">📞 Call Trustee: ' + esc(tr.name) + ' · ' + esc(tr.phone) + '</a>' : '<span class="cline">No trustee phone on file</span>') +
+        (tr.phone ? '<div class="hot-phone"><a data-who="trustee" href="' + esc(telHref(tr.phone)) + '">' + esc(tr.phone) + '</a></div><a class="tel" data-who="trustee" href="' + esc(telHref(tr.phone)) + '">📞 Call Trustee: ' + esc(tr.name) + ' · ' + esc(tr.phone) + '</a>' : '<span class="cline">No trustee phone on file</span>') +
         (tr.email ? '<div class="cmail">✉ ' + esc(tr.email) + '</div>' : "") + '</div>' +
       (co ? '<div class="who wc"><div class="wlab"><span class="k">2 · Then</span>Counsel: <b>' + esc(co.name) + '</b>' + (co.role ? ' <span class="crole">' + esc(co.role) + '</span>' : "") + '</div>' +
-        (co.phone ? '<a class="tel c2" data-who="counsel" href="' + esc(telHref(co.phone)) + '">📞 Call Counsel · ' + esc(co.phone) + '</a>' : "") +
+        (co.phone ? '<div class="hot-phone"><a data-who="counsel" href="' + esc(telHref(co.phone)) + '">' + esc(co.phone) + '</a></div><a class="tel c2" data-who="counsel" href="' + esc(telHref(co.phone)) + '">📞 Call Counsel · ' + esc(co.phone) + '</a>' : "") +
         (co.email ? '<div class="cmail">✉ ' + esc(co.email) + '</div>' : "") + '</div>' : "") : "";
     return '<div class="call' + (urgent ? " urgent" : "") + (isDone ? " done" : "") + (isArchivedAttempt(c) ? " archived" : "") + (c.id === spCall ? " active" : "") + '" data-call="' + esc(c.id) + '">' +
       '<div class="call-h">' + (c.time ? '<span class="ctime">' + esc(c.time) + '</span>' : "") +
@@ -536,7 +543,8 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
         meetFor(secret || {}, c.id).map((m) => '<span class="badge mtg">📅 Meeting ' + esc(m.label || m.start) + '</span>').join("") +
         (isEml(c.id) ? '<span class="badge eml">✉ Email requested</span>' : "") + (isSkipped(c.id) ? '<span class="badge skp">Skipped</span>' : isDone ? '<span class="badge ok">✓ Called</span>' : "") + '</div>' +
       (isSkipped(c.id) ? '<div class="cline cskip"><b>Skip reason:</b> ' + (skips[c.id] ? esc(skips[c.id]) : '<i>' + (skips[c.id] === "" ? "none given" : "saved on another device (Riley has it)") + '</i>') + '</div>' : "") +
-      (tr ? whoHtml : '<div class="phones">' + (big ? '<a class="tel" href="' + esc(telHref(big)) + '">📞 Call ' + esc(big) + (c.direct_phone ? " · direct" : "") + '</a>' : '<span class="cline">No phone on file</span>') +
+      (tr ? whoHtml : (big ? '<div class="hot-phone"><a href="' + esc(telHref(big)) + '">' + esc(big) + '</a>' + (small ? '<span class="alt">Main: <a href="' + esc(telHref(small)) + '">' + esc(small) + '</a></span>' : '') + '</div>' : '<div class="cline">No phone on file</div>') +
+        '<div class="phones">' + (big ? '<a class="tel" href="' + esc(telHref(big)) + '">📞 Call ' + esc(big) + (c.direct_phone ? " · direct" : "") + '</a>' : '') +
         (small ? '<a class="tel sm" href="' + esc(telHref(small)) + '">📞 Call main office ' + esc(small) + '</a>' : "") + '</div>' +
       (c.email ? '<div class="cmail">✉ ' + esc(c.email) + '</div>' : "")) + (focusMode ? askLine(c) : "") +
       (c.signal ? '<div class="cline csig"><b>🚩 ' + esc(c.signal) + (c.signal_date ? " · " + esc(c.signal_date) : "") + ':</b> ' + esc(c.signal_detail || "") +
@@ -889,15 +897,23 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
       if (/^potential$/i.test(s)) return "Potential";
       return s;
     };
-    return '<section class="meets hots"><h3 class="meets-h">🔥 Hot leads · ongoing</h3><div class="cline">Pinned — stays here every day. Tap Call or Email.</div>' + L.map((h) => {
+    return '<section class="meets hots"><h3 class="meets-h">🔥 Hot leads · ongoing</h3><div class="cline">Pinned — stays here every day. Numbers shown big for manual dial; Call still works if you want it.</div>' + L.map((h) => {
       const phone = (h.phone || h.direct_phone || "").trim();
       const alt = (h.phone_alt || "").trim();
       const email = (h.email || "").trim();
       const buyer = buyerLabel(h.buyer);
+      // Large plain-text numbers for manual dial (Bluetooth); tel: links kept on the number and Call button.
+      let phoneBlock = "";
+      if (phone) {
+        phoneBlock = '<div class="hot-phone"><a href="' + esc(telHref(phone)) + '">' + esc(phone) + '</a>';
+        if (alt && alt !== phone) phoneBlock += '<span class="alt">Alt: <a href="' + esc(telHref(alt)) + '">' + esc(alt) + '</a></span>';
+        phoneBlock += '</div>';
+      } else {
+        phoneBlock = '<div class="cline">📞 phone: missing</div>';
+      }
       let acts = '<div class="hot-actions">';
-      if (phone) acts += '<a class="tel" href="' + esc(telHref(phone)) + '">📞 Call ' + esc(h.contact || phone) + '</a>';
-      else acts += '<span class="cline">📞 phone: missing</span>';
-      if (alt && alt !== phone) acts += '<a class="tel sm" href="' + esc(telHref(alt)) + '">Alt ' + esc(alt) + '</a>';
+      if (phone) acts += '<a class="tel" href="' + esc(telHref(phone)) + '">📞 Call ' + esc(phone) + '</a>';
+      if (alt && alt !== phone) acts += '<a class="tel sm" href="' + esc(telHref(alt)) + '">📞 Alt ' + esc(alt) + '</a>';
       if (email) acts += '<a class="mail" href="mailto:' + esc(email) + '">✉ ' + esc(email) + '</a>';
       else acts += '<span class="cline">✉ email: missing</span>';
       acts += '</div>';
@@ -907,7 +923,7 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
       const fuBadge = fuStatus ? '<div class="cline"><span class="hot-buyer ' + (/awaiting|drafted/i.test(fuStatus) ? "potential" : (/skip/i.test(fuStatus) ? "potential" : "micro1")) + '">✉ ' + esc(fuStatus) + '</span></div>' : "";
       return '<div class="meet hot"><b>' + esc(h.company || "") + '</b><span class="hot-buyer ' + buyerClass(h.buyer) + '">' + esc(buyer) + '</span>' +
         '<div class="cline">' + esc([h.contact, h.role].filter(Boolean).join(" · ")) + '</div>' +
-        acts +
+        phoneBlock + acts +
         (h.cc ? '<div class="cline">cc: ' + esc(h.cc) + '</div>' : "") +
         (h.status ? '<div class="hot-status">' + esc(h.status) + '</div>' : "") +
         fuBadge +
