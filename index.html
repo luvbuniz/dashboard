@@ -901,11 +901,17 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
       if (email) acts += '<a class="mail" href="mailto:' + esc(email) + '">✉ ' + esc(email) + '</a>';
       else acts += '<span class="cline">✉ email: missing</span>';
       acts += '</div>';
+      const fu = h.follow_up_email || {};
+      const fuStatus = (fu.status || "").trim();
+      const fuNote = (fu.note || h.note_summary || "").trim();
+      const fuBadge = fuStatus ? '<div class="cline"><span class="hot-buyer ' + (/awaiting|drafted/i.test(fuStatus) ? "potential" : (/skip/i.test(fuStatus) ? "potential" : "micro1")) + '">✉ ' + esc(fuStatus) + '</span></div>' : "";
       return '<div class="meet hot"><b>' + esc(h.company || "") + '</b><span class="hot-buyer ' + buyerClass(h.buyer) + '">' + esc(buyer) + '</span>' +
         '<div class="cline">' + esc([h.contact, h.role].filter(Boolean).join(" · ")) + '</div>' +
         acts +
         (h.cc ? '<div class="cline">cc: ' + esc(h.cc) + '</div>' : "") +
         (h.status ? '<div class="hot-status">' + esc(h.status) + '</div>' : "") +
+        fuBadge +
+        (fuNote ? '<div class="hot-status">Follow-up: ' + esc(fuNote) + '</div>' : "") +
         '</div>';
     }).join("") + '</section>';
   }
