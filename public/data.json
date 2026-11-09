@@ -1,55 +1,55 @@
 {
-  "updated": "2026-11-06T07:23:23-05:00",
-  "heading": "Friday, Nov 6",
-  "kicker": "Last kid day · working from Panera",
-  "message": "Kari Bowyer at noon (prep 11:45). If Unique pay + ShareFile e-sign still open, knock that out this morning, then calls from the Call leads card after Kari.",
+  "updated": "2026-11-09T07:30:00-05:00",
+  "heading": "Monday, Nov 9",
+  "kicker": "Project week · no kids",
+  "message": "Calls first: the 5 start-here pre-bankruptcy calls at 9 (Schwebel auctions start Nov 17). Endodontist at 1 PM, then more calls. Project week, so a one-hour cleaning block fits tonight, vacuum included.",
   "frog": {
-    "id": "d1106-kari",
-    "text": "Kari Bowyer / Orinove call at 12 PM",
-    "note": "Prep 11:45 · simplified intake · Mercor Biotech & Life Sciences Lab OK · also raise Chris Haltom Floors 🐸"
+    "id": "d1109-calls",
+    "text": "Calls from 9:00 (Call leads card)",
+    "note": "Start with the 5 pre-bankruptcy calls: Schwebel (Jacen Dinoff), Mara Technologies, then NanoCellect / Glowforge / Enevate 🐸"
   },
   "today": [
     {
-      "id": "d1106-unique",
-      "text": "1. Unique Accounting: pay invoices + e-sign 2025 returns",
-      "note": "Carried · $1,525 MX Merchant · ShareFile PIN 36287 · still unread as of this morning"
+      "id": "d1109-calls",
+      "text": "1. Calls from 9:00 (Call leads card)",
+      "note": "Start-here pre-bankruptcy 5, then Chapter 7 · ~6 dials per Pomodoro · check-in 2:15 PM"
     },
     {
-      "id": "d1106-kari",
-      "text": "2. Kari Bowyer call (Orinove)",
-      "note": "Prep 11:45 · call 12:00–12:30 · (408) 641-1327 · notes on the Buni calendar"
+      "id": "d1109-replies",
+      "text": "2. Check for replies from Friday's intakes",
+      "note": "Kari Bowyer (Orinove), Fred Hjelmeset (Light & Motion), Catherine Curtis / Julie Koenig (Prime Eco)"
     },
     {
-      "id": "d1106-calls",
-      "text": "3. Calls (Call leads card)",
-      "note": "After Kari · start with Mohawk Melissa Heshmat + Jose Cordova · check-in 2:15 PM"
+      "id": "d1109-endo",
+      "text": "3. Endodontics, 1–2 PM",
+      "note": "Lakewood Ranch Endodontics, 5485 Lena Rd · tooth #21 · (941) 896-4915"
     },
     {
-      "id": "d1106-followups",
-      "text": "4. Any of last Friday's follow-up emails still unsent",
-      "note": "Carolyn Dye, Beau Butler via Pat Lowe, Brian Shapiro, plus Peter Mastan's OK to submit"
+      "id": "d1109-calls-pm",
+      "text": "4. More calls after the dentist",
+      "note": "Pick up where the morning left off on the Call leads card"
     },
     {
-      "id": "d1106-hoa780",
+      "id": "d1109-hoa780",
       "text": "5. Call about the $780 HOA check (Nevada's Finest)",
       "note": "Carried · Stephanie Bills"
     },
     {
-      "id": "d1106-printing",
-      "text": "6. Printing Research: see if Areya replied",
-      "note": "Last Amy follow-up was Mon 11/3 · check Mercor progress bar"
+      "id": "d1109-followups",
+      "text": "6. Any older call follow-up emails still unsent",
+      "note": "Carolyn Dye, Beau Butler via Pat Lowe, Brian Shapiro, plus Peter Mastan's OK to submit"
     },
     {
-      "id": "d1106-pickup",
-      "text": "7. School pickup, kids time",
-      "note": "Last day of kid week · Treats for Troops ends today"
+      "id": "d1109-clean",
+      "text": "7. Cleaning block, 1 hour",
+      "note": "Project week · podcast + oven timer · vacuum is fine while the kids are away"
     }
   ],
   "quick": [
-    "Skim Kari Bowyer / Orinove intake notes before 11:45 (10 min)",
     "Reply to Lea Cathey's Etsy message (10 min)",
+    "Pull $175 for tomorrow's handgun class balance (5 min)",
+    "Jot notes for tomorrow's no-screens trial review (5 min)",
     "Check if the micro1 robotics gig is still open (5 min)",
-    "Handshake Project Chromium: say yes or no (5 min)",
     "Send Pewter the firm no-meeting reply if not sent (5 min)"
   ],
   "lanes": [
@@ -60,18 +60,18 @@
       "tag": "TOP PRIORITY",
       "tasks": [
         {
-          "id": "d1106-kari-lane",
-          "text": "Kari Bowyer / Orinove call at 12 PM",
-          "note": "Prep 11:45 · get OK for Mercor Biotech & Life Sciences Lab referral"
+          "id": "d1109-calls-lane",
+          "text": "Calls today (Call leads card)",
+          "note": "9:00 start-here pre-bankruptcy 5 · Schwebel auctions from Nov 17 · more after the 1 PM dentist"
         },
         {
-          "id": "d1106-calls-lane",
-          "text": "Calls after Kari (Call leads card)",
-          "note": "Mohawk Melissa (518) 281-4430 + Jose (518) 419-1094 · check-in 2:15 PM"
+          "id": "d1109-replies-lane",
+          "text": "Watch for intake replies",
+          "note": "Orinove (Kari Bowyer), Light & Motion (Fred Hjelmeset), Prime Eco (Catherine Curtis) · all sent 11/6"
         },
         {
           "id": "d1106-followups-lane",
-          "text": "Send last Friday's call follow-up emails (if not done)",
+          "text": "Send older call follow-up emails (if not done)",
           "note": "Carolyn Dye, Beau Butler (via Pat Lowe), Brian Shapiro; Peter Mastan OK'd submitting Bruce's Entertainment"
         },
         {
@@ -103,11 +103,12 @@
       "waiting": [
         "Lawyer cost replies: Peal, Moore, Lapointe, Silberstein",
         "Marc Yaverbaum's broker detail for Techcyte",
-        "Insala Tech Genie / systems reply (Giancarlo)"
+        "Insala Tech Genie / systems reply (Giancarlo)",
+        "Orinove, Light & Motion and Prime Eco intake replies"
       ],
       "facts": [
         "LinkedIn attorney outreach routine runs around 10:30 AM",
-        "Kari Bowyer (Orinove trustee) call: today Fri 11/6, 12 PM ET (prep 11:45)",
+        "Kari Bowyer call done Fri 11/6 · Orinove 341 on 11/18",
         "Buyer order: Mercor → micro1 → Handshake; Pewter optional/last (firm no-meeting reply)",
         "Mercor referrals in: Cyber-Dive (sale hearing 11/19, status check Tue 11/10) and Printing Research"
       ]
@@ -118,9 +119,9 @@
       "name": "Admin",
       "tasks": [
         {
-          "id": "d1106-unique-lane",
-          "text": "Unique Accounting: pay $1,525 + ShareFile e-sign",
-          "note": "Invoices #43494 + #43493 · PIN 36287 · IRS personal ~$1,031 after filing · ShareFile still unread"
+          "id": "d1109-unique-lane",
+          "text": "Unique Accounting: e-sign the 2025 returns if not done",
+          "note": "$1,525 fees paid ✓ · IRS personal ~$1,031 still owed · tax reminder Thu 11/12"
         },
         {
           "id": "d1106-hoa780-lane",
@@ -217,7 +218,7 @@
         {
           "id": "home-strip-bed",
           "text": "Strip the bed, sheets in the washer",
-          "note": "10 min · when back at the apartment"
+          "note": "10 min"
         },
         {
           "id": "home-counters",
@@ -247,7 +248,7 @@
         {
           "id": "home-vacuum",
           "text": "Vacuum the living room",
-          "note": "15 min · save for project week (Fiona)"
+          "note": "15 min · project week, OK now"
         }
       ]
     },
@@ -257,47 +258,25 @@
       "name": "Kids & calendar",
       "tasks": [],
       "facts": [
-        "Kids with you through tonight Fri 11/6 · no-screens trial runs through Mon 11/9 (review Tue 11/10)",
-        "Treats for Troops candy collection at Witt ends today",
-        "Mon 11/9 · Endodontics, 1 PM, Lakewood Ranch Endodontics (tooth #21)",
-        "Tue 11/10 · Women's Intro to Handguns, 10 AM–1:30 PM, Shoot Straight Sarasota ($175 balance due)",
+        "Project week · kid week ended Fri 11/6",
+        "Today Mon 11/9 · Endodontics, 1 PM, Lakewood Ranch Endodontics (tooth #21) · no-screens trial's last day",
+        "Tue 11/10 · Women's Intro to Handguns, 10 AM–1:30 PM, Shoot Straight Sarasota ($175 balance due) · screen-trial review",
         "Wed 11/11 · Rubino Check Up, 10:30 AM · Veterans Day, no school at Witt",
+        "Sat 11/14 · Grok Bot Meetup Tampa Bay, 1–4 PM, Embarc Collective",
         "Thu 11/19 · Fiona's school meeting, 10 AM (on the calendar)"
       ]
     }
   ],
   "week": [
     {
-      "day": "Fri",
-      "date": "11/6",
-      "items": [
-        "Kari Bowyer call 12 PM (prep 11:45)",
-        "Kid week ends · Treats for Troops ends"
-      ],
-      "today": true
-    },
-    {
-      "day": "Sat",
-      "date": "11/7",
-      "items": [],
-      "today": false
-    },
-    {
-      "day": "Sun",
-      "date": "11/8",
-      "items": [],
-      "trash": true,
-      "today": false
-    },
-    {
       "day": "Mon",
       "date": "11/9",
       "items": [
-        "Endodontics 1 PM",
+        "Calls from 9 · Endodontics 1 PM",
         "No-screens trial ends"
       ],
       "trash": true,
-      "today": false
+      "today": true
     },
     {
       "day": "Tue",
@@ -314,6 +293,28 @@
       "items": [
         "Rubino Check Up 10:30 AM",
         "Veterans Day · no school"
+      ],
+      "today": false
+    },
+    {
+      "day": "Thu",
+      "date": "11/12",
+      "items": [
+        "Taxes: pay IRS + returns for Penny"
+      ],
+      "today": false
+    },
+    {
+      "day": "Fri",
+      "date": "11/13",
+      "items": [],
+      "today": false
+    },
+    {
+      "day": "Sat",
+      "date": "11/14",
+      "items": [
+        "Grok Bot Meetup Tampa 1–4 PM"
       ],
       "today": false
     }
