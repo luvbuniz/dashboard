@@ -107,6 +107,11 @@
     .rsteps { display:flex; gap:4px; flex-wrap:wrap; margin:4px 0; } .rstep { font-size:11px; padding:2px 7px; border-radius:10px; border:1px solid var(--line); color:var(--muted); } .rstep.on { border-color:var(--copper); color:var(--ink); }
     .meets .cline { color:var(--muted); font-size:14px; } .meets details { font-size:14px; color:var(--muted); margin-top:4px; } .meets summary { cursor:pointer; color:var(--ink); padding:4px 0; }
     .mwhen { font-size:15px; font-weight:600; color:var(--copper); margin-bottom:2px; } .nocall { color:var(--faint); font-style:italic; font-size:13px; }
+    .hots { border-left-color:#30d158; } .hot-buyer { display:inline-block; font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; padding:2px 8px; border-radius:999px; margin-left:6px; vertical-align:middle; }
+    .hot-buyer.mercor { background:#e8f0ff; color:#2456c8; } .hot-buyer.micro1 { background:#e8f6ee; color:#1f6b45; } .hot-buyer.potential { background:#fff4e0; color:#9a5b00; }
+    .hot-actions { display:flex; flex-wrap:wrap; gap:8px; margin:8px 0 4px; align-items:center; }
+    .hot-actions .mail { display:inline-flex; align-items:center; gap:6px; background:var(--elev); color:var(--ink); border:1px solid var(--line); text-decoration:none; font-weight:600; font-size:14px; padding:8px 14px; border-radius:999px; min-height:40px; }
+    .hot-status { font-size:13px; color:var(--muted); margin-top:4px; line-height:1.35; }
     .badge.mtg { background:var(--copper); color:#fff; }
     .cdur { font-weight:600; margin-left:6px; }
     .tel.sm { background:none; color:var(--copper); font-size:14px; font-weight:500; padding:6px 0; min-height:0; text-decoration:underline; }
@@ -867,6 +872,43 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
         }).join("") : '<div class="cline">No ' + esc(b) + ' referrals yet</div>') + '</div>';
     }).join("") + '</section>';
   }
+  // Hot leads / ongoing (11/9): sd.hot_leads from encrypted payload; pinned above daily list; survives refresh via hot-leads.json.
+  function hotLeadsHtml(sd) {
+    const H = sd.hot_leads || {};
+    const L = Array.isArray(H.leads) ? H.leads : (Array.isArray(H) ? H : []);
+    if (!L.length) return "";
+    const buyerClass = (b) => {
+      const s = String(b || "").toLowerCase();
+      if (s === "mercor") return "mercor";
+      if (s === "micro1") return "micro1";
+      return "potential";
+    };
+    const buyerLabel = (b) => {
+      const s = String(b || "").trim();
+      if (!s) return "Potential";
+      if (/^potential$/i.test(s)) return "Potential";
+      return s;
+    };
+    return '<section class="meets hots"><h3 class="meets-h">🔥 Hot leads · ongoing</h3><div class="cline">Pinned — stays here every day. Tap Call or Email.</div>' + L.map((h) => {
+      const phone = (h.phone || h.direct_phone || "").trim();
+      const alt = (h.phone_alt || "").trim();
+      const email = (h.email || "").trim();
+      const buyer = buyerLabel(h.buyer);
+      let acts = '<div class="hot-actions">';
+      if (phone) acts += '<a class="tel" href="' + esc(telHref(phone)) + '">📞 Call ' + esc(h.contact || phone) + '</a>';
+      else acts += '<span class="cline">📞 phone: missing</span>';
+      if (alt && alt !== phone) acts += '<a class="tel sm" href="' + esc(telHref(alt)) + '">Alt ' + esc(alt) + '</a>';
+      if (email) acts += '<a class="mail" href="mailto:' + esc(email) + '">✉ ' + esc(email) + '</a>';
+      else acts += '<span class="cline">✉ email: missing</span>';
+      acts += '</div>';
+      return '<div class="meet hot"><b>' + esc(h.company || "") + '</b><span class="hot-buyer ' + buyerClass(h.buyer) + '">' + esc(buyer) + '</span>' +
+        '<div class="cline">' + esc([h.contact, h.role].filter(Boolean).join(" · ")) + '</div>' +
+        acts +
+        (h.cc ? '<div class="cline">cc: ' + esc(h.cc) + '</div>' : "") +
+        (h.status ? '<div class="hot-status">' + esc(h.status) + '</div>' : "") +
+        '</div>';
+    }).join("") + '</section>';
+  }
   function avgHtml(calls) {
     const today = etYmd(Date.now()), S = { "Avg voicemail": [], "Avg live call": [], "Avg gatekeeper": [] };
     for (const c of calls) {
@@ -1098,8 +1140,8 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
     if (!allCalls.length) h += '<div class="empty">No calls today. 🎉 When there\'s a call list, Riley puts it here at 7am.</div>';
     else {
       const n = calls.length, d = calls.filter(callDone).length;
-      h += focusMode ? '<details class="fmextra"><summary class="csec">Meetings, referrals &amp; today\'s stats</summary>' + meetHtml(sd) + refHtml(sd) + todayCallsHtml(allCalls) + '</details>' + sessHtml()
-        : meetHtml(sd) + refHtml(sd) + sessHtml() + todayCallsHtml(allCalls);
+      h += focusMode ? '<details class="fmextra"><summary class="csec">Hot leads, meetings, referrals &amp; today\'s stats</summary>' + hotLeadsHtml(sd) + meetHtml(sd) + refHtml(sd) + todayCallsHtml(allCalls) + '</details>' + sessHtml()
+        : hotLeadsHtml(sd) + meetHtml(sd) + refHtml(sd) + sessHtml() + todayCallsHtml(allCalls);
       if (pbCalls.length) h += '<div class="ltabs">' + [["main", "Chapter 7 & main", mainCalls], ["prebk", "Pre-bankruptcy (ABC / receivership)", pbCalls]].map(([k, l, g]) => {
         const q = g.filter((c) => !isArchivedAttempt(c));
         return '<button type="button" class="ltab' + (k === listTab ? " on" : "") + '" data-ltab="' + k + '">' + esc(l) + " (" + q.filter(callDone).length + "/" + q.length + ")</button>";
