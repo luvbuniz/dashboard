@@ -951,7 +951,23 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
       if (email) acts += '<a class="mail" href="mailto:' + esc(email) + '">✉ ' + esc(email) + '</a>';
       else acts += '<span class="cline">✉ email: missing</span>';
       acts += '</div>';
-      const outs = cid ? '<div class="outs">' + OUTCOMES.map(([k, l]) => '<button type="button" class="out' + (done["call:" + cid + ":" + k] ? " on" : "") + '" data-call="' + esc(cid) + '" data-out="' + k + '">' + l + '</button>').join("") + '</div>' : "";
+      const localNote = cid ? (notes[cid] || "") : "";
+      const nst = cid ? noteStatus(cid) : { cls: "", text: "" };
+      const outs = cid ? '<div class="outs">' + OUTCOMES.map(([k, l]) => '<button type="button" class="out' + (done["call:" + cid + ":" + k] ? " on" : "") + '" data-call="' + esc(cid) + '" data-out="' + k + '">' + l + '</button>').join("") +
+        '<button type="button" class="skipbtn' + (isSkipped(cid) ? " on" : "") + (skipOpen[cid] ? " open" : "") + '" data-skip="' + esc(cid) + '">' + (isSkipped(cid) ? "Skipped ✎" : "Skip") + '</button>' +
+        '<button type="button" class="skipbtn emlbtn' + (isEml(cid) ? " on" : "") + (emlOpen[cid] ? " open" : "") + '" data-eml="' + esc(cid) + '">' + (isEml(cid) ? "✉ Requested ✎" : "✉ Email") + '</button>' +
+        (() => { const d = durOf(cid); return d ? ' <span class="cdur">⏱ ' + (d.v === "unknown" ? "?" : fmtDur(+d.v)) + "</span>" : ""; })() + '</div>' : "";
+      const emlBox = (cid && emlOpen[cid]) ? ((v) => '<div class="cskipbox cemlbox"><input type="email" placeholder="Email address (optional)" data-emladdr="' + esc(cid) + '" value="' + esc(v[0]) + '">' +
+        '<input type="text" maxlength="200" placeholder="What to say (e.g. wants intake form)" data-emlnote="' + esc(cid) + '" value="' + esc(v.slice(1).join("|")) + '">' +
+        '<div class="skrow"><button type="button" class="sksave" data-emlsave="' + esc(cid) + '">Save</button>' +
+        (isEml(cid) ? '<button type="button" class="skun" data-emlclear="' + esc(cid) + '">Clear request</button>' : "") +
+        '<button type="button" class="skcancel" data-emlclose="' + esc(cid) + '">Cancel</button></div></div>')((emls[cid] != null ? emls[cid] : (email || "") + "|").split("|")) : "";
+      const skipBox = (cid && skipOpen[cid]) ? '<div class="cskipbox"><textarea maxlength="200" rows="2" placeholder="Why skip? (e.g. photo rights too tricky)" data-skipreason="' + esc(cid) + '">' + esc(skips[cid] || "") + '</textarea>' +
+        '<div class="skrow"><button type="button" class="sksave" data-skipsave="' + esc(cid) + '"' + (skipBusy[cid] ? " disabled" : "") + '>' + (skipBusy[cid] ? "Saving…" : isSkipped(cid) ? "Save reason" : "Save") + '</button>' +
+        (isSkipped(cid) ? '<button type="button" class="skun" data-unskip="' + esc(cid) + '">Un-skip</button>' : "") +
+        '<button type="button" class="skcancel" data-skipclose="' + esc(cid) + '">Cancel</button></div></div>' : "";
+      const noteBox = cid ? '<div class="cnote"><textarea maxlength="200" rows="1" placeholder="Quick note (who answered, call back when…)" data-note="' + esc(cid) + '">' + esc(localNote) + '</textarea><button type="button" data-savenote="' + esc(cid) + '"' + (noteBusy[cid] ? " disabled" : "") + (noteFlash[cid] > Date.now() ? ' class="saved"' : "") + '>' + (noteBusy[cid] ? "Saving…" : noteFlash[cid] > Date.now() ? "Saved ✓" : "Save") + '</button></div>' +
+        '<div class="nstat' + (nst.cls ? " " + nst.cls : "") + '" id="nstat-' + esc(cid) + '">' + esc(nst.text) + '</div>' : "";
       const fu = h.follow_up_email || {};
       const fuStatus = (fu.status || "").trim();
       const fuNote = (fu.note || h.note_summary || "").trim();
@@ -959,7 +975,7 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
       const calledBadge = isDone ? '<span class="badge ok">✓ Called</span>' : "";
       return '<div class="meet hot' + (isDone ? " done" : "") + '" data-call="' + esc(cid) + '"><b>' + esc(h.company || "") + '</b><span class="hot-buyer ' + buyerClass(h.buyer) + '">' + esc(buyer) + '</span>' + calledBadge +
         '<div class="cline">' + esc([h.contact, h.role].filter(Boolean).join(" · ")) + '</div>' +
-        phoneBlock + acts + outs +
+        phoneBlock + acts + outs + emlBox + skipBox + noteBox +
         (h.cc ? '<div class="cline">cc: ' + esc(h.cc) + '</div>' : "") +
         (h.status ? '<div class="hot-status">' + esc(h.status) + '</div>' : "") +
         fuBadge +
