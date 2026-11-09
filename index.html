@@ -99,7 +99,7 @@
     .badge.ch { color:var(--copper); background:var(--copper-dim); border-color:transparent; }
     .badge.ok { background:var(--ok); color:#fff; border-color:var(--ok); }
     .phones { display:flex; flex-wrap:wrap; align-items:center; gap:6px 12px; margin:6px 0; }
-    .tel { display:inline-flex; align-items:center; gap:6px; background:var(--copper); color:#fff; text-decoration:none; font-weight:600; font-size:17px; padding:10px 16px; border-radius:999px; min-height:44px; }
+    .tel { display:inline-flex; align-items:center; gap:6px; background:var(--copper); color:#fff; text-decoration:none; font-weight:600; font-size:17px; padding:10px 16px; border-radius:999px; min-height:44px; border:0; cursor:pointer; font-family:inherit; }
     .meets { border:1px solid var(--line); border-left:3px solid var(--copper); background:var(--panel); color:var(--ink); border-radius:var(--r); padding:12px 16px; margin:8px 0 22px; }
     .meets-h { margin:0 0 8px; font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); font-weight:600; } .meet { padding:10px 0; border-top:1px solid var(--line); } .meet:first-of-type{border-top:0}
     .reftot { font-size:15px; color:var(--muted); margin:2px 0 6px; } .reftot b { font-size:28px; color:#4cc38a; margin-left:6px; } .refup { font-size:12px !important; color:#e0a060 !important; }
@@ -112,7 +112,7 @@
     .hot-actions { display:flex; flex-wrap:wrap; gap:8px; margin:8px 0 4px; align-items:center; }
     .hot-actions .mail { display:inline-flex; align-items:center; gap:6px; background:var(--elev); color:var(--ink); border:1px solid var(--line); text-decoration:none; font-weight:600; font-size:14px; padding:8px 14px; border-radius:999px; min-height:40px; }
     .hot-phone { font-size:22px; font-weight:800; letter-spacing:.02em; color:var(--ink); margin:6px 0 2px; font-variant-numeric:tabular-nums; line-height:1.2; }
-    .hot-phone a { color:inherit; text-decoration:none; }
+    .hot-phone span.num { color:inherit; }
     .hot-phone .alt { display:block; font-size:18px; font-weight:700; color:var(--muted); margin-top:4px; }
     @media (max-width:480px) {
       .hot-phone { font-size:26px; }
@@ -506,7 +506,7 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
     let hh = callHtml0(c); const r = todayRank[c.id];
     const fm = meetFor(secret || {}, c.id).find((m) => etYmd(Date.parse(m.start)) > etYmd(Date.now()));
     if (fm) {   // meeting on a future day: no dialing from the card until that day
-      hh = hh.replace(/<a class="tel[^"]*"[^>]*>[\s\S]*?<\/a>/g, "");
+      hh = hh.replace(/<a class="tel[^"]*"[^>]*>[\s\S]*?<\/a>/g, "").replace(/<button type="button" class="tel[^"]*"[^>]*>[\s\S]*?<\/button>/g, "");
       hh = hh.replace('<div class="phones">', '<div class="phones"><span class="nocall">📅 Meeting ' + esc(mtgDay(fm)) + ", don't call</span>");
     }
     if (!r) return hh;
@@ -523,10 +523,10 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
     const tr = c.trustee && c.trustee.status === "verified" ? c.trustee : null, trNF = c.trustee && c.trustee.status === "not_found";
     const co = c.counsel || null;
     const whoHtml = tr ? '<div class="who wt"><div class="wlab"><span class="k">1 · Call first</span>Trustee: <b>' + esc(tr.name) + '</b></div>' +
-        (tr.phone ? '<div class="hot-phone"><a data-who="trustee" href="' + esc(telHref(tr.phone)) + '">' + esc(tr.phone) + '</a></div><a class="tel" data-who="trustee" href="' + esc(telHref(tr.phone)) + '">📞 Call Trustee: ' + esc(tr.name) + ' · ' + esc(tr.phone) + '</a>' : '<span class="cline">No trustee phone on file</span>') +
+        (tr.phone ? '<div class="hot-phone"><span class="num">' + esc(tr.phone) + '</span></div><button type="button" class="tel" data-who="trustee">📞 Call Trustee: ' + esc(tr.name) + ' · ' + esc(tr.phone) + '</button>' : '<span class="cline">No trustee phone on file</span>') +
         (tr.email ? '<div class="cmail">✉ ' + esc(tr.email) + '</div>' : "") + '</div>' +
       (co ? '<div class="who wc"><div class="wlab"><span class="k">2 · Then</span>Counsel: <b>' + esc(co.name) + '</b>' + (co.role ? ' <span class="crole">' + esc(co.role) + '</span>' : "") + '</div>' +
-        (co.phone ? '<div class="hot-phone"><a data-who="counsel" href="' + esc(telHref(co.phone)) + '">' + esc(co.phone) + '</a></div><a class="tel c2" data-who="counsel" href="' + esc(telHref(co.phone)) + '">📞 Call Counsel · ' + esc(co.phone) + '</a>' : "") +
+        (co.phone ? '<div class="hot-phone"><span class="num">' + esc(co.phone) + '</span></div><button type="button" class="tel c2" data-who="counsel">📞 Call Counsel · ' + esc(co.phone) + '</button>' : "") +
         (co.email ? '<div class="cmail">✉ ' + esc(co.email) + '</div>' : "") + '</div>' : "") : "";
     return '<div class="call' + (urgent ? " urgent" : "") + (isDone ? " done" : "") + (isArchivedAttempt(c) ? " archived" : "") + (c.id === spCall ? " active" : "") + '" data-call="' + esc(c.id) + '">' +
       '<div class="call-h">' + (c.time ? '<span class="ctime">' + esc(c.time) + '</span>' : "") +
@@ -543,9 +543,9 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
         meetFor(secret || {}, c.id).map((m) => '<span class="badge mtg">📅 Meeting ' + esc(m.label || m.start) + '</span>').join("") +
         (isEml(c.id) ? '<span class="badge eml">✉ Email requested</span>' : "") + (isSkipped(c.id) ? '<span class="badge skp">Skipped</span>' : isDone ? '<span class="badge ok">✓ Called</span>' : "") + '</div>' +
       (isSkipped(c.id) ? '<div class="cline cskip"><b>Skip reason:</b> ' + (skips[c.id] ? esc(skips[c.id]) : '<i>' + (skips[c.id] === "" ? "none given" : "saved on another device (Riley has it)") + '</i>') + '</div>' : "") +
-      (tr ? whoHtml : (big ? '<div class="hot-phone"><a href="' + esc(telHref(big)) + '">' + esc(big) + '</a>' + (small ? '<span class="alt">Main: <a href="' + esc(telHref(small)) + '">' + esc(small) + '</a></span>' : '') + '</div>' : '<div class="cline">No phone on file</div>') +
-        '<div class="phones">' + (big ? '<a class="tel" href="' + esc(telHref(big)) + '">📞 Call ' + esc(big) + (c.direct_phone ? " · direct" : "") + '</a>' : '') +
-        (small ? '<a class="tel sm" href="' + esc(telHref(small)) + '">📞 Call main office ' + esc(small) + '</a>' : "") + '</div>' +
+      (tr ? whoHtml : (big ? '<div class="hot-phone"><span class="num">' + esc(big) + '</span>' + (small ? '<span class="alt">Main: ' + esc(small) + '</span>' : '') + '</div>' : '<div class="cline">No phone on file</div>') +
+        '<div class="phones">' + (big ? '<button type="button" class="tel">📞 Call ' + esc(big) + (c.direct_phone ? " · direct" : "") + '</button>' : '') +
+        (small ? '<button type="button" class="tel sm">📞 Call main office ' + esc(small) + '</button>' : "") + '</div>' +
       (c.email ? '<div class="cmail">✉ ' + esc(c.email) + '</div>' : "")) + (focusMode ? askLine(c) : "") +
       (c.signal ? '<div class="cline csig"><b>🚩 ' + esc(c.signal) + (c.signal_date ? " · " + esc(c.signal_date) : "") + ':</b> ' + esc(c.signal_detail || "") +
         (c.source_url ? ' <a href="' + esc(c.source_url) + '" target="_blank" rel="noopener">source ↗</a>' : "") + (c.city_state ? '<br>📍 ' + esc(c.city_state) : "") + '</div>' : "") +
@@ -824,8 +824,14 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
   document.addEventListener("visibilitychange", () => { if (!document.hidden) pRender(); });
   setInterval(pRender, 1000); pRender();
   function todayCallsHtml(calls) {
-    const today = etYmd(Date.now()), rows = [];
-    for (const c of calls) {
+    const today = etYmd(Date.now()), rows = [], seen = new Set();
+    const pool = (calls || []).slice();
+    for (const h of hotLeadsList(secret || {})) {
+      const hc = hotAsCall(h); if (!hc || seen.has(hc.id) || pool.some((c) => c.id === hc.id)) continue;
+      pool.push(hc);
+    }
+    for (const c of pool) {
+      if (seen.has(c.id)) continue; seen.add(c.id);
       let first = null; const outs = [];
       for (const [k, lab] of OUTCOMES) { const v = done["call:" + c.id + ":" + k]; if (v && !isNaN(Date.parse(v)) && etYmd(v) === today) { outs.push(lab); if (!first || v < first) first = v; } }
       if (first) rows.push({ c, first, outs });
@@ -835,8 +841,10 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
     return '<div style="font-size:2rem;font-weight:800;margin:6px 0">📞 ' + rows.length + ' call' + (rows.length === 1 ? "" : "s") + ' today</div>' + avgHtml(calls) + '<details class="cline"><summary><b>Today: ' + rows.length + ' call' + (rows.length === 1 ? "" : "s") + '</b></summary>' +
       (rows.length ? rows.map((r) => '<div>' + esc(hhmm(r.first)) + " · " + esc(r.c.name || r.c.id) + (r.c.company ? " · " + esc(r.c.company) : "") + " — " + esc(r.outs.join(", ")) + "</div>").join("") : "<div>No outcomes ticked yet today.</div>") + "</details>";
   }
-  document.addEventListener("click", (e) => {   // Call button: record dial time (link still opens dialer / Phone Link)
-    const a = e.target.closest && e.target.closest("a.tel"), card = a && a.closest(".call[data-call]"); if (!card) return;
+  document.addEventListener("click", (e) => {   // Call button: log dial only (no tel: / Phone Link)
+    const a = e.target.closest && e.target.closest("button.tel, a.tel"); if (!a) return;
+    const card = a.closest(".call[data-call], .hot[data-call]"); if (!card) return;
+    e.preventDefault();
     const k = "call:" + card.dataset.call + ":dialed", iso = new Date().toISOString();
     done[k] = iso; save(DONE_KEY, done); pushTick(k, iso, true);
   }, true);
@@ -881,9 +889,34 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
     }).join("") + '</section>';
   }
   // Hot leads / ongoing (11/9): sd.hot_leads from encrypted payload; pinned above daily list; survives refresh via hot-leads.json.
+  // Call buttons log dials (and share opaque lead_id with daily cards when present); no tel: links (Phone Link on Windows).
+  function hotLeadId(h) {
+    const lid = String((h && h.lead_id) || "").trim();
+    if (lid) return lid;
+    return String((h && h.id) || "").trim();
+  }
+  function hotLeadsList(sd) {
+    const H = (sd && sd.hot_leads) || {};
+    return Array.isArray(H.leads) ? H.leads : (Array.isArray(H) ? H : []);
+  }
+  function hotAsCall(h) {
+    const id = hotLeadId(h);
+    if (!id) return null;
+    return {
+      id,
+      name: h.contact || "",
+      company: h.company || "",
+      role: h.role || "",
+      phone: h.phone || "",
+      phone_alt: h.phone_alt || "",
+      email: h.email || "",
+      section: "Hot leads",
+      tags: ["hot"],
+      hot: true,
+    };
+  }
   function hotLeadsHtml(sd) {
-    const H = sd.hot_leads || {};
-    const L = Array.isArray(H.leads) ? H.leads : (Array.isArray(H) ? H : []);
+    const L = hotLeadsList(sd);
     if (!L.length) return "";
     const buyerClass = (b) => {
       const s = String(b || "").toLowerCase();
@@ -897,33 +930,36 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
       if (/^potential$/i.test(s)) return "Potential";
       return s;
     };
-    return '<section class="meets hots"><h3 class="meets-h">🔥 Hot leads · ongoing</h3><div class="cline">Pinned — stays here every day. Numbers shown big for manual dial; Call still works if you want it.</div>' + L.map((h) => {
+    return '<section class="meets hots"><h3 class="meets-h">🔥 Hot leads · ongoing</h3><div class="cline">Pinned — stays here every day. Numbers shown big for manual dial; Call logs the attempt (no Phone Link).</div>' + L.map((h) => {
+      const cid = hotLeadId(h);
       const phone = (h.phone || h.direct_phone || "").trim();
       const alt = (h.phone_alt || "").trim();
       const email = (h.email || "").trim();
       const buyer = buyerLabel(h.buyer);
-      // Large plain-text numbers for manual dial (Bluetooth); tel: links kept on the number and Call button.
+      const isDone = cid && callDone({ id: cid });
       let phoneBlock = "";
       if (phone) {
-        phoneBlock = '<div class="hot-phone"><a href="' + esc(telHref(phone)) + '">' + esc(phone) + '</a>';
-        if (alt && alt !== phone) phoneBlock += '<span class="alt">Alt: <a href="' + esc(telHref(alt)) + '">' + esc(alt) + '</a></span>';
+        phoneBlock = '<div class="hot-phone"><span class="num">' + esc(phone) + '</span>';
+        if (alt && alt !== phone) phoneBlock += '<span class="alt">Alt: ' + esc(alt) + '</span>';
         phoneBlock += '</div>';
       } else {
         phoneBlock = '<div class="cline">📞 phone: missing</div>';
       }
       let acts = '<div class="hot-actions">';
-      if (phone) acts += '<a class="tel" href="' + esc(telHref(phone)) + '">📞 Call ' + esc(phone) + '</a>';
-      if (alt && alt !== phone) acts += '<a class="tel sm" href="' + esc(telHref(alt)) + '">📞 Alt ' + esc(alt) + '</a>';
+      if (phone && cid) acts += '<button type="button" class="tel">📞 Call ' + esc(phone) + '</button>';
+      if (alt && alt !== phone && cid) acts += '<button type="button" class="tel sm">📞 Alt ' + esc(alt) + '</button>';
       if (email) acts += '<a class="mail" href="mailto:' + esc(email) + '">✉ ' + esc(email) + '</a>';
       else acts += '<span class="cline">✉ email: missing</span>';
       acts += '</div>';
+      const outs = cid ? '<div class="outs">' + OUTCOMES.map(([k, l]) => '<button type="button" class="out' + (done["call:" + cid + ":" + k] ? " on" : "") + '" data-call="' + esc(cid) + '" data-out="' + k + '">' + l + '</button>').join("") + '</div>' : "";
       const fu = h.follow_up_email || {};
       const fuStatus = (fu.status || "").trim();
       const fuNote = (fu.note || h.note_summary || "").trim();
       const fuBadge = fuStatus ? '<div class="cline"><span class="hot-buyer ' + (/awaiting|drafted/i.test(fuStatus) ? "potential" : (/skip/i.test(fuStatus) ? "potential" : "micro1")) + '">✉ ' + esc(fuStatus) + '</span></div>' : "";
-      return '<div class="meet hot"><b>' + esc(h.company || "") + '</b><span class="hot-buyer ' + buyerClass(h.buyer) + '">' + esc(buyer) + '</span>' +
+      const calledBadge = isDone ? '<span class="badge ok">✓ Called</span>' : "";
+      return '<div class="meet hot' + (isDone ? " done" : "") + '" data-call="' + esc(cid) + '"><b>' + esc(h.company || "") + '</b><span class="hot-buyer ' + buyerClass(h.buyer) + '">' + esc(buyer) + '</span>' + calledBadge +
         '<div class="cline">' + esc([h.contact, h.role].filter(Boolean).join(" · ")) + '</div>' +
-        phoneBlock + acts +
+        phoneBlock + acts + outs +
         (h.cc ? '<div class="cline">cc: ' + esc(h.cc) + '</div>' : "") +
         (h.status ? '<div class="hot-status">' + esc(h.status) + '</div>' : "") +
         fuBadge +
@@ -1157,6 +1193,10 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
     const calls = tabCalls.filter((c) => !isArchivedAttempt(c));
     const archivedCalls = tabCalls.filter(isArchivedAttempt);
     allCalls.forEach((c) => { labels["call:" + c.id] = { label: [c.name, c.company].filter(Boolean).join(" · "), lane: "calls" }; });
+    for (const h of hotLeadsList(sd)) {
+      const hc = hotAsCall(h); if (!hc) continue;
+      if (!labels["call:" + hc.id]) labels["call:" + hc.id] = { label: [hc.name, hc.company].filter(Boolean).join(" · "), lane: "calls" };
+    }
     const spOld = document.getElementById("spanel"), spScroll = spOld ? spOld.scrollTop : 0;
     let h = "";
     if (!allCalls.length) h += '<div class="empty">No calls today. 🎉 When there\'s a call list, Riley puts it here at 7am.</div>';
