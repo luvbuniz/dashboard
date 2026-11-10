@@ -23,7 +23,7 @@
     }
     * { box-sizing:border-box; }
     html,body { margin:0; background:var(--bg); color:var(--ink); }
-    body { font-family:"IBM Plex Sans",system-ui,-apple-system,sans-serif; font-size:16px; line-height:1.45; -webkit-text-size-adjust:100%; }
+    body { font-family:"IBM Plex Sans",system-ui,-apple-system,sans-serif; font-size:16px; line-height:1.45; -webkit-text-size-adjust:100%; padding-top:calc(env(safe-area-inset-top, 0px) + var(--pomo-h, 52px)); }
     .wrap { max-width:1080px; margin:0 auto; padding:20px 16px calc(40px + env(safe-area-inset-bottom)); }
     header { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:flex-end; gap:8px 16px; }
     .kicker { font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--faint); font-weight:500; }
@@ -250,9 +250,9 @@
     }
     /* 📱 Landscape phone: two panels (11/4 pm) — left contact/call, right script + outcomes */
     @media (orientation:landscape) and (max-height:520px) {
-      body.fm-on #pomo { position:static; padding:3px 10px; margin:2px 0 6px; box-shadow:none; }
-      body.fm-on #pomo .pclk { font-size:1.1rem; } body.fm-on #pomo button { min-height:30px; padding:4px 10px; }
-      body.fm-on #pomo .pmsg, body.fm-on #pomo .psm, body.fm-on #pomo details { display:none; }
+      body.fm-on #pomo { padding:3px 10px; margin:0 0 6px; }
+      body.fm-on #pomo .pclk { font-size:1.15rem; } body.fm-on #pomo button { min-height:30px; padding:4px 10px; }
+      body.fm-on #pomo .pmsg, body.fm-on #pomo details { display:none; }
       .focus.land { display:grid; grid-template-columns:minmax(0,44%) minmax(0,56%); gap:12px; align-items:start; }
       .focus.land .fmL, .focus.land .fmR { position:sticky; top:4px; max-height:calc(100vh - 8px); overflow:auto; overscroll-behavior:contain; }
       .focus.land .fmR .spanel { margin-top:0; }
@@ -272,7 +272,7 @@
     body.callpage .wrap > *:not(#calls-sec) { display:none !important; }
     body.callpage #calls-sec > h2, body.callpage .startcall, body.callpage .fmextra, body.callpage .fmbar { display:none; }
     body.callpage .wrap { padding-top:0; }
-    .fmtop { position:sticky; top:0; z-index:60; display:flex; flex-wrap:wrap; align-items:center; gap:8px; padding:6px 0; background:var(--bg); border-bottom:1px solid var(--line); margin-bottom:8px; }
+    .fmtop { position:sticky; top:calc(env(safe-area-inset-top, 0px) + var(--pomo-h, 52px)); z-index:70; display:flex; flex-wrap:wrap; align-items:center; gap:8px; padding:6px 0; background:var(--bg); border-bottom:1px solid var(--line); margin-bottom:8px; }
     .fmtop-nav { flex:1 1 100%; display:flex; align-items:center; gap:8px; min-width:0; }
     .fmtop .fmpos { flex:1; min-width:0; font-size:14px; line-height:1.2; }
     .fmtop a.home { color:var(--muted); text-decoration:none; font-size:22px; padding:0 6px; min-height:52px; display:flex; align-items:center; }
@@ -300,7 +300,7 @@
       .fmtop { padding:4px 0; margin-bottom:6px; } .fmtop-nav button { min-height:46px; }
       .callfind input, .callfind .qclear { min-height:44px; }
       .callhits { max-height:calc(100vh - 120px); }
-      body.callpage #pomo, body.callpage .calls-top, body.callpage #calls .pbar { display:none; }
+      body.callpage .calls-top, body.callpage #calls .pbar { display:none; }
       body.callpage .ltab { min-height:32px; padding:4px 10px; font-size:13px; } body.callpage .ltabs { margin:4px 0; }
       .focus.land .fmL, .focus.land .fmR { top:calc(var(--fmtop-h, 100px) + 4px); max-height:calc(100vh - var(--fmtop-h, 100px) - 8px); }
       .focus.land .stext { font-size:16px; line-height:1.45; } .focus.land .spanel { padding:8px 10px; }
@@ -316,17 +316,18 @@
     .ltabs { display:flex; gap:6px; flex-wrap:wrap; margin:8px 0; }
     .ltab { background:var(--panel); color:var(--ink); border:1px solid var(--line); border-radius:8px; font:inherit; font-size:14px; padding:8px 12px; min-height:40px; cursor:pointer; }
     .ltab.on { background:var(--copper); border-color:var(--copper); color:#fff; font-weight:600; }
-    #pomo { position:sticky; top:0; z-index:50; background:#1d1a17; color:#f4ece4; border:1px solid #e8792b; border-radius:10px; padding:8px 12px; margin:6px 0 10px; box-shadow:0 2px 8px rgba(0,0,0,.35); }
+    #pomo { position:fixed; top:env(safe-area-inset-top, 0px); left:16px; right:16px; max-width:1080px; margin:0 auto; z-index:80; background:#1d1a17; color:#f4ece4; border:1px solid #e8792b; border-radius:10px; padding:5px 10px; box-shadow:0 2px 8px rgba(0,0,0,.35); box-sizing:border-box; }
     #pomo.brk { background:#163226; border-color:#3fae7a; }
-    #pomo .prow { display:flex; flex-wrap:wrap; align-items:center; gap:6px 14px; }
-    #pomo button { background:#e8792b; color:#fff; border:0; border-radius:8px; font:inherit; font-weight:600; padding:7px 12px; min-height:38px; cursor:pointer; }
+    #pomo .prow { display:flex; flex-wrap:wrap; align-items:center; gap:4px 10px; }
+    #pomo button { background:#e8792b; color:#fff; border:0; border-radius:8px; font:inherit; font-weight:600; padding:6px 10px; min-height:36px; cursor:pointer; }
     #pomo.brk button { background:#3fae7a; } #pomo button.sec { background:transparent; border:1px solid #8a7a6a; color:#f4ece4; }
-    #pomo .pclk { font-size:1.9rem; font-weight:800; font-variant-numeric:tabular-nums; letter-spacing:1px; }
-    #pomo .pbar { display:inline-block; width:90px; height:7px; background:#3a332c; border-radius:4px; vertical-align:middle; overflow:hidden; }
+    #pomo .pclk { font-size:1.45rem; font-weight:800; font-variant-numeric:tabular-nums; letter-spacing:1px; }
+    #pomo .pbar { display:inline-block; width:72px; height:6px; background:#3a332c; border-radius:4px; vertical-align:middle; overflow:hidden; }
     #pomo .pbar i { display:block; height:100%; background:#e8792b; }
     #pomo .pmsg { font-size:13px; color:#bfe8d2; } #pomo .psm { font-size:13px; color:#c9b9a8; }
+    #pomo .pcount { font-weight:800; font-variant-numeric:tabular-nums; white-space:nowrap; margin-left:auto; }
     #pomo details { font-size:13px; color:#c9b9a8; margin-top:4px; }
-    @media print { #pomo { display:none !important; } }
+    @media print { #pomo { display:none !important; } body { padding-top:0 !important; } }
   </style>
 </head>
 <body>
@@ -374,6 +375,39 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
   const DONE_KEY = "amy-day-v2-done", OUT_KEY = "amy-day-v2-outbox";
   const QUOTES = [ { t: "How we spend our days is, of course, how we spend our lives.", by: "Annie Dillard" },{ t: "Start where you are. Use what you have. Do what you can.", by: "Arthur Ashe" },{ t: "You do not rise to the level of your goals. You fall to the level of your systems.", by: "James Clear" },{ t: "It always seems impossible until it's done.", by: "Nelson Mandela" },{ t: "The best way out is always through.", by: "Robert Frost" },{ t: "You can do anything, but not everything.", by: "David Allen" },{ t: "Focus on being productive instead of busy.", by: "Tim Ferriss" },{ t: "Action isn't just the effect of motivation; it's also the cause of it.", by: "Mark Manson" },{ t: "Nothing is so fatiguing as the eternal hanging on of an uncompleted task.", by: "William James" },{ t: "Just five minutes. You're allowed to quit after five minutes. (You won't.)", by: "the Frog" },{ t: "Well done is better than well said.", by: "Benjamin Franklin" },{ t: "Success is the sum of small efforts, repeated day in and day out.", by: "Robert Collier" },{ t: "Finish each day and be done with it. You have done what you could.", by: "Ralph Waldo Emerson" },{ t: "Tomorrow is always fresh, with no mistakes in it.", by: "L. M. Montgomery" },{ t: "Don't count the days; make the days count.", by: "Muhammad Ali" },{ t: "Momentum or it dies. Small daily touches count.", by: "house rule" },{ t: "Receipts beat vibes.", by: "house motto" } ];
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+  function empUnknown(emp) {
+    const s = String(emp ?? "").trim();
+    return !s || /^(unknown|n\/a|n\.a\.|none|\?|-+)$/i.test(s);
+  }
+  function revenueLabel(c) {
+    if (!c) return "";
+    const ready = String(c.revenue_display || "").trim();
+    if (ready) return ready;
+    let amt = String(c.revenue || c.peak_revenue || "").trim();
+    if (!amt) return "";
+    if (/^rev\b/i.test(amt)) return amt;
+    if (/^\d/.test(amt) && !/^\$/.test(amt)) amt = "$" + amt;
+    if (/^\$/.test(amt) && amt[0] !== "~") amt = "~" + amt;
+    const year = String(c.revenue_year || c.peak_revenue_year || "").trim();
+    let src = String(c.revenue_source || c.peak_revenue_source || "").trim();
+    if (src && !/\best\.?\b/i.test(src)) src = src + " est.";
+    const tail = [year, src].filter(Boolean).join(", ");
+    return "Rev " + amt + (tail ? " (" + tail + ")" : " (estimate)");
+  }
+  function scaleText(c) {
+    if (!empUnknown(c && c.employees)) return { kind: "employees", text: String(c.employees).trim() };
+    const rev = revenueLabel(c);
+    if (rev) return { kind: "revenue", text: rev };
+    return null;
+  }
+  function scaleHtml(c, badge) {
+    const s = scaleText(c);
+    if (!s) return "";
+    const b = badge || "";
+    if (s.kind === "employees") return "<b>Employees:</b> " + esc(s.text) + b;
+    return "<b>Peak revenue (est.):</b> " + esc(s.text) + b;
+  }
+
   const load = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } };
   const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
   const device = /iPhone|iPad/.test(navigator.userAgent) ? "iPhone" : /Android/.test(navigator.userAgent) ? "Android" : /Mac/.test(navigator.userAgent) ? "Mac" : "browser";
@@ -478,6 +512,16 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
   const callDone = (c) => isSkipped(c.id) || OUTCOMES.some(([k]) => done["call:" + c.id + ":" + k]);
   const meetingsNow = () => (secret && Array.isArray(secret.meetings) ? secret.meetings : []);
   const isArchivedAttempt = (c) => attemptArchived(c, done, meetingsNow());
+  function isOffQueue(c) {
+    if (isArchivedAttempt(c)) return true;
+    if (c && (c.archived === true || c.archived === "true")) return true;
+    return /^(archived|closed)\b/i.test(String((c && c.status) || ""));
+  }
+  function archiveBadge(c) {
+    if (isArchivedAttempt(c)) return '<span class="badge skp">Archived · 3 attempts</span>';
+    if (isOffQueue(c)) return '<span class="badge skp">Archived</span>';
+    return "";
+  }
   // ---- court dates (341 / hearings / bar dates) ----
   const ETZ = "America/New_York";
   function kdEvents(c) {
@@ -593,7 +637,7 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
       (co ? '<div class="who wc"><div class="wlab"><span class="k">2 · Then</span>Counsel: <b>' + esc(co.name) + '</b>' + (co.role ? ' <span class="crole">' + esc(co.role) + '</span>' : "") + '</div>' +
         (co.phone ? '<div class="hot-phone"><span class="num">' + esc(co.phone) + '</span></div><button type="button" class="tel c2" data-who="counsel">📞 Call Counsel · ' + esc(co.phone) + '</button>' : "") +
         (co.email ? '<div class="cmail">✉ ' + esc(co.email) + '</div>' : "") + '</div>' : "") : "";
-    return '<div class="call' + (urgent ? " urgent" : "") + (isDone ? " done" : "") + (isArchivedAttempt(c) ? " archived" : "") + (c.id === spCall ? " active" : "") + '" data-call="' + esc(c.id) + '">' +
+    return '<div class="call' + (urgent ? " urgent" : "") + (isDone ? " done" : "") + (isOffQueue(c) ? " archived" : "") + (c.id === spCall ? " active" : "") + '" data-call="' + esc(c.id) + '">' +
       '<div class="call-h">' + (c.time ? '<span class="ctime">' + esc(c.time) + '</span>' : "") +
         '<span class="cname">' + esc(c.name || c.company || "") + '</span>' + (c.role ? '<span class="crole">' + esc(c.role) + '</span>' : "") + '</div>' +
       (c.company && c.name ? '<div class="ccomp">' + esc(c.company) + '</div>' : "") +
@@ -602,7 +646,7 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
         (c.big_upside ? '<span class="badge ok">Big upside</span>' : "") +
         (c.fit ? '<span class="badge fit fit-' + esc(String(c.fit).toLowerCase()) + '">Fit: ' + esc(c.fit) + '</span>' : "") +
         (c.script_tag ? '<span class="badge">' + esc(c.script_tag) + '</span>' : "") +
-        ((ab, note) => (ab ? '<span class="badge att">' + esc(ab) + '</span>' : "") + (note ? '<span class="badge">' + esc(note) + '</span>' : "") + (isArchivedAttempt(c) ? '<span class="badge skp">Archived · 3 attempts</span>' : ""))(attemptBadgeText(c, done), attemptNote(c)) +
+        ((ab, note) => (ab ? '<span class="badge att">' + esc(ab) + '</span>' : "") + (note ? '<span class="badge">' + esc(note) + '</span>' : "") + archiveBadge(c))(attemptBadgeText(c, done), attemptNote(c)) +
         (tr ? '<span class="badge urg">CALL TRUSTEE FIRST</span>' : trNF ? '<span class="badge tnf">trustee: not found</span>' : "") +
         ((rf) => rf ? '<span class="badge em">🤝 Referred: ' + esc(rf.buyer) + '</span>' : "")(refFor(secret || {}, c.id)) + (Array.isArray(c.tags) ? c.tags.map((t) => '<span class="badge em">' + (/^emailed/i.test(t) ? "✉ " : "") + esc(t) + '</span>').join("") : "") +
         meetFor(secret || {}, c.id).map((m) => '<span class="badge mtg">📅 Meeting ' + esc(m.label || m.start) + '</span>').join("") +
@@ -615,7 +659,7 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
       (c.signal ? '<div class="cline csig"><b>🚩 ' + esc(c.signal) + (c.signal_date ? " · " + esc(c.signal_date) : "") + ':</b> ' + esc(c.signal_detail || "") +
         (c.source_url ? ' <a href="' + esc(c.source_url) + '" target="_blank" rel="noopener">source ↗</a>' : "") + (c.city_state ? '<br>📍 ' + esc(c.city_state) : "") + '</div>' : "") +
       (c.why && !c.signal ? '<div class="cline"><b>Why:</b> ' + esc(c.why) + '</div>' : "") +
-      kdLine(c) + (c.fit ? '<div class="cline cfit"><b>Buyer fit:</b> ' + esc(c.fit) + (c.fit_why ? ' · ' + esc(c.fit_why) : "") + (c.employees ? ' · <b>Employees:</b> ' + esc(c.employees) : "") + (c.emp_badge ? ' <span class="badge kd soon">' + esc(c.emp_badge) + '</span>' : "") + '</div>' : (c.employees ? '<div class="cline cfit"><b>Employees:</b> ' + esc(c.employees) + (c.emp_badge ? ' <span class="badge kd soon">' + esc(c.emp_badge) + '</span>' : "") + '</div>' : "")) +
+      kdLine(c) + (c.fit || scaleText(c) ? '<div class="cline cfit">' + (c.fit ? '<b>Buyer fit:</b> ' + esc(c.fit) + (c.fit_why ? ' · ' + esc(c.fit_why) : "") : "") + ((c.fit && scaleText(c)) ? ' · ' : "") + scaleHtml(c, c.emp_badge ? ' <span class="badge kd soon">' + esc(c.emp_badge) + '</span>' : "") + '</div>' : "") +
       (c.payout ? '<div class="cline cpay"><b>💰 Your payout (est.):</b> ' + String(c.payout).split(' || ').map(esc).join('<br>') + '</div>' : "") +
       (c.company_range ? '<div class="cline crange"><b>🏢</b> ' + esc(c.company_range) + '</div>' : "") +
       (c.other_avenues ? '<div class="cline cav"><b>Other avenues:</b> ' + esc(c.other_avenues) + '</div>' : "") + '<div class="cline crec"><b>Records to mention:</b> ' + esc(recMention(c)) + '</div>' +
@@ -923,9 +967,31 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
     const mid = !run ? '<span class="pclk">25:00</span><span class="psm">25 min focus · 5 min break · every 4th break 15</span>'
       : brk ? '<span class="pclk">' + mmss(left) + '</span><b>' + (P.block % 4 === 0 ? "Long break" : "Break") + '</b><span class="pmsg">Break: send your email requests, stretch, water · ✉ ' + td.emails + ' email request' + (td.emails === 1 ? "" : "s") + ' today</span>'
       : '<span class="pclk">' + mmss(left) + '</span><b>Block ' + P.block + '</b><span>Dials this block: <b>' + n + ' / ' + PGOAL + '</b> <span class="pbar"><i style="width:' + Math.min(100, n / PGOAL * 100) + '%"></i></span></span>';
-    const html = '<div class="prow">' + btns + mid + '<span class="psm">Today: <b>' + td.dials + '</b> dials · <b>' + nDone + '</b> block' + (nDone === 1 ? "" : "s") + ' done</span></div>' +
+    const nToday = todayCallCount();
+    const html = '<div class="prow">' + btns + mid + '<span class="pcount">📞 ' + nToday + ' call' + (nToday === 1 ? "" : "s") + '</span><span class="psm">Today: <b>' + td.dials + '</b> dials · <b>' + nDone + '</b> block' + (nDone === 1 ? "" : "s") + ' done</span></div>' +
       (nDone ? '<details' + (P.logOpen ? " open" : "") + ' id="pomolog"><summary>Today\'s blocks</summary>' + P.log.map((r) => '<div>Block ' + r.b + ' ' + esc(hhmm(r.start)) + '–' + esc(hhmm(r.end)) + ', ' + r.dials + ' dial' + (r.dials === 1 ? "" : "s") + ', avg ' + mfmt(r.avg) + '</div>').join("") + '</details>' : "");
     if (el.dataset.h !== html) { el.innerHTML = html; el.dataset.h = html; }
+    document.documentElement.style.setProperty("--pomo-h", el.offsetHeight + "px");
+    updateTabTitle(nToday);
+  }
+  function todayCallCount() {
+    const td = pDialsToday();
+    const adj = (typeof callTallyAdjust === "function") ? callTallyAdjust(secret || {}) : null;
+    return td.dials + (adj ? (adj.extra || 0) : 0);
+  }
+  function updateTabTitle(n) {
+    if (n == null) n = todayCallCount();
+    const calls = n + (n === 1 ? " call" : " calls");
+    let clock = "--:--";
+    if (P.phase !== "idle") {
+      const left = P.paused ? P.left : P.endsAt - Date.now();
+      clock = mmss(left);
+    } else {
+      const run = todaySessions().find((x) => !x.stop);
+      if (run) clock = clkFmt(Date.now() - run.start);
+    }
+    const t = "⏱ " + clock + " · " + calls;
+    if (document.title !== t) document.title = t;
   }
   document.addEventListener("toggle", (e) => { if (e.target && e.target.id === "pomolog") { P.logOpen = e.target.open; pSave(); } }, true);
   document.addEventListener("calloutcome", (e) => {
@@ -1187,6 +1253,11 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
       records: pick("records"),
       records_mention: pick("records_mention"),
       employees: pick("employees"),
+      revenue: pick("revenue"),
+      revenue_year: pick("revenue_year"),
+      revenue_source: pick("revenue_source"),
+      revenue_display: pick("revenue_display"),
+      peak_revenue: pick("peak_revenue"),
       years: pick("years"),
       fit: pick("fit"),
       fit_why: pick("fit_why"),
@@ -1215,10 +1286,11 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
     if (m.court) caseBits.push(m.court);
     if (m.filed) caseBits.push('filed ' + m.filed);
     if (caseBits.length) bits.push('<div class="cline"><b>Case:</b> ' + esc(caseBits.join(" · ")) + '</div>');
-    if (m.fit || m.fit_why || m.employees || m.years) {
+    if (m.fit || m.fit_why || scaleText(m) || m.years) {
       let line = '';
       if (m.fit) line += '<b>Buyer fit:</b> ' + esc(m.fit) + (m.fit_why ? ' · ' + esc(m.fit_why) : '');
-      if (m.employees) line += (line ? ' · ' : '') + '<b>Employees:</b> ' + esc(m.employees);
+      const sc = scaleHtml(m);
+      if (sc) line += (line ? ' · ' : '') + sc;
       if (m.years) line += (line ? ' · ' : '') + '<b>Years:</b> ' + esc(m.years);
       bits.push('<div class="cline cfit">' + line + '</div>');
     }
@@ -1393,7 +1465,7 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
   function route() {
     const was = callPage; callPage = /^#calls/.test(location.hash);
     document.body.classList.toggle("callpage", callPage);
-    document.title = callPage ? "📞 Calls" : "Amy — today";
+    updateTabTitle();
     // Desktop (≥1000px): keep split-pane list+script. Mobile/small: one-at-a-time on the call page.
     const desk = window.matchMedia("(min-width:1000px)").matches;
     if (callPage) {
@@ -1451,7 +1523,7 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
   }
   function listSearchHtml() {
     const home = callPage ? '<a class="home" href="#" title="Back to dashboard" style="font-size:22px;text-decoration:none;color:var(--muted);padding:0 6px">🏠</a>' : "";
-    return '<div class="clist-find fmtop" style="position:sticky;top:0;z-index:60">' + home + '<div class="callfind" role="search"><label for="callq">Search company or contact</label>' +
+    return '<div class="clist-find fmtop">' + home + '<div class="callfind" role="search"><label for="callq">Search company or contact</label>' +
       '<input id="callq" type="search" enterkeyhint="search" inputmode="search" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Search company or contact" aria-autocomplete="list" aria-controls="callhits" aria-expanded="false" value="' + esc(callQuery) + '">' +
       '<button type="button" class="qclear" id="callqclear"' + (String(callQuery).trim() ? "" : " hidden") + '>Clear</button>' +
       '<div id="callhits" class="callhits" role="listbox" hidden></div></div></div>';
@@ -1486,7 +1558,7 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
     const shown = hits.slice(0, 40);
     box.innerHTML = shown.map((c, i) => {
       const name = c.name || c.company || "Lead", co = c.company && c.name && callFold(c.company) !== callFold(c.name) ? c.company : "";
-      const where = [c.tab === "prebk" ? "Pre-bankruptcy" : "", isArchivedAttempt(c) ? "Archived" : ""].filter(Boolean).join(" · ");
+      const where = [c.tab === "prebk" ? "Pre-bankruptcy" : "", isOffQueue(c) ? "Archived" : ""].filter(Boolean).join(" · ");
       return '<button type="button" class="callhit' + (i === callPick ? " on" : "") + '" role="option" id="callhit-' + i + '" data-jump="' + esc(c.id) + '" aria-selected="' + (i === callPick ? "true" : "false") + '"><span class="qn">' + esc(name) + (where ? " · " + where : "") + "</span>" + (co ? '<span class="qco">' + esc(co) + "</span>" : "") + "</button>";
     }).join("") + (hits.length > shown.length ? '<div class="callnone">Showing ' + shown.length + " of " + hits.length + ". Keep typing to narrow.</div>" : "");
     if (callPick >= 0) input.setAttribute("aria-activedescendant", "callhit-" + callPick); else input.removeAttribute("aria-activedescendant");
@@ -1531,13 +1603,13 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
   let archiveBrowse = false;
   function focusHtml(sd, calls) {
     // Active queue excludes 3-attempt archives. Freeze that order so an outcome tap doesn't reshuffle Next/Prev.
-    const active = calls.filter((c) => !isArchivedAttempt(c) && stateMatchesFilter(c));
+    const active = calls.filter((c) => !isOffQueue(c) && stateMatchesFilter(c));
     const ids = new Set(active.map((c) => c.id));
     if (!focusOrder || focusOrderTab !== listTab + "|" + stateFilter || focusOrder.some((id) => !ids.has(id)) || active.some((c) => !focusOrder.includes(c.id))) {
       focusOrder = focusList(active).map((c) => c.id); focusOrderTab = listTab + "|" + stateFilter;
     }
     const picked = calls.find((x) => x.id === focusId);
-    const showingArchive = !!(picked && isArchivedAttempt(picked));
+    const showingArchive = !!(picked && isOffQueue(picked));
     if (!focusOrder.length && !showingArchive && !archiveBrowse) return '<div class="empty">No calls in this list.</div>';
     let i = focusOrder.indexOf(focusId);
     if (!showingArchive && i < 0 && focusOrder.length) { i = focusOrder.findIndex((id) => !callDone(calls.find((c) => c.id === id))); if (i < 0) i = 0; focusId = focusOrder[i]; }
@@ -1553,7 +1625,7 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
       '<input id="callq" type="search" enterkeyhint="search" inputmode="search" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Search company or contact" aria-autocomplete="list" aria-controls="callhits" aria-expanded="false" value="' + esc(callQuery) + '">' +
       '<button type="button" class="qclear" id="callqclear"' + (String(callQuery).trim() ? "" : " hidden") + '>Clear</button>' +
       '<div id="callhits" class="callhits" role="listbox" hidden></div></div>';
-    const archN = calls.filter(isArchivedAttempt).length;
+    const archN = calls.filter(isOffQueue).length;
     const pos = showingArchive
       ? '<div class="fmpos">Archived · <b>' + attemptTotal(c, done) + '</b> attempts<br>Off the calling queue</div>'
       : '<div class="fmpos">Lead <b>' + (i + 1) + '</b> of ' + focusOrder.length + '<br>' + left + ' left' + (c && c.pin ? ' · 📌' : "") + '</div>';
@@ -1561,8 +1633,8 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
       (archN ? '<button type="button" id="archbtn"' + (archiveBrowse ? ' class="nx"' : "") + '>Archive (' + archN + ')</button>' : "") +
       '<button type="button" data-fmgo="-1"' + (!focusOrder.length || (!showingArchive && i === 0) ? " disabled" : "") + '>◀ Prev</button><button type="button" class="nx" data-fmgo="1"' + (!focusOrder.length || (!showingArchive && i === focusOrder.length - 1) ? " disabled" : "") + '>Next ▶</button></div></div>';
     if (archiveBrowse) {
-      const rows = calls.filter(isArchivedAttempt);
-      return top + '<div class="card"><div class="csec">Archived · 3 attempts (' + rows.length + ')</div><div class="cline">Off the calling queue. Open one to read the notes, meetings, and outcomes. Search still finds them.</div>' +
+      const rows = calls.filter(isOffQueue);
+      return top + '<div class="card"><div class="csec">Archived (' + rows.length + ')</div><div class="cline">Off the calling queue. Open one to read the notes, meetings, and outcomes. Search still finds them.</div>' +
         (rows.length ? rows.map((r) => '<button type="button" class="callhit" data-jump="' + esc(r.id) + '"><span class="qn">' + esc(r.name || r.company || r.id) + '</span>' + (r.company && r.name ? '<span class="qco">' + esc(r.company) + '</span>' : "") + '</button>').join("") : '<div class="cline">None in this list.</div>') + '</div>';
     }
     if (!c) return top + '<div class="empty">No calls left in the active queue.</div>';
@@ -1638,8 +1710,8 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
     if (!pbCalls.length) listTab = "main";
     const tabCalls = listTab === "prebk" ? pbCalls : mainCalls;
     const qOn = callTokens(callQuery).length > 0;
-    const calls = tabCalls.filter((c) => !isArchivedAttempt(c) && stateMatchesFilter(c) && (!qOn || callMatch(c, callQuery)));
-    const archivedCalls = tabCalls.filter((c) => isArchivedAttempt(c) && stateMatchesFilter(c) && (!qOn || callMatch(c, callQuery)));
+    const calls = tabCalls.filter((c) => !isOffQueue(c) && stateMatchesFilter(c) && (!qOn || callMatch(c, callQuery)));
+    const archivedCalls = tabCalls.filter((c) => isOffQueue(c) && stateMatchesFilter(c) && (!qOn || callMatch(c, callQuery)));
     allCalls.forEach((c) => { labels["call:" + c.id] = { label: [c.name, c.company].filter(Boolean).join(" · "), lane: "calls" }; });
     for (const h of hotLeadsList(sd)) {
       const hc = hotAsCall(h); if (!hc) continue;
@@ -1653,7 +1725,7 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
       h += focusMode ? pipeCompactHtml(sd) + '<details class="fmextra"><summary class="csec">Potential earnings, hot leads, meetings &amp; today\'s stats</summary>' + refHtml(sd) + hotLeadsHtml(sd) + meetHtml(sd) + todayCallsHtml(allCalls) + '</details>' + sessHtml()
         : refHtml(sd) + hotLeadsHtml(sd) + meetHtml(sd) + sessHtml() + todayCallsHtml(allCalls);
       if (pbCalls.length) h += '<div class="ltabs">' + [["main", "Chapter 7 & main", mainCalls], ["prebk", "Pre-bankruptcy (ABC / receivership)", pbCalls]].map(([k, l, g]) => {
-        const q = g.filter((c) => !isArchivedAttempt(c));
+        const q = g.filter((c) => !isOffQueue(c));
         return '<button type="button" class="ltab' + (k === listTab ? " on" : "") + '" data-ltab="' + k + '">' + esc(l) + " (" + q.filter(callDone).length + "/" + q.length + ")</button>";
       }).join("") + "</div>";
       h += '<div class="calls-top"><span class="calls-prog"><b>' + d + " of " + n + "</b> called</span>" +
@@ -1661,7 +1733,7 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
         (calls.some((c) => c.chapter === "Ch 7") ? '<span class="tag">CHAPTER 7 FIRST</span>' : "") + '</div>' +
         '<div class="pbar"><i style="width:' + Math.round((n ? d / n : 0) * 100) + '%"></i></div>' +
         '<div class="fmbar"><button type="button" id="fmtoggle" class="fmtoggle' + (focusMode ? "" : " off") + '">' + (focusMode ? "☰ Show full list" : "📱 One at a time") + '</button></div>' +
-        stateBarHtml(tabCalls.filter((c) => !isArchivedAttempt(c)));
+        stateBarHtml(tabCalls.filter((c) => !isOffQueue(c)));
       if (focusMode) {
         h += focusHtml(sd, tabCalls);
         if (lockState === "ok") h += '<button type="button" class="linkbtn" id="calllock">🔒 Lock call list on this device</button>';
@@ -1696,7 +1768,7 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
         h += '<div class="csec">' + esc(s) + "</div>" + (isCh7 ? '<div class="cline ckd">Pinned first, then court dates in the next 7 days, then newest filings first (beat other brokers to the trustee). Called on an earlier day and already-called at the bottom.</div>' : "") + (isCh7 ? ch7Div(ch7Sort(g)) : g.map(callHtml).join(""));
       }
       if (exN) h += '<details id="extra-det"' + (extraOpen ? " open" : "") + '><summary class="csec">Extra – only if on a roll (' + exN + ")</summary>" + ex + "</details>";
-      if (archivedCalls.length) h += '<details id="arch-det"' + (archiveBrowse ? " open" : "") + '><summary class="csec">Archived · 3 attempts (' + archivedCalls.length + ')</summary><div class="cline">Off the calling queue. Notes, meetings, and outcomes stay on the card. Search still finds them.</div>' + archivedCalls.map(callHtml).join("") + "</details>";
+      if (archivedCalls.length) h += '<details id="arch-det"' + (archiveBrowse ? " open" : "") + '><summary class="csec">Archived (' + archivedCalls.length + ')</summary><div class="cline">Off the calling queue. Notes, meetings, and outcomes stay on the card. Search still finds them.</div>' + archivedCalls.map(callHtml).join("") + "</details>";
     }
     if (lockState === "ok") h += '<button type="button" class="linkbtn" id="calllock">🔒 Lock call list on this device</button>';
     const panel = panelHtml(sd, allCalls);
