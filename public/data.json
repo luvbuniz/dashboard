@@ -1,9 +1,492 @@
 {
-  "updated": "2026-11-10T07:45:00-05:00",
+  "updated": "2026-11-10T07:50:00-05:00",
   "heading": "Tuesday, Nov 10",
   "kicker": "Project week · no kids",
   "message": "Short call window first: the 5 start-here pre-bankruptcy calls at 9, then the handgun class 10 to 1:30 (bring the $175 balance). More calls after, plus the kids' screen-trial review tonight.",
   "frog": {
     "id": "d1110-calls",
     "text": "Calls from 9:00 (Call leads card)",
-    "note": 
+    "note": "Start-here 5 before the 10 AM class: Enevate, Mara Technologies, NanoCellect, Glowforge, C.D.L. Electric 🐸"
+  },
+  "today": [
+    {
+      "id": "d1110-calls",
+      "text": "1. Calls from 9:00 (Call leads card)",
+      "note": "Start-here pre-bankruptcy 5 before you head to class"
+    },
+    {
+      "id": "d1110-handgun",
+      "text": "2. Women's Intro to Handguns, 10 AM–1:30 PM",
+      "note": "Shoot Straight Sarasota, University Pkwy · $175 balance due today"
+    },
+    {
+      "id": "d1110-calls-pm",
+      "text": "3. More calls after class",
+      "note": "Chapter 7 call-first section next · ~6 dials per Pomodoro · check-in 2:15 PM"
+    },
+    {
+      "id": "d1110-giancarlo",
+      "text": "4. Send Giancarlo (INSALA) the drafted micro1 follow-up, if not sent",
+      "note": "Draft cc's Corky · Mercor already emailed him 11/9"
+    },
+    {
+      "id": "d1110-replies",
+      "text": "5. Check intake replies",
+      "note": "Fred Hjelmeset (Light & Motion: if yes, submit to Mercor), Kari Bowyer (Orinove, Mercor form), Catherine Curtis (Prime Eco)"
+    },
+    {
+      "id": "d1110-synchrony",
+      "text": "6. Synchrony furniture card: log in and pay",
+      "note": "Riley can help get through the login"
+    },
+    {
+      "id": "d1110-screens",
+      "text": "7. Kids screen-trial 3-month review",
+      "note": "Keep going, extend to 6 months, or adjust rules"
+    },
+    {
+      "id": "d1110-clean",
+      "text": "8. Cleaning block, 1 hour",
+      "note": "Project week · podcast + oven timer · vacuum is fine while the kids are away"
+    }
+  ],
+  "quick": [
+    "Reply to Lea Cathey's Etsy message (10 min)",
+    "Grab the $175 for today's handgun class (5 min)",
+    "Call about the $780 HOA check, Nevada's Finest (10 min)",
+    "Check if the micro1 robotics gig is still open (5 min)",
+    "Send Pewter the firm no-meeting reply if not sent (5 min)"
+  ],
+  "lanes": [
+    {
+      "id": "data",
+      "emoji": "💼",
+      "name": "AI data business",
+      "tag": "TOP PRIORITY",
+      "tasks": [
+        {
+          "id": "d1110-calls-lane",
+          "text": "Calls today (Call leads card)",
+          "note": "9:00 start-here pre-bankruptcy 5 · more after the 1:30 PM class"
+        },
+        {
+          "id": "d1110-cyberdive",
+          "text": "Cyber-Dive: Mercor status check today, bidder Zoom 11/12 at 1 PM ET",
+          "note": "Sale hearing Thu 11/19 · $100k opening offer, $2.5k–$5k overbids · you offered Robert Bartlemay an NDA"
+        },
+        {
+          "id": "d1110-giancarlo-lane",
+          "text": "INSALA: send Giancarlo the micro1 follow-up (drafted)",
+          "note": "Mercor referral submitted 11/9 · he's waiting on the debtor's principal for the asset picture"
+        },
+        {
+          "id": "d1110-replies-lane",
+          "text": "Watch for intake replies",
+          "note": "Light & Motion (Fred: OK for second buyer?), Orinove (Kari: Mercor form), Prime Eco (Catherine: VM + email 11/9)"
+        },
+        {
+          "id": "d1106-followups-lane",
+          "text": "Send older call follow-up emails (if not done)",
+          "note": "Carolyn Dye, Beau Butler (via Pat Lowe), Brian Shapiro; Peter Mastan OK'd submitting Bruce's Entertainment"
+        },
+        {
+          "id": "d1030-storj",
+          "text": "Check the Storj Labs hearing outcome",
+          "note": "Christopher Arthur (Spilman) said he'd know more after the 10/29 hearing"
+        },
+        {
+          "id": "d1030-chromium",
+          "text": "Handshake Project Chromium: say yes or no",
+          "note": "$80/hr, 10+ hrs a week"
+        },
+        {
+          "id": "d1030-patent-nudge",
+          "text": "Optional: nudge the patent co-brokers",
+          "note": "J.S. Held, Hilco, ICAP, Tangible IP · no replies since 10/23"
+        }
+      ],
+      "waiting": [
+        "Lawyer cost replies: Peal, Moore, Lapointe, Silberstein",
+        "Marc Yaverbaum's broker detail for Techcyte",
+        "Printing Research: Areya's schedules not filed yet (micro1 link sent 11/9)",
+        "Light & Motion, Orinove and Prime Eco replies",
+        "Michael Wynn (Rolls Rite) referral ask sent 11/9"
+      ],
+      "facts": [
+        "LinkedIn attorney outreach routine runs around 10:30 AM",
+        "Orinove 341 meeting on 11/18 · trustee Kari Bowyer",
+        "Buyer order: Mercor → micro1 → Handshake; Pewter optional/last (firm no-meeting reply)",
+        "Mercor referrals in (all 5 slots used, incl. Cyber-Dive, Printing Research, INSALA, Orinove) · Mercor keeps adding slots"
+      ]
+    },
+    {
+      "id": "admin",
+      "emoji": "🗂️",
+      "name": "Admin",
+      "tasks": [
+        {
+          "id": "d1109-unique-lane",
+          "text": "Unique Accounting: e-sign the 2025 returns if not done",
+          "note": "$1,525 fees paid ✓ · IRS personal ~$1,031 still owed · tax reminder Thu 11/12"
+        },
+        {
+          "id": "d1110-synchrony-lane",
+          "text": "Pay off the Synchrony furniture card",
+          "note": "Login is the hard part · ask Riley for help"
+        },
+        {
+          "id": "d1106-hoa780-lane",
+          "text": "Call about the $780 HOA check (Nevada's Finest)",
+          "note": "Carried · Stephanie Bills"
+        },
+        {
+          "id": "d1102-flex-check",
+          "text": "Check the Flex first payment went through",
+          "note": "Was due around 10/31"
+        },
+        {
+          "id": "d1102-newrez-check",
+          "text": "Check the Newrez November payment went out at $608.99",
+          "note": "Was due Sun 11/1"
+        },
+        {
+          "id": "d1030-wilcock",
+          "text": "Send Richard Wilcock the Aibani LLC tax info",
+          "note": "2025 insurance on the 4 rentals, business address, McLeod depreciation report · Reed can pull insurance"
+        },
+        {
+          "id": "d1030-etsy-lea",
+          "text": "Reply to Lea Cathey's Etsy message (Honeybun Threads)",
+          "note": "Custom order question from 10/28"
+        }
+      ],
+      "facts": [
+        "Working from Panera for a few days (master toilet; maintenance won't come while she's home)",
+        "Trash: out after 5 PM, Sun–Thu, 2 bags max. Friday is not a trash night."
+      ]
+    },
+    {
+      "id": "sub",
+      "emoji": "🍎",
+      "name": "Sub-teaching",
+      "tasks": [],
+      "tag": "ON HOLD",
+      "facts": [
+        "Van is back from A&B ✓"
+      ]
+    },
+    {
+      "id": "training",
+      "emoji": "🧠",
+      "name": "AI training",
+      "tasks": [
+        {
+          "id": "d1028-mercor-interview",
+          "text": "Prep for the Mercor AI interview (education expert)"
+        },
+        {
+          "id": "d1028-micro1",
+          "text": "micro1: check the robotics gig is still open, then prep for the AI interview"
+        },
+        {
+          "id": "d1030-micro1-voice",
+          "text": "micro1 Voice Recording interview: if not finished, see if it can be reopened",
+          "note": "The link expired around 11:20 PM on 10/29"
+        },
+        {
+          "id": "d1030-crowdgen",
+          "text": "Review the CrowdGen project invites",
+          "note": "Reminder came 10/29"
+        }
+      ],
+      "facts": [
+        "Mercor Project Odin is paused (as of 11/3) · open to other Mercor AI training jobs",
+        "micro1 Voice Coach not certified — Voice Recording interview still open"
+      ]
+    },
+    {
+      "id": "x",
+      "emoji": "🐰",
+      "name": "@bunifree on X",
+      "tag": "YOU POST",
+      "tasks": [
+        {
+          "id": "d1028-bunifree-pin",
+          "text": "Post and pin an intro post on @bunifree"
+        },
+        {
+          "id": "d1028-bunifree-header",
+          "text": "Refresh the @bunifree header"
+        }
+      ]
+    },
+    {
+      "id": "home",
+      "emoji": "🏡",
+      "name": "Home",
+      "tag": "10–15 MIN CHUNKS",
+      "tasks": [
+        {
+          "id": "home-strip-bed",
+          "text": "Strip the bed, sheets in the washer",
+          "note": "10 min"
+        },
+        {
+          "id": "home-counters",
+          "text": "Clear the kitchen counters",
+          "note": "15 min"
+        },
+        {
+          "id": "home-dishes",
+          "text": "Dishes, one load",
+          "note": "15 min"
+        },
+        {
+          "id": "home-dryer-bed",
+          "text": "Sheets to the dryer, remake the bed",
+          "note": "10 min"
+        },
+        {
+          "id": "home-bathroom",
+          "text": "Bathroom sink and mirror",
+          "note": "10 min"
+        },
+        {
+          "id": "home-floor",
+          "text": "Pick up the floor in one room",
+          "note": "15 min"
+        },
+        {
+          "id": "home-vacuum",
+          "text": "Vacuum the living room",
+          "note": "15 min · project week, OK now"
+        }
+      ]
+    },
+    {
+      "id": "kids",
+      "emoji": "👧",
+      "name": "Kids & calendar",
+      "tasks": [],
+      "facts": [
+        "Project week · kid week ended Fri 11/6",
+        "Today Tue 11/10 · Women's Intro to Handguns, 10 AM–1:30 PM, Shoot Straight Sarasota ($175 balance due) · screen-trial review",
+        "Wed 11/11 · Rubino Check Up, 10:30 AM · Veterans Day, no school at Witt",
+        "Sat 11/14 · Grok Bot Meetup Tampa Bay, 1–4 PM, Embarc Collective",
+        "Thu 11/19 · Fiona's school meeting, 10 AM (on the calendar)"
+      ]
+    }
+  ],
+  "week": [
+    {
+      "day": "Tue",
+      "date": "11/10",
+      "items": [
+        "Handguns class 10 AM–1:30 PM",
+        "Screen-trial review · Cyber-Dive Mercor check"
+      ],
+      "trash": true,
+      "today": true
+    },
+    {
+      "day": "Wed",
+      "date": "11/11",
+      "items": [
+        "Rubino Check Up 10:30 AM",
+        "Veterans Day · no school"
+      ],
+      "trash": true,
+      "today": false
+    },
+    {
+      "day": "Thu",
+      "date": "11/12",
+      "items": [
+        "Taxes: pay IRS + returns for Penny",
+        "Cyber-Dive bidder Zoom 1 PM"
+      ],
+      "trash": true,
+      "today": false
+    },
+    {
+      "day": "Fri",
+      "date": "11/13",
+      "items": [
+        "Kolegend excavator cover chase"
+      ],
+      "today": false
+    },
+    {
+      "day": "Sat",
+      "date": "11/14",
+      "items": [
+        "Grok Bot Meetup Tampa 1–4 PM"
+      ],
+      "today": false
+    },
+    {
+      "day": "Sun",
+      "date": "11/15",
+      "items": [],
+      "trash": true,
+      "today": false
+    }
+  ],
+  "elodie": [
+    {
+      "id": "elo-printify",
+      "text": "Confirm the Printify email",
+      "note": "Link expires Thu 10/29, 4:31 AM — click it in the Printify email if not done"
+    },
+    {
+      "id": "elo-etsy-desc",
+      "text": "Approve the Etsy shop description",
+      "note": "Draft waiting: approve, edit, or skip"
+    },
+    {
+      "id": "elo-wiz-ep3",
+      "text": "Post Wizlings Ep3 on Instagram @wizlingstv",
+      "note": "Due today Wed 10/28, vertical 3:34"
+    },
+    {
+      "id": "elo-wiz-ep4",
+      "text": "Post Wizlings Ep4 on Instagram @wizlingstv",
+      "note": "Due Thu 10/29"
+    },
+    {
+      "id": "elo-wiz-ep5",
+      "text": "Post Wizlings Ep5 on Instagram @wizlingstv",
+      "note": "Due Fri 10/30"
+    },
+    {
+      "id": "elo-crowns",
+      "text": "Bring the container with both popped crowns to the dentist",
+      "note": "Thu 10/29, 11 AM, Family Smile Dentistry"
+    },
+    {
+      "id": "elo-newrez",
+      "text": "Newrez mortgage + escrow note",
+      "note": "Sun 11/1, 8 AM; escrow note $608.99"
+    },
+    {
+      "id": "elo-thu-calls",
+      "text": "Call block 8:30-10:30 AM, trustees and leads",
+      "note": "Thu 10/29, priority 1"
+    },
+    {
+      "id": "elo-thu-mercor",
+      "text": "Mercor work (Odin): 2-hour testing limit, then real hours up to 60",
+      "note": "Thu 10/29, after dentist, priority 3"
+    },
+    {
+      "id": "elo-thu-micro1",
+      "text": "Micro1 onboarding / interview next",
+      "note": "Thu 10/29, after Mercor, priority 4"
+    },
+    {
+      "id": "elo-thu-costco",
+      "text": "Costco run: emergency box, canned food, cases of water",
+      "note": "Thu 10/29, last; warehouse closes 8:30 PM"
+    },
+    {
+      "id": "elo-oct31-handshake-survey",
+      "text": "Handshake surveys: Project Conductor survey, about 10 minutes",
+      "note": "Sat Oct 31"
+    },
+    {
+      "id": "elo-oct31-handshake-onboarding",
+      "text": "Handshake onboarding: finish onboarding tasks",
+      "note": "Sat Oct 31"
+    },
+    {
+      "id": "elo-oct31-mercor-hours",
+      "text": "Mercor hours: do Mercor training and Mercor hours",
+      "note": "Sat Oct 31"
+    },
+    {
+      "id": "elo-oct31-pay-david-75",
+      "text": "Pay David $75 for Game On via Zelle",
+      "note": "Still unpaid as of Oct 31 morning, reminder fired Oct 30 evening"
+    },
+    {
+      "id": "elo-oct31-aldi-clean",
+      "text": "Aldi's kids shopping and clean house intermittently, Sat Oct 31",
+      "note": "Sat Oct 31, quiet Saturday"
+    },
+    {
+      "id": "elo-oct31-micro1-interview",
+      "text": "Micro1 interview, voice actor role, desktop only, do it in a closet for quiet sound",
+      "note": "Deadline tonight Sat Oct 31 after the 24-hour extension"
+    },
+    {
+      "id": "elo-oct31-morning-human",
+      "text": "Brush teeth, breakfast, shower, wash hair, coffee",
+      "note": "Sat Oct 31 morning, human stuff first"
+    },
+    {
+      "id": "elo-oct31-sherri",
+      "text": "Sherri at Root and Seed 11 AM, early lunch and chit chat",
+      "note": "Sat Oct 31, 11 AM to 12 PM, Root and Seed, 8209 Natures Way, Bradenton"
+    },
+    {
+      "id": "elo-oct31-mercor-cafe",
+      "text": "Mercor work at cafe before or after Sherri",
+      "note": "Sat Oct 31, desk work at cafe"
+    },
+    {
+      "id": "elo-oct31-sunglasses",
+      "text": "Find sunglasses, if not found go to Bealls before Aldi's for a $10 pair",
+      "note": "Needed for Sun Nov 1 pickup at Wawa's"
+    },
+    {
+      "id": "elo-oct31-aldi-list",
+      "text": "Aldi's shopping: fruit, vegetables, fresh chicken drumsticks to bake and freeze, snacks, breakfast items",
+      "note": "Sat Oct 31, after cafe, Fiona is picky"
+    },
+    {
+      "id": "elo-oct31-dinner-clean",
+      "text": "Dinner and clean up, extra coffee",
+      "note": "Sat Oct 31 evening"
+    },
+    {
+      "id": "elo-oct31-staples-done",
+      "text": "Staples shopping, done",
+      "note": "Already done Sat Oct 31"
+    },
+    {
+      "id": "elo-oct31-clean-kitchen",
+      "text": "Clean up before and after dinner, especially kitchen, clean the counters",
+      "note": "Sat Oct 31, kitchen and counters"
+    },
+    {
+      "id": "elo-oct31-vacuum",
+      "text": "Vacuum the floor, dusty, do it while kids are with David today so Fiona is not home to hear the loud vacuum",
+      "note": "Sat Oct 31, kids with David today"
+    },
+    {
+      "id": "elo-oct31-laundry-couch",
+      "text": "Get clean laundry off the couch and put it away",
+      "note": "Sat Oct 31"
+    },
+    {
+      "id": "elo-oct31-kids-beds-sheets",
+      "text": "Make the kids beds and wash their sheets before Sun Nov 1 pickup",
+      "note": "Before Sun Nov 1 10 AM pickup at Wawa's"
+    },
+    {
+      "id": "elo-oct31-back-on-track",
+      "text": "Back on track after Sherri: Mercor 2-hour evaluation first",
+      "note": "Sat Oct 31, after cafe, Mercor Odin reviewer, 2-hour cap to paid hours"
+    },
+    {
+      "id": "elo-oct31-micro1-closet",
+      "text": "Micro1 interview in closet, desktop only, tonight deadline",
+      "note": "Sat Oct 31, deadline tonight after 24-hour extension, quiet closet"
+    },
+    {
+      "id": "elo-oct31-dashboard-daily",
+      "text": "Dashboard updated to Saturday Oct 31",
+      "note": "Heading and week today flag fixed from Friday Oct 30"
+    }
+  ]
+}
