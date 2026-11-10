@@ -1082,7 +1082,7 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
     // micro1 section — no invented per-deal dollar amounts
     const dRows = Array.isArray(m1.deals) ? m1.deals : [];
     let micro = '<div class="refb"><div class="refbh"><b>micro1</b> <span class="cline">' +
-      $(m1Confirmed) + " confirmed so far · " + dRows.length + " intake link" + (dRows.length === 1 ? "" : "s") + " sent · payout TBD</span></div>';
+      $(m1Confirmed) + " confirmed so far · " + dRows.length + " intake link" + (dRows.length === 1 ? "" : "s") + " sent · payout TBD</span></div>";
     if (m1.payout_note) {
       micro += '<div class="cline refup">' + esc(m1.payout_note) + '</div>';
     }
