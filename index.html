@@ -110,6 +110,8 @@
     .pipe { border-left-color:#4cc38a; }
     .pipe-tot { font-size:15px; color:var(--muted); margin:2px 0 8px; }
     .pipe-tot b { font-size:28px; color:#4cc38a; margin-left:6px; }
+    .pipe-compact { margin:0 0 10px; padding:8px 12px; background:var(--elev); border-radius:var(--r); border-left:4px solid #4cc38a; }
+    .pipe-compact b { font-size:22px; }
     .pipe-sub { font-size:13px; color:var(--muted); margin:0 0 8px; }
     .pipe-badge { display:inline-block; font-size:11px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:2px 8px; border-radius:999px; margin-left:6px; vertical-align:middle; }
     .pipe-badge.potential { background:#fff4e0; color:#9a5b00; }
@@ -1030,54 +1032,75 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
         }).join("") : '<div class="cline">No ' + esc(b) + ' referrals yet</div>') + '</div>';
     }).join("") + '</section>';
   }
+  function pipeMoney(n) { return "$" + Math.round(n || 0).toLocaleString("en-US"); }
+  function pipeTotals(sd) {
+    const P = (sd && sd.pipeline) || {}, M = P.mercor || {};
+    const rows = Array.isArray(M.rows) ? M.rows : [];
+    const tot = M.potential_earnings != null ? M.potential_earnings : rows.reduce((a, r) => a + (r.up_to || 0), 0);
+    const used = M.referred != null ? M.referred : rows.length;
+    const slots = M.slots;
+    return { tot, used, slots, paid: M.paid || 0, open: M.open != null ? M.open : rows.length };
+  }
+  function pipeCompactHtml(sd) {
+    if (!(sd && sd.pipeline && (sd.pipeline.mercor || sd.pipeline.micro1))) return "";
+    const t = pipeTotals(sd);
+    return '<div class="pipe-tot pipe-compact">Potential earnings: <b>' + pipeMoney(t.tot) + '</b>' +
+      ' <span class="pipe-sub">Mercor confirmed max' + (t.slots ? " · " + t.used + " of " + t.slots + " slots used" : "") +
+      ' · micro1 $0 confirmed</span></div>';
+  }
   function pipelineHtml(sd) {
     const P = sd.pipeline || {}, M = P.mercor || {}, m1 = P.micro1 || {};
-    const $ = (n) => "$" + Math.round(n || 0).toLocaleString("en-US");
-    const mercorTot = M.potential_earnings != null ? M.potential_earnings
-      : (M.rows || []).reduce((a, r) => a + (r.up_to || 0), 0);
-    const m1Note = m1.payout_short || m1.payout_note || "varies, % of deal";
-    const totLine = '<div class="pipe-tot">Total potential: <b>' + $(mercorTot) + '</b>' +
+    const $ = pipeMoney;
+    const t = pipeTotals(sd);
+    const mercorTot = t.tot;
+    const m1Confirmed = m1.confirmed != null ? m1.confirmed : 0;
+    const totLine = '<div class="pipe-tot">Potential earnings: <b>' + $(mercorTot) + '</b>' +
       ' <span class="pipe-sub">Mercor confirmed max</span></div>' +
-      '<div class="pipe-sub">+ micro1: ' + esc(m1Note) + ' (no fixed $ until a deal signs)</div>';
-    // Mercor section
+      '<div class="pipe-sub">Mercor: ' + $(t.paid) + ' paid out · ' + t.open + ' still open' +
+      (t.slots ? " · " + t.used + " of " + t.slots + " slots used" : "") + '</div>' +
+      (t.slots ? '<div class="pbar"><i style="width:' + Math.round(Math.min(1, t.used / t.slots) * 100) + '%"></i></div>' : "") +
+      '<div class="pipe-sub">+ micro1: ' + $(m1Confirmed) + ' confirmed so far (payout TBD — no fixed $ until a deal signs)</div>';
+    // Mercor section — edit /workspace/data-broker/pipeline.json, then publish-calls.py, to refresh.
     const mRows = Array.isArray(M.rows) ? M.rows : [];
     const mSum = (M.referred != null ? M.referred : mRows.length) + " referred · " +
-      $(M.paid || 0) + " paid · " + (M.open != null ? M.open : mRows.length) + " open";
+      $(M.paid || 0) + " paid · " + (M.open != null ? M.open : mRows.length) + " open" +
+      (t.slots ? " · " + t.used + " of " + t.slots + " slots used" : "");
     let mercor = '<div class="refb"><div class="refbh"><b>Mercor</b> <span class="cline">' + esc(mSum) +
       (mercorTot ? " · Potential " + $(mercorTot) : "") + '</span>' +
       (M.portal ? ' <a href="' + esc(M.portal) + '" target="_blank" rel="noopener">Portal ↗</a>' : "") + '</div>';
     mercor += mRows.length ? mRows.map((r) => {
       const d = r.submitted ? new Date(r.submitted + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "";
+      const amt = r.up_to ? ("Up to " + $(r.up_to) + (r.amount_inferred ? " (inferred)" : "")) : "";
       return '<div class="meet ref"><b>' + esc(r.company || "") + '</b>' +
         '<span class="pipe-badge submitted">' + esc(r.status || "Submitted") + '</span>' +
-        '<div class="cline">' + esc([r.listing, d, r.up_to && ("Up to " + $(r.up_to))].filter(Boolean).join(" · ")) + '</div>' +
+        '<div class="cline">' + esc([r.listing, d, amt].filter(Boolean).join(" · ")) + '</div>' +
         (r.past_payouts ? '<div class="cline refup">Past payouts on this listing: ' + esc(r.past_payouts) + '</div>' : "") +
         ((r.contact || r.note) ? '<div class="cline">' + esc([r.contact, r.note].filter(Boolean).join(" · ")) + '</div>' : "") +
         '</div>';
     }).join("") : '<div class="cline">No Mercor referrals yet</div>';
     mercor += '</div>';
-    // micro1 section
+    // micro1 section — no invented per-deal dollar amounts
     const dRows = Array.isArray(m1.deals) ? m1.deals : [];
     let micro = '<div class="refb"><div class="refbh"><b>micro1</b> <span class="cline">' +
-      dRows.length + " deal" + (dRows.length === 1 ? "" : "s") + " in progress · payout " + esc(m1Note) + '</span></div>';
-    if (m1.payout_note && m1.payout_note !== m1Note) {
+      $(m1Confirmed) + " confirmed so far · " + dRows.length + " intake link" + (dRows.length === 1 ? "" : "s") + " sent · payout TBD</span></div>';
+    if (m1.payout_note) {
       micro += '<div class="cline refup">' + esc(m1.payout_note) + '</div>';
     }
     micro += dRows.length ? dRows.map((r) => {
-      const st = (r.status || "").toLowerCase();
+      const st = (r.status || "intake link sent, not started").toLowerCase();
       const badgeCls = st.indexOf("potential") >= 0 ? "potential" : "sent";
       const d = r.started ? new Date(r.started + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "";
+      const amt = (r.up_to != null && r.up_to !== "") ? ("Up to " + $(r.up_to)) : "TBD";
       return '<div class="meet ref"><b>' + esc(r.company || "") + '</b>' +
-        '<span class="pipe-badge ' + badgeCls + '">' + esc(r.status || "in progress") + '</span>' +
-        '<div class="cline">' + esc([r.contact, r.role, r.listing, d].filter(Boolean).join(" · ")) + '</div>' +
+        '<span class="pipe-badge ' + badgeCls + '">' + esc(r.status || "intake link sent, not started") + '</span>' +
+        '<div class="cline">' + esc([r.contact, r.role, r.listing, d, "payout " + amt].filter(Boolean).join(" · ")) + '</div>' +
         (r.status_detail ? '<div class="cline">' + esc(r.status_detail) + '</div>' : "") +
         '</div>';
-    }).join("") : '<div class="cline">No micro1 deals in progress</div>';
+    }).join("") : '<div class="cline">No micro1 intake links sent yet</div>';
     micro += '</div>';
-    // Legacy stage steppers for Mercor rows that also live in referrals (optional detail)
-    return '<section class="meets refs pipe"><h3 class="meets-h">Pipeline / potential earnings</h3>' +
+    return '<section class="meets refs pipe"><h3 class="meets-h">Potential earnings</h3>' +
       totLine + mercor + micro +
-      '<div class="cline" style="margin-top:8px">Private — payout figures stay in the encrypted call list. Never say dollar amounts on a call or put them in email.</div>' +
+      '<div class="cline" style="margin-top:8px">Private — payout figures stay in the encrypted call list. Never say dollar amounts on a call or put them in email. Refresh Mercor by editing pipeline.json and republishing.</div>' +
       '</section>';
   }
   function callTallyAdjust(sd) {
@@ -1627,8 +1650,8 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
     if (!allCalls.length) h += '<div class="empty">No calls today. 🎉 When there\'s a call list, Riley puts it here at 7am.</div>';
     else {
       const n = calls.length, d = calls.filter(callDone).length;
-      h += focusMode ? '<details class="fmextra"><summary class="csec">Hot leads, meetings, referrals &amp; today\'s stats</summary>' + hotLeadsHtml(sd) + meetHtml(sd) + refHtml(sd) + todayCallsHtml(allCalls) + '</details>' + sessHtml()
-        : hotLeadsHtml(sd) + meetHtml(sd) + refHtml(sd) + sessHtml() + todayCallsHtml(allCalls);
+      h += focusMode ? pipeCompactHtml(sd) + '<details class="fmextra"><summary class="csec">Potential earnings, hot leads, meetings &amp; today\'s stats</summary>' + refHtml(sd) + hotLeadsHtml(sd) + meetHtml(sd) + todayCallsHtml(allCalls) + '</details>' + sessHtml()
+        : refHtml(sd) + hotLeadsHtml(sd) + meetHtml(sd) + sessHtml() + todayCallsHtml(allCalls);
       if (pbCalls.length) h += '<div class="ltabs">' + [["main", "Chapter 7 & main", mainCalls], ["prebk", "Pre-bankruptcy (ABC / receivership)", pbCalls]].map(([k, l, g]) => {
         const q = g.filter((c) => !isArchivedAttempt(c));
         return '<button type="button" class="ltab' + (k === listTab ? " on" : "") + '" data-ltab="' + k + '">' + esc(l) + " (" + q.filter(callDone).length + "/" + q.length + ")</button>";
