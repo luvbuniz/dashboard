@@ -395,8 +395,8 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
     return "Rev " + amt + (tail ? " (" + tail + ")" : " (estimate)");
   }
   function scaleText(c) {
-    if (!empUnknown(c && c.employees)) return { kind: "employees", text: String(c.employees).trim() };
     const rev = revenueLabel(c);
+    if (!empUnknown(c && c.employees)) return rev ? { kind: "both", text: String(c.employees).trim() + " · " + rev, emp: String(c.employees).trim(), rev: rev } : { kind: "employees", text: String(c.employees).trim() };
     if (rev) return { kind: "revenue", text: rev };
     return null;
   }
@@ -404,6 +404,7 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
     const s = scaleText(c);
     if (!s) return "";
     const b = badge || "";
+    if (s.kind === "both") return "<b>Peak employees:</b> " + esc(s.emp) + " · <b>Peak revenue:</b> " + esc(s.rev.replace(/^Rev\s+/i, "")) + b;
     if (s.kind === "employees") return "<b>Employees:</b> " + esc(s.text) + b;
     return "<b>Peak revenue (est.):</b> " + esc(s.text) + b;
   }
