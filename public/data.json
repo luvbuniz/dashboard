@@ -1,61 +1,67 @@
 {
-  "updated": "2026-11-10T07:50:00-05:00",
-  "heading": "Tuesday, Nov 10",
-  "kicker": "Project week · no kids",
-  "message": "Short call window first: the 5 start-here pre-bankruptcy calls at 9, then the handgun class 10 to 1:30 (bring the $175 balance). More calls after, plus the kids' screen-trial review tonight.",
+  "updated": "2026-11-11T07:45:00-05:00",
+  "heading": "Wednesday, Nov 11",
+  "kicker": "Project week · kids back Fri 3 PM",
+  "message": "Nice session yesterday: Mindyra is a real lead. Call block first, Rubino at 10:30, then follow-ups (Mindyra, Moondog's trustee, two voicemail emails) and more dials after. Happy Veterans Day, and it's Ping's birthday.",
   "frog": {
-    "id": "d1110-calls",
-    "text": "Calls from 9:00 (Call leads card)",
-    "note": "Start-here 5 before the 10 AM class: Enevate, Mara Technologies, NanoCellect, Glowforge, C.D.L. Electric 🐸"
+    "id": "d1111-calls",
+    "text": "Calls from 8:30 (Call leads card)",
+    "note": "Get a block in before the 10:30 Rubino appointment 🐸"
   },
   "today": [
     {
-      "id": "d1110-calls",
-      "text": "1. Calls from 9:00 (Call leads card)",
-      "note": "Start-here pre-bankruptcy 5 before you head to class"
+      "id": "d1111-calls",
+      "text": "1. Calls from 8:30 (Call leads card)",
+      "note": "Today's list is loaded · ~6 dials per Pomodoro · leave by ~10:10 for Rubino"
     },
     {
-      "id": "d1110-handgun",
-      "text": "2. Women's Intro to Handguns, 10 AM–1:30 PM",
-      "note": "Shoot Straight Sarasota, University Pkwy · $175 balance due today"
+      "id": "d1111-rubino",
+      "text": "2. Rubino Periodontics check-up, 10:30 AM",
+      "note": "8614 SR 70 E #103, Lakewood Ranch · (941) 755-0029"
     },
     {
-      "id": "d1110-calls-pm",
-      "text": "3. More calls after class",
-      "note": "Chapter 7 call-first section next · ~6 dials per Pomodoro · check-in 2:15 PM"
+      "id": "d1111-mindyra",
+      "text": "3. Mindyra Health: follow up with Jonathan Horne",
+      "note": "Interested on yesterday's call · SaaS that burned VC money · next step: intake"
     },
     {
-      "id": "d1110-giancarlo",
-      "text": "4. Send Giancarlo (INSALA) the drafted micro1 follow-up, if not sent",
-      "note": "Draft cc's Corky · Mercor already emailed him 11/9"
+      "id": "d1111-moondog",
+      "text": "4. Moondog Animation: call trustee Janet Haigler",
+      "note": "803-261-9806 · say Kevin Campbell sent you"
     },
     {
-      "id": "d1110-replies",
-      "text": "5. Check intake replies",
-      "note": "Fred Hjelmeset (Light & Motion: if yes, submit to Mercor), Kari Bowyer (Orinove, Mercor form), Catherine Curtis (Prime Eco)"
+      "id": "d1111-vm-emails",
+      "text": "5. Send voicemail follow-up emails: IR-TEC, LV Residential Care",
+      "note": "Reply-only, no links or buyer names · still missing from yesterday"
     },
     {
-      "id": "d1110-synchrony",
-      "text": "6. Synchrony furniture card: log in and pay",
-      "note": "Riley can help get through the login"
+      "id": "d1111-calls-pm",
+      "text": "6. More calls after lunch",
+      "note": "Check-in 2:15 PM · X note around 12:45 for the 1–4 PM window"
     },
     {
-      "id": "d1110-screens",
-      "text": "7. Kids screen-trial 3-month review",
-      "note": "Keep going, extend to 6 months, or adjust rules"
+      "id": "d1111-replies",
+      "text": "7. Check intake replies",
+      "note": "Fred Hjelmeset (Light & Motion), Kari Bowyer (Orinove), Catherine Curtis (Prime Eco), Giancarlo (INSALA)"
     },
     {
-      "id": "d1110-clean",
-      "text": "8. Cleaning block, 1 hour",
-      "note": "Project week · podcast + oven timer · vacuum is fine while the kids are away"
+      "id": "d1111-freelancer",
+      "text": "8. Cancel Freelancer Plus before it renews Thu 11/12",
+      "note": "$9.99/mo · stay on the free plan"
+    },
+    {
+      "id": "d1111-clean",
+      "text": "9. Cleaning block, 1 hour",
+      "note": "Last full project-week day before the kids are back · vacuum while they're away"
     }
   ],
   "quick": [
+    "Cancel Freelancer Plus before Thu renewal (5 min)",
     "Reply to Lea Cathey's Etsy message (10 min)",
-    "Grab the $175 for today's handgun class (5 min)",
     "Call about the $780 HOA check, Nevada's Finest (10 min)",
+    "Send Giancarlo (INSALA) the drafted micro1 follow-up if not sent (5 min)",
     "Check if the micro1 robotics gig is still open (5 min)",
-    "Send Pewter the firm no-meeting reply if not sent (5 min)"
+    "Kids screen-trial review if not done (15 min)"
   ],
   "lanes": [
     {
@@ -65,13 +71,28 @@
       "tag": "TOP PRIORITY",
       "tasks": [
         {
-          "id": "d1110-calls-lane",
+          "id": "d1111-calls-lane",
           "text": "Calls today (Call leads card)",
-          "note": "9:00 start-here pre-bankruptcy 5 · more after the 1:30 PM class"
+          "note": "8:30 block before Rubino · more after lunch"
         },
         {
-          "id": "d1110-cyberdive",
-          "text": "Cyber-Dive: Mercor status check today, bidder Zoom 11/12 at 1 PM ET",
+          "id": "d1111-mindyra-lane",
+          "text": "Mindyra Health: send Jonathan Horne the next step",
+          "note": "Hot lead from 11/10 · Harris Beach Murtha Cullina"
+        },
+        {
+          "id": "d1111-moondog-lane",
+          "text": "Moondog Animation: call trustee Janet Haigler",
+          "note": "803-261-9806 · Kevin Campbell referred you"
+        },
+        {
+          "id": "d1111-vm-lane",
+          "text": "Voicemail follow-up emails still owed",
+          "note": "IR-TEC (Weneta Kosmala), LV Residential Care (Brian Shapiro)"
+        },
+        {
+          "id": "d1111-cyberdive",
+          "text": "Cyber-Dive: bidder Zoom tomorrow 11/12 at 1 PM ET",
           "note": "Sale hearing Thu 11/19 · $100k opening offer, $2.5k–$5k overbids · you offered Robert Bartlemay an NDA"
         },
         {
@@ -110,7 +131,8 @@
         "Marc Yaverbaum's broker detail for Techcyte",
         "Printing Research: Areya's schedules not filed yet (micro1 link sent 11/9)",
         "Light & Motion, Orinove and Prime Eco replies",
-        "Michael Wynn (Rolls Rite) referral ask sent 11/9"
+        "Michael Wynn (Rolls Rite) referral ask sent 11/9",
+        "Voicemails left 11/10: Mara, AeroBrigham, Rogue Space, Thoughtweave, Tilcam, Gifford, Commercial Liquidators, Cleburne, Elite Wound Care, Barrington, Cornerstone, Caribbean Roofing, IR-TEC, Medical Center of Marin, LV Residential"
       ],
       "facts": [
         "LinkedIn attorney outreach routine runs around 10:30 AM",
@@ -125,9 +147,14 @@
       "name": "Admin",
       "tasks": [
         {
+          "id": "d1111-freelancer-lane",
+          "text": "Cancel Freelancer Plus before the Thu 11/12 renewal",
+          "note": "$9.99/mo · keep bidding on the free plan"
+        },
+        {
           "id": "d1109-unique-lane",
           "text": "Unique Accounting: e-sign the 2025 returns if not done",
-          "note": "$1,525 fees paid ✓ · IRS personal ~$1,031 still owed · tax reminder Thu 11/12"
+          "note": "$1,525 fees paid ✓ · IRS personal ~$1,031 still owed · tax reminder tomorrow 11/12"
         },
         {
           "id": "d1110-synchrony-lane",
@@ -269,41 +296,33 @@
       "name": "Kids & calendar",
       "tasks": [],
       "facts": [
-        "Project week · kid week ended Fri 11/6",
-        "Today Tue 11/10 · Women's Intro to Handguns, 10 AM–1:30 PM, Shoot Straight Sarasota ($175 balance due) · screen-trial review",
-        "Wed 11/11 · Rubino Check Up, 10:30 AM · Veterans Day, no school at Witt",
+        "Project week · kids with David until Fri 11/13, back with you Fri 3 PM",
+        "Today Wed 11/11 · Rubino check-up 10:30 AM · Veterans Day, no school at Witt · Ping's birthday",
+        "Thu 11/12 · Call kids 7:15 PM (text David first)",
         "Sat 11/14 · Grok Bot Meetup Tampa Bay, 1–4 PM, Embarc Collective",
+        "Tue 11/17 · Math tutoring with Heidi, 4:45 PM, Rocky Bluff Library",
         "Thu 11/19 · Fiona's school meeting, 10 AM (on the calendar)"
       ]
     }
   ],
   "week": [
     {
-      "day": "Tue",
-      "date": "11/10",
-      "items": [
-        "Handguns class 10 AM–1:30 PM",
-        "Screen-trial review · Cyber-Dive Mercor check"
-      ],
-      "trash": true,
-      "today": true
-    },
-    {
       "day": "Wed",
       "date": "11/11",
       "items": [
-        "Rubino Check Up 10:30 AM",
-        "Veterans Day · no school"
+        "Rubino check-up 10:30 AM",
+        "Veterans Day · Ping's birthday"
       ],
       "trash": true,
-      "today": false
+      "today": true
     },
     {
       "day": "Thu",
       "date": "11/12",
       "items": [
         "Taxes: pay IRS + returns for Penny",
-        "Cyber-Dive bidder Zoom 1 PM"
+        "Cyber-Dive bidder Zoom 1 PM",
+        "Call kids 7:15 PM"
       ],
       "trash": true,
       "today": false
@@ -312,6 +331,7 @@
       "day": "Fri",
       "date": "11/13",
       "items": [
+        "Kids back 3 PM",
         "Kolegend excavator cover chase"
       ],
       "today": false
@@ -327,6 +347,13 @@
     {
       "day": "Sun",
       "date": "11/15",
+      "items": [],
+      "trash": true,
+      "today": false
+    },
+    {
+      "day": "Mon",
+      "date": "11/16",
       "items": [],
       "trash": true,
       "today": false
