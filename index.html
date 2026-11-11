@@ -658,6 +658,7 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
       (c.email ? '<div class="cmail">✉ ' + esc(c.email) + '</div>' : "")) + (focusMode ? askLine(c) : "") +
       (c.signal ? '<div class="cline csig"><b>🚩 ' + esc(c.signal) + (c.signal_date ? " · " + esc(c.signal_date) : "") + ':</b> ' + esc(c.signal_detail || "") +
         (c.source_url ? ' <a href="' + esc(c.source_url) + '" target="_blank" rel="noopener">source ↗</a>' : "") + (c.city_state ? '<br>📍 ' + esc(c.city_state) : "") + '</div>' : "") +
+      (c.callback_window ? '<div class="cline"><b>Callback:</b> ' + esc(c.callback_window) + '</div>' : "") +
       (c.why && !c.signal ? '<div class="cline"><b>Why:</b> ' + esc(c.why) + '</div>' : "") +
       kdLine(c) + (c.fit || scaleText(c) ? '<div class="cline cfit">' + (c.fit ? '<b>Buyer fit:</b> ' + esc(c.fit) + (c.fit_why ? ' · ' + esc(c.fit_why) : "") : "") + ((c.fit && scaleText(c)) ? ' · ' : "") + scaleHtml(c, c.emp_badge ? ' <span class="badge kd soon">' + esc(c.emp_badge) + '</span>' : "") + '</div>' : "") +
       (c.payout ? '<div class="cline cpay"><b>💰 Your payout (est.):</b> ' + String(c.payout).split(' || ').map(esc).join('<br>') + '</div>' : "") +
@@ -1689,6 +1690,31 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
     if (hit) { jumpToCall(hit.dataset.jump); return; }
     if (callHitsOpen && (!e.target.closest || !e.target.closest(".callfind"))) { callHitsOpen = false; paintCallHits(); }
   });
+  // Reminder-to-call / Callbacks tab (11/11): sd.callbacks from encrypted payload (callbacks.json).
+  // Survives morning refresh; not stored in the day's calls.json.
+  function callbackList(sd) {
+    const C = (sd && sd.callbacks) || {};
+    if (Array.isArray(C)) return C;
+    return C.callbacks || C.leads || [];
+  }
+  function callbackAsCall(cb) {
+    if (!cb || !cb.id) return null;
+    const c = Object.assign({}, cb, { tab: "callback" });
+    if (!c.section) c.section = c.callback_window ? ("Callback · " + c.callback_window) : "Reminder to call / Callbacks";
+    return c;
+  }
+  function callbackCalls(sd, rawCalls) {
+    const out = [], seen = new Set();
+    for (const cb of callbackList(sd)) {
+      const c = callbackAsCall(cb);
+      if (!c || seen.has(c.id)) continue;
+      seen.add(c.id); out.push(c);
+    }
+    for (const c of rawCalls || []) {
+      if (c && c.tab === "callback" && c.id && !seen.has(c.id)) { seen.add(c.id); out.push(Object.assign({}, c, { tab: "callback" })); }
+    }
+    return out;
+  }
   function renderCalls() {
     const qEl = document.getElementById("callq"), qFocus = !!(qEl && document.activeElement === qEl);
     const qSel = qEl ? [qEl.selectionStart, qEl.selectionEnd] : null;
@@ -1704,11 +1730,13 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
       return;
     }
     const sd = secret || {};
-    const allCalls = Array.isArray(sd.calls) ? sd.calls.filter((c) => c && c.id) : [];
-    // Tabs (10/29): calls with tab:"prebk" (ABC / receivership leads) get their own tab; everything else is the main list.
-    const pbCalls = allCalls.filter((c) => c.tab === "prebk"), mainCalls = allCalls.filter((c) => c.tab !== "prebk");
-    if (!pbCalls.length) listTab = "main";
-    const tabCalls = listTab === "prebk" ? pbCalls : mainCalls;
+    const rawCalls = Array.isArray(sd.calls) ? sd.calls.filter((c) => c && c.id && c.tab !== "callback") : [];
+    // Tabs (10/29): tab:"prebk" → Pre-bankruptcy. (11/11): sd.callbacks (and tab:"callback") → Reminder to call / Callbacks. Everything else is the main list.
+    const cbCalls = callbackCalls(sd, Array.isArray(sd.calls) ? sd.calls.filter((c) => c && c.id) : []);
+    const allCalls = rawCalls.concat(cbCalls);
+    const pbCalls = allCalls.filter((c) => c.tab === "prebk"), mainCalls = allCalls.filter((c) => c.tab !== "prebk" && c.tab !== "callback");
+    if ((listTab === "prebk" && !pbCalls.length) || (listTab === "callback" && !cbCalls.length)) listTab = "main";
+    const tabCalls = listTab === "prebk" ? pbCalls : listTab === "callback" ? cbCalls : mainCalls;
     const qOn = callTokens(callQuery).length > 0;
     const calls = tabCalls.filter((c) => !isOffQueue(c) && stateMatchesFilter(c) && (!qOn || callMatch(c, callQuery)));
     const archivedCalls = tabCalls.filter((c) => isOffQueue(c) && stateMatchesFilter(c) && (!qOn || callMatch(c, callQuery)));
@@ -1724,10 +1752,15 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
       const n = calls.length, d = calls.filter(callDone).length;
       h += focusMode ? pipeCompactHtml(sd) + '<details class="fmextra"><summary class="csec">Potential earnings, hot leads, meetings &amp; today\'s stats</summary>' + refHtml(sd) + hotLeadsHtml(sd) + meetHtml(sd) + todayCallsHtml(allCalls) + '</details>' + sessHtml()
         : refHtml(sd) + hotLeadsHtml(sd) + meetHtml(sd) + sessHtml() + todayCallsHtml(allCalls);
-      if (pbCalls.length) h += '<div class="ltabs">' + [["main", "Chapter 7 & main", mainCalls], ["prebk", "Pre-bankruptcy (ABC / receivership)", pbCalls]].map(([k, l, g]) => {
-        const q = g.filter((c) => !isOffQueue(c));
-        return '<button type="button" class="ltab' + (k === listTab ? " on" : "") + '" data-ltab="' + k + '">' + esc(l) + " (" + q.filter(callDone).length + "/" + q.length + ")</button>";
-      }).join("") + "</div>";
+      if (pbCalls.length || cbCalls.length) {
+        const tabs = [["main", "Chapter 7 & main", mainCalls]];
+        if (pbCalls.length) tabs.push(["prebk", "Pre-bankruptcy (ABC / receivership)", pbCalls]);
+        if (cbCalls.length) tabs.push(["callback", "Reminder to call / Callbacks", cbCalls]);
+        h += '<div class="ltabs">' + tabs.map(([k, l, g]) => {
+          const q = g.filter((c) => !isOffQueue(c));
+          return '<button type="button" class="ltab' + (k === listTab ? " on" : "") + '" data-ltab="' + k + '">' + esc(l) + " (" + q.filter(callDone).length + "/" + q.length + ")</button>";
+        }).join("") + "</div>";
+      }
       h += '<div class="calls-top"><span class="calls-prog"><b>' + d + " of " + n + "</b> called</span>" +
         (archivedCalls.length ? '<span class="tag"> ' + archivedCalls.length + " archived</span>" : "") +
         (calls.some((c) => c.chapter === "Ch 7") ? '<span class="tag">CHAPTER 7 FIRST</span>' : "") + '</div>' +
