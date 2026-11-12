@@ -1,62 +1,66 @@
 {
-  "updated": "2026-11-11T07:45:00-05:00",
-  "heading": "Wednesday, Nov 11",
-  "kicker": "Project week · kids back Fri 3 PM",
-  "message": "Nice session yesterday: Mindyra is a real lead. Call block first, Rubino at 10:30, then follow-ups (Mindyra, Moondog's trustee, two voicemail emails) and more dials after. Happy Veterans Day, and it's Ping's birthday.",
+  "updated": "2026-11-12T07:50:00-05:00",
+  "heading": "Thursday, Nov 12",
+  "kicker": "Last project-week day · kids back Fri 3 PM",
+  "message": "Even on a holiday, two trustee-side calls came in: Emerson Noble (Caribbean Roofing) and Aaron Conrardy (Rogue Space) are both interested. Calls first, Sherri at 11:30, then taxes and more dials. Last full day before the kids are back.",
   "frog": {
-    "id": "d1111-calls",
+    "id": "d1112-calls",
     "text": "Calls from 8:30 (Call leads card)",
-    "note": "Get a block in before the 10:30 Rubino appointment 🐸"
+    "note": "Get a solid block in before Sherri at 11:30 🐸"
   },
   "today": [
     {
-      "id": "d1111-calls",
+      "id": "d1112-calls",
       "text": "1. Calls from 8:30 (Call leads card)",
-      "note": "Today's list is loaded · ~6 dials per Pomodoro · leave by ~10:10 for Rubino"
+      "note": "Today's list is loaded · ~6 dials per Pomodoro · leave by ~11:10 for Sherri"
     },
     {
-      "id": "d1111-rubino",
-      "text": "2. Rubino Periodontics check-up, 10:30 AM",
-      "note": "8614 SR 70 E #103, Lakewood Ranch · (941) 755-0029"
+      "id": "d1112-sherri",
+      "text": "2. Coffee with Sherri, 11:30 AM",
+      "note": "Root and Seed, 8209 Natures Way, Bradenton · walk after (Bob Gardner Park or Nathan Benderson)"
     },
     {
-      "id": "d1111-mindyra",
-      "text": "3. Mindyra Health: follow up with Jonathan Horne",
-      "note": "Interested on yesterday's call · SaaS that burned VC money · next step: intake"
+      "id": "d1112-cyberdive",
+      "text": "3. Cyber-Dive bidder Zoom, 1 PM ET",
+      "note": "Sale hearing Thu 11/19 · you told Robert the buyers work from intake, not presentations"
     },
     {
-      "id": "d1111-moondog",
-      "text": "4. Moondog Animation: call trustee Janet Haigler",
-      "note": "803-261-9806 · say Kevin Campbell sent you"
+      "id": "d1112-taxes",
+      "text": "4. Taxes: pay the IRS + get the returns to Penny",
+      "note": "Personal IRS ~$1,031 still owed · e-sign the Unique Accounting returns if not done"
     },
     {
-      "id": "d1111-vm-emails",
-      "text": "5. Send voicemail follow-up emails: IR-TEC, LV Residential Care",
-      "note": "Reply-only, no links or buyer names · still missing from yesterday"
-    },
-    {
-      "id": "d1111-calls-pm",
-      "text": "6. More calls after lunch",
+      "id": "d1112-calls-pm",
+      "text": "5. More calls in the afternoon",
       "note": "Check-in 2:15 PM · X note around 12:45 for the 1–4 PM window"
     },
     {
-      "id": "d1111-replies",
-      "text": "7. Check intake replies",
-      "note": "Fred Hjelmeset (Light & Motion), Kari Bowyer (Orinove), Catherine Curtis (Prime Eco), Giancarlo (INSALA)"
+      "id": "d1112-moondog",
+      "text": "6. Moondog Animation: call trustee Janet Haigler (if not done)",
+      "note": "803-261-9806 · say Kevin Campbell sent you"
     },
     {
-      "id": "d1111-freelancer",
-      "text": "8. Cancel Freelancer Plus before it renews Thu 11/12",
-      "note": "$9.99/mo · stay on the free plan"
+      "id": "d1112-vm-emails",
+      "text": "7. Voicemail follow-up emails: IR-TEC, LV Residential Care (if not sent)",
+      "note": "Reply-only, no links or buyer names"
     },
     {
-      "id": "d1111-clean",
+      "id": "d1112-replies",
+      "text": "8. Watch for replies",
+      "note": "Aaron Conrardy (Rogue Space) is asking the bank about the lien today · Fred (Light & Motion), Kari (Orinove), Catherine (Prime Eco), Giancarlo (INSALA)"
+    },
+    {
+      "id": "d1112-clean",
       "text": "9. Cleaning block, 1 hour",
-      "note": "Last full project-week day before the kids are back · vacuum while they're away"
+      "note": "Last project-week day · vacuum before the kids are back Fri"
+    },
+    {
+      "id": "d1112-kids-call",
+      "text": "10. Call the kids, 7:15 PM",
+      "note": "Text David first"
     }
   ],
   "quick": [
-    "Cancel Freelancer Plus before Thu renewal (5 min)",
     "Reply to Lea Cathey's Etsy message (10 min)",
     "Call about the $780 HOA check, Nevada's Finest (10 min)",
     "Send Giancarlo (INSALA) the drafted micro1 follow-up if not sent (5 min)",
@@ -71,29 +75,39 @@
       "tag": "TOP PRIORITY",
       "tasks": [
         {
-          "id": "d1111-calls-lane",
+          "id": "d1112-calls-lane",
           "text": "Calls today (Call leads card)",
-          "note": "8:30 block before Rubino · more after lunch"
+          "note": "8:30 block before Sherri · more in the afternoon"
         },
         {
-          "id": "d1111-mindyra-lane",
-          "text": "Mindyra Health: send Jonathan Horne the next step",
-          "note": "Hot lead from 11/10 · Harris Beach Murtha Cullina"
+          "id": "d1112-rogue-lane",
+          "text": "Rogue Space: watch for Aaron Conrardy's lien answer",
+          "note": "He's checking with the secured bank today · will fill the micro1 intake · 341 is Mon 12/14, 10 AM MT"
+        },
+        {
+          "id": "d1112-mindyra-lane",
+          "text": "Mindyra Health: follow up with Jonathan Horne Wed 11/18",
+          "note": "micro1 intake sent 11/10 · on the Callbacks tab"
+        },
+        {
+          "id": "d1112-caribbean-lane",
+          "text": "Caribbean Roofing: Emerson Noble callback Nov 30–Dec 4",
+          "note": "Follow-up with micro1 intake sent 11/11 · 341 set for 11/25, may move to December"
         },
         {
           "id": "d1111-moondog-lane",
-          "text": "Moondog Animation: call trustee Janet Haigler",
+          "text": "Moondog Animation: call trustee Janet Haigler (if not done)",
           "note": "803-261-9806 · Kevin Campbell referred you"
         },
         {
           "id": "d1111-vm-lane",
-          "text": "Voicemail follow-up emails still owed",
+          "text": "Voicemail follow-up emails still owed (if not sent)",
           "note": "IR-TEC (Weneta Kosmala), LV Residential Care (Brian Shapiro)"
         },
         {
-          "id": "d1111-cyberdive",
-          "text": "Cyber-Dive: bidder Zoom tomorrow 11/12 at 1 PM ET",
-          "note": "Sale hearing Thu 11/19 · $100k opening offer, $2.5k–$5k overbids · you offered Robert Bartlemay an NDA"
+          "id": "d1112-cyberdive-lane",
+          "text": "Cyber-Dive: bidder Zoom today at 1 PM ET",
+          "note": "Sale hearing Thu 11/19 · $100k opening offer, $2.5k–$5k overbids · micro1 can take what's left after the sale"
         },
         {
           "id": "d1110-giancarlo-lane",
@@ -132,7 +146,8 @@
         "Printing Research: Areya's schedules not filed yet (micro1 link sent 11/9)",
         "Light & Motion, Orinove and Prime Eco replies",
         "Michael Wynn (Rolls Rite) referral ask sent 11/9",
-        "Voicemails left 11/10: Mara, AeroBrigham, Rogue Space, Thoughtweave, Tilcam, Gifford, Commercial Liquidators, Cleburne, Elite Wound Care, Barrington, Cornerstone, Caribbean Roofing, IR-TEC, Medical Center of Marin, LV Residential"
+        "Aaron Conrardy (Rogue Space): bank's answer on the lien, then the micro1 intake",
+        "Cyber-Dive: wait-and-see until after the 11/19 sale hearing"
       ],
       "facts": [
         "LinkedIn attorney outreach routine runs around 10:30 AM",
@@ -147,14 +162,9 @@
       "name": "Admin",
       "tasks": [
         {
-          "id": "d1111-freelancer-lane",
-          "text": "Cancel Freelancer Plus before the Thu 11/12 renewal",
-          "note": "$9.99/mo · keep bidding on the free plan"
-        },
-        {
           "id": "d1109-unique-lane",
           "text": "Unique Accounting: e-sign the 2025 returns if not done",
-          "note": "$1,525 fees paid ✓ · IRS personal ~$1,031 still owed · tax reminder tomorrow 11/12"
+          "note": "$1,525 fees paid ✓ · IRS personal ~$1,031 still owed · tax day is today"
         },
         {
           "id": "d1110-synchrony-lane",
@@ -297,8 +307,7 @@
       "tasks": [],
       "facts": [
         "Project week · kids with David until Fri 11/13, back with you Fri 3 PM",
-        "Today Wed 11/11 · Rubino check-up 10:30 AM · Veterans Day, no school at Witt · Ping's birthday",
-        "Thu 11/12 · Call kids 7:15 PM (text David first)",
+        "Today Thu 11/12 · Sherri at Root and Seed 11:30 AM · Call kids 7:15 PM (text David first)",
         "Sat 11/14 · Grok Bot Meetup Tampa Bay, 1–4 PM, Embarc Collective",
         "Tue 11/17 · Math tutoring with Heidi, 4:45 PM, Rocky Bluff Library",
         "Thu 11/19 · Fiona's school meeting, 10 AM (on the calendar)"
@@ -307,25 +316,16 @@
   ],
   "week": [
     {
-      "day": "Wed",
-      "date": "11/11",
-      "items": [
-        "Rubino check-up 10:30 AM",
-        "Veterans Day · Ping's birthday"
-      ],
-      "trash": true,
-      "today": true
-    },
-    {
       "day": "Thu",
       "date": "11/12",
       "items": [
-        "Taxes: pay IRS + returns for Penny",
+        "Sherri, Root and Seed 11:30 AM",
         "Cyber-Dive bidder Zoom 1 PM",
+        "Taxes: pay IRS + returns for Penny",
         "Call kids 7:15 PM"
       ],
       "trash": true,
-      "today": false
+      "today": true
     },
     {
       "day": "Fri",
@@ -355,6 +355,15 @@
       "day": "Mon",
       "date": "11/16",
       "items": [],
+      "trash": true,
+      "today": false
+    },
+    {
+      "day": "Tue",
+      "date": "11/17",
+      "items": [
+        "Math tutoring with Heidi 4:45 PM"
+      ],
       "trash": true,
       "today": false
     }
