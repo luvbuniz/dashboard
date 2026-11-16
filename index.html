@@ -594,8 +594,20 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
     }
     const emails = emailHistoryOf(c);
     for (const e of emails) {
+      const typ = String((e && e.type) || "").toLowerCase();
+      if (typ === "chat_note" || typ === "note_from_chat") {
+        items.push({
+          kind: "chat_note",
+          at: e.at || "",
+          from: e.from || "",
+          text: e.snippet || e.text || e.note || "",
+          sort: histSortKey(e),
+          id: e.id
+        });
+        continue;
+      }
       items.push({
-        kind: e.type === "sent" ? "sent" : (e.type === "auto_reply" ? "auto" : "reply"),
+        kind: typ === "sent" ? "sent" : (typ === "auto_reply" ? "auto" : "reply"),
         at: e.at || "",
         from: e.from || e.from_email || "",
         text: e.snippet || e.subject || "",
@@ -628,6 +640,7 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
     return items;
   }
   function histLabel(item) {
+    if (item.kind === "chat_note") return "Note (from chat)";
     if (item.kind === "note") return "Note";
     if (item.kind === "sent") return "Email sent";
     if (item.kind === "auto") return "Auto-reply from " + (item.from || "them");
