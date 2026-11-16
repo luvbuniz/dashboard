@@ -1,56 +1,52 @@
 {
-  "updated": "2026-11-13T07:40:00-05:00",
-  "heading": "Friday, Nov 13",
-  "kicker": "Kids back today at 3 PM · custody week starts",
-  "message": "Taxes are paid and two trustees are warm. Get a good call block in this morning, tidy up loose ends, and vacuum before the kids are back at 3.",
+  "updated": "2026-11-16T07:40:00-05:00",
+  "heading": "Monday, Nov 16",
+  "kicker": "Kids week · work during school hours",
+  "message": "New week, fresh call list. Get the calls in this morning while it's quiet, knock out the ChatGPT ID check, and keep an eye out for trustee replies.",
   "frog": {
-    "id": "d1113-calls",
+    "id": "d1116-calls",
     "text": "Calls from 8:30 (Call leads card)",
-    "note": "Best block of the day before pickup 🐸"
+    "note": "Best block of the day while the kids are at school 🐸"
   },
   "today": [
     {
-      "id": "d1113-calls",
+      "id": "d1116-calls",
       "text": "1. Calls from 8:30 (Call leads card)",
       "note": "Today's list is loaded · ~6 dials per Pomodoro"
     },
     {
-      "id": "d1113-vm-emails",
+      "id": "d1116-chatgpt-id",
+      "text": "2. ChatGPT Business Hub: do the government ID check",
+      "note": "Then add the Stackadoo description and publish (amy@bunillc.com)"
+    },
+    {
+      "id": "d1116-vm-emails",
       "text": "3. Voicemail follow-up emails: IR-TEC, LV Residential Care (if not sent)",
       "note": "Reply-only, no links or buyer names"
     },
     {
-      "id": "d1113-kolegend",
-      "text": "4. Kolegend excavator cover chase",
-      "note": "Leo's K-101 battery cover · Amazon order 114-7551431-8253069"
-    },
-    {
-      "id": "d1113-calls-pm",
-      "text": "5. More calls after lunch, until pickup",
+      "id": "d1116-calls-pm",
+      "text": "4. More calls after lunch, until school pickup",
       "note": "X note around 12:45 · check-in 2:15 PM"
     },
     {
-      "id": "d1113-replies",
-      "text": "6. Watch for replies",
+      "id": "d1116-replies",
+      "text": "5. Watch for replies",
       "note": "Aaron Conrardy (Rogue Space) lien answer · Fred (Light & Motion), Kari (Orinove), Catherine (Prime Eco), Giancarlo (INSALA)"
     },
     {
-      "id": "d1113-vacuum",
-      "text": "7. Vacuum before the kids are back (if not done)",
-      "note": "Last chance this project week · Fiona hates the vacuum"
-    },
-    {
-      "id": "d1113-kids",
-      "text": "8. Kids back, 3 PM",
-      "note": "Custody week starts · no trash tonight (Friday)"
+      "id": "d1116-trash",
+      "text": "6. Trash out after 5 PM",
+      "note": "2 bags max"
     }
   ],
   "quick": [
+    "Check for Kolegend's replacement cover tracking email (5 min)",
     "Reply to Lea Cathey's Etsy message (10 min)",
     "Call about the $780 HOA check, Nevada's Finest (10 min)",
     "Send Giancarlo (INSALA) the drafted micro1 follow-up if not sent (5 min)",
     "Check if the micro1 robotics gig is still open (5 min)",
-    "Kids screen-trial review if not done (15 min)"
+    "Google Flow: opt in old creations before they expire Fri 11/20 (5 min)"
   ],
   "lanes": [
     {
@@ -60,9 +56,9 @@
       "tag": "TOP PRIORITY",
       "tasks": [
         {
-          "id": "d1113-calls-lane",
+          "id": "d1116-calls-lane",
           "text": "Calls today (Call leads card)",
-          "note": "Morning block · more after lunch until pickup"
+          "note": "Morning block · more after lunch until school pickup"
         },
         {
           "id": "d1112-rogue-lane",
@@ -276,7 +272,7 @@
         {
           "id": "home-vacuum",
           "text": "Vacuum the living room",
-          "note": "15 min · before 3 PM today, then next project week"
+          "note": "15 min · save for next project week (Fiona hates the vacuum)"
         }
       ]
     },
@@ -286,8 +282,7 @@
       "name": "Kids & calendar",
       "tasks": [],
       "facts": [
-        "Kids back with you today, Fri 11/13 at 3 PM · custody week",
-        "Sat 11/14 · Grok Bot Meetup Tampa Bay, 1–4 PM, Embarc Collective",
+        "Kids week with you (since Fri 11/13)",
         "Tue 11/17 · Math tutoring with Heidi, 4:45 PM, Rocky Bluff Library",
         "Thu 11/19 · Fiona's gifted-eligibility meeting with the school psychologist, 10 AM, Gene Witt"
       ]
@@ -295,35 +290,14 @@
   ],
   "week": [
     {
-      "day": "Fri",
-      "date": "11/13",
-      "items": [
-        "Kids back 3 PM",
-        "Kolegend excavator cover chase"
-      ],
-      "today": true
-    },
-    {
-      "day": "Sat",
-      "date": "11/14",
-      "items": [
-        "Grok Bot Meetup Tampa 1–4 PM"
-      ],
-      "today": false
-    },
-    {
-      "day": "Sun",
-      "date": "11/15",
-      "items": [],
-      "trash": true,
-      "today": false
-    },
-    {
       "day": "Mon",
       "date": "11/16",
-      "items": [],
+      "items": [
+        "Calls",
+        "ChatGPT Business Hub ID check"
+      ],
       "trash": true,
-      "today": false
+      "today": true
     },
     {
       "day": "Tue",
@@ -342,6 +316,31 @@
         "Mindyra: follow up with Jonathan Horne"
       ],
       "trash": true,
+      "today": false
+    },
+    {
+      "day": "Thu",
+      "date": "11/19",
+      "items": [
+        "Fiona's school psychologist meeting 10 AM",
+        "Cyber-Dive sale hearing 1 PM"
+      ],
+      "trash": true,
+      "today": false
+    },
+    {
+      "day": "Fri",
+      "date": "11/20",
+      "items": [
+        "Google Flow old creations expire",
+        "X payout expected (~11/20)"
+      ],
+      "today": false
+    },
+    {
+      "day": "Sat",
+      "date": "11/21",
+      "items": [],
       "today": false
     }
   ],
