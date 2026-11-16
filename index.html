@@ -559,10 +559,18 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
     }
     return out;
   }
+  function etStamp(d) {
+    const parts = new Intl.DateTimeFormat("en-CA", {
+      timeZone: "America/New_York", year: "numeric", month: "2-digit", day: "2-digit",
+      hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false
+    }).formatToParts(d);
+    const g = (typ) => (parts.find((p) => p.type === typ) || {}).value || "00";
+    return g("year") + "-" + g("month") + "-" + g("day") + "T" + g("hour") + ":" + g("minute") + ":" + g("second");
+  }
   function histSortKey(item) {
     const at = item.at || "";
-    if (/^\d{4}-\d{2}-\d{2}T/.test(at)) return at;
     if (/^\d{4}-\d{2}-\d{2}$/.test(at)) return at + "T00:00:00";
+    if (at && !isNaN(Date.parse(at))) return etStamp(new Date(at));
     if (item.date) {
       const t = String(item.time_et || "").trim();
       const m = t.match(/^(\d{1,2}):(\d{2})\s*(am|pm)?/i);
@@ -595,11 +603,23 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
         id: e.id
       });
     }
+    function emailEventCovered(e) {
+      const typ = String((e && e.type) || "").toLowerCase();
+      if (typ !== "email" && typ !== "sent" && typ !== "reply") return false;
+      const day = e.date || "";
+      const eSent = typ === "sent" || /sent|outbound/i.test(String(e.outcome || ""));
+      return emails.some((h) => {
+        const hd = String(h.at || "").slice(0, 10);
+        if (day && hd && day !== hd) return false;
+        const hSent = h.type === "sent";
+        return !day || !hd || eSent === hSent;
+      });
+    }
     const evs = Array.isArray(c && c.events) ? c.events : [];
     for (const e of evs) {
       if (!e) continue;
       const typ = String(e.type || "").toLowerCase();
-      if (emails.length && (typ === "email" || typ === "sent" || typ === "reply")) continue;
+      if (emailEventCovered(e)) continue;
       const text = (e.note || [e.type, e.outcome].filter(Boolean).join(" · ") || "").trim();
       if (!text && !e.date) continue;
       items.push({ kind: typ || "update", at: e.at || e.date || "", time_et: e.time_et, date: e.date, from: "", text, sort: histSortKey(e) });
