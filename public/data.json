@@ -1,43 +1,53 @@
 {
-  "updated": "2026-11-16T07:40:00-05:00",
-  "heading": "Monday, Nov 16",
-  "kicker": "Kids week · work during school hours",
-  "message": "New week, fresh call list. Get the calls in this morning while it's quiet, knock out the ChatGPT ID check, and keep an eye out for trustee replies.",
+  "updated": "2026-11-17T07:35:00-05:00",
+  "heading": "Tuesday, Nov 17",
+  "kicker": "Kids week · micro1 project offer this week",
+  "message": "Big one today: the micro1 project offer. Get it signed, onboarded and the first task done well before the window closes early Wednesday. Fit calls around it, then enjoy the walk with Sherri.",
   "frog": {
-    "id": "d1116-calls",
-    "text": "Calls from 8:30 (Call leads card)",
-    "note": "Best block of the day while the kids are at school 🐸"
+    "id": "d1117-micro1",
+    "text": "micro1 project: sign, onboard, finish the first task",
+    "note": "36-hour window from Mon 6:40 PM, so it closes around 6:40 AM Wed 🐸"
   },
   "today": [
     {
-      "id": "d1116-calls",
-      "text": "1. Calls from 8:30 (Call leads card)",
+      "id": "d1117-micro1",
+      "text": "1. micro1 project: sign, onboard, first task (from 9:30)",
+      "note": "Window closes around 6:40 AM Wed · sub-teaching paused for this"
+    },
+    {
+      "id": "d1117-calls",
+      "text": "2. Calls around micro1 (Call leads card)",
       "note": "Today's list is loaded · ~6 dials per Pomodoro"
     },
     {
-      "id": "d1116-chatgpt-id",
-      "text": "2. ChatGPT Business Hub: do the government ID check",
-      "note": "Then add the Stackadoo description and publish (amy@bunillc.com)"
+      "id": "d1117-lunch",
+      "text": "3. Light lunch around noon",
+      "note": "Before the walk"
     },
     {
-      "id": "d1116-vm-emails",
-      "text": "3. Voicemail follow-up emails: IR-TEC, LV Residential Care (if not sent)",
-      "note": "Reply-only, no links or buyer names"
+      "id": "d1117-sherri",
+      "text": "4. Meet Sherri at Bob Gardner Park, 1 PM",
+      "note": "Calendar"
     },
     {
-      "id": "d1116-calls-pm",
-      "text": "4. More calls after lunch, until school pickup",
+      "id": "d1117-pm",
+      "text": "5. Back to micro1 or calls until school pickup",
       "note": "X note around 12:45 · check-in 2:15 PM"
     },
     {
-      "id": "d1116-replies",
-      "text": "5. Watch for replies",
-      "note": "Aaron Conrardy (Rogue Space) lien answer · Fred (Light & Motion), Kari (Orinove), Catherine (Prime Eco), Giancarlo (INSALA)"
+      "id": "d1117-heidi",
+      "text": "6. Math tutoring with Heidi, 4:45 PM, Rocky Bluff Library",
+      "note": "Calendar"
     },
     {
-      "id": "d1116-trash",
-      "text": "6. Trash out after 5 PM",
+      "id": "d1117-trash",
+      "text": "7. Trash out after 5 PM",
       "note": "2 bags max"
+    },
+    {
+      "id": "d1116-chatgpt-id",
+      "text": "If time: ChatGPT Business Hub government ID check",
+      "note": "Then add the Stackadoo description and publish (amy@bunillc.com)"
     }
   ],
   "quick": [
@@ -56,19 +66,24 @@
       "tag": "TOP PRIORITY",
       "tasks": [
         {
-          "id": "d1116-calls-lane",
+          "id": "d1117-calls-lane",
           "text": "Calls today (Call leads card)",
-          "note": "Morning block · more after lunch until school pickup"
+          "note": "Fit around the micro1 onboarding"
+        },
+        {
+          "id": "d1117-mindyra-lane",
+          "text": "Mindyra Health: call trustee George Roumeliotis, 413-734-1100",
+          "note": "Jonathan Horne gave his name 11/16 · customer data was destroyed; ask if the operational data survived"
+        },
+        {
+          "id": "d1117-yhangry-lane",
+          "text": "Yhangry: main contact is Alfred Guiliano",
+          "note": "From Robert Masten 11/16 · 341 is Fri 11/20 · schedules not filed yet"
         },
         {
           "id": "d1112-rogue-lane",
           "text": "Rogue Space: watch for Aaron Conrardy's lien answer",
           "note": "He was checking with the secured bank on 11/12 · will fill the micro1 intake · 341 is Mon 12/14, 10 AM MT"
-        },
-        {
-          "id": "d1112-mindyra-lane",
-          "text": "Mindyra Health: follow up with Jonathan Horne Wed 11/18",
-          "note": "micro1 intake sent 11/10 · on the Callbacks tab"
         },
         {
           "id": "d1112-caribbean-lane",
@@ -185,6 +200,7 @@
       "tasks": [],
       "tag": "ON HOLD",
       "facts": [
+        "Paused 11/16 (Quinn stopped the Frontline/ESS checks) while you take the micro1 project",
         "Van is back from A&B ✓"
       ]
     },
@@ -193,6 +209,11 @@
       "emoji": "🧠",
       "name": "AI training",
       "tasks": [
+        {
+          "id": "d1117-micro1-lane",
+          "text": "micro1 first AI-training project: sign, onboard, first task",
+          "note": "Offer came Mon 6:40 PM · 36-hour window (closes around 6:40 AM Wed)"
+        },
         {
           "id": "d1028-mercor-interview",
           "text": "Prep for the Mercor AI interview (education expert)"
@@ -290,30 +311,22 @@
   ],
   "week": [
     {
-      "day": "Mon",
-      "date": "11/16",
+      "day": "Tue",
+      "date": "11/17",
       "items": [
-        "Calls",
-        "ChatGPT Business Hub ID check"
+        "micro1 onboarding",
+        "Sherri, Bob Gardner Park 1 PM",
+        "Math tutoring with Heidi 4:45 PM"
       ],
       "trash": true,
       "today": true
     },
     {
-      "day": "Tue",
-      "date": "11/17",
-      "items": [
-        "Math tutoring with Heidi 4:45 PM"
-      ],
-      "trash": true,
-      "today": false
-    },
-    {
       "day": "Wed",
       "date": "11/18",
       "items": [
-        "Orinove 341 meeting",
-        "Mindyra: follow up with Jonathan Horne"
+        "micro1 window closes ~6:40 AM",
+        "Orinove 341 meeting"
       ],
       "trash": true,
       "today": false
@@ -332,6 +345,7 @@
       "day": "Fri",
       "date": "11/20",
       "items": [
+        "Yhangry 341",
         "Google Flow old creations expire",
         "X payout expected (~11/20)"
       ],
@@ -341,6 +355,13 @@
       "day": "Sat",
       "date": "11/21",
       "items": [],
+      "today": false
+    },
+    {
+      "day": "Sun",
+      "date": "11/22",
+      "items": [],
+      "trash": true,
       "today": false
     }
   ],
