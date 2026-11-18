@@ -918,9 +918,12 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
   }
   const leadKind = (c) => {
     const tag = String(c.script_tag || "").toUpperCase();
+    const ch = String(c.chapter || "").trim();
     if (/LINK/.test(tag)) return "link";
     if (/ASSIGNEE|RECEIVER/.test(tag)) return "assignee";
     if (/^OWNER/.test(tag)) return "owner";
+    // 11/18: Chapter 11 / Sub V / liquidating-trust cards use ch11_live and ch11_vm, not the Ch 7 trustee script.
+    if (/CH\s*11|CHAPTER 11|SUB\s*V|SUBV|LIQUIDATING|PLAN ADMIN/.test(tag) || /^(Ch 11|Sub V)$/i.test(ch)) return "ch11";
     if (/ATTORNEY|TRUSTEE/.test(tag) || c.chapter || /trustee|counsel|attorney/i.test(c.role || "")) return "atty";
     return "owner";
   };
