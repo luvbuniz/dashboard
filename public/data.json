@@ -361,6 +361,14 @@
       ],
       "trash": true,
       "today": false
+    },
+    {
+      "day": "Tue",
+      "date": "11/24",
+      "items": [
+        "Printing Research / Areya Holder callback (schedules)"
+      ],
+      "today": false
     }
   ],
   "elodie": [
