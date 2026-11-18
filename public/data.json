@@ -102,8 +102,8 @@
         },
         {
           "id": "d1110-giancarlo-lane",
-          "text": "INSALA: live call with Corky Sherman 12:12 PM ET; data-types follow-up sent 12:17 PM ET",
-          "note": "Very friendly. High-value multi-estate trustee (~100 cases). Grouped with VeUP and TTS under one Corky card. Always call him Corky."
+          "text": "INSALA: on hold pending UST Region 6 position; check in Wed Dec 2",
+          "note": "Giancarlo called back 12:32 PM ET. They would probably need a motion to sell; he thinks UST may object, but wait and see. Favor non-PII data (code, docs, content)."
         },
         {
           "id": "d1110-replies-lane",
@@ -367,6 +367,14 @@
       "date": "11/24",
       "items": [
         "Printing Research / Areya Holder callback (schedules)"
+      ],
+      "today": false
+    },
+    {
+      "day": "Wed",
+      "date": "12/2",
+      "items": [
+        "INSALA / Region 6 check-in (Giancarlo: wait and see on UST data-sale review)"
       ],
       "today": false
     }
