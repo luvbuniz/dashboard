@@ -1,43 +1,53 @@
 {
-  "updated": "2026-11-18T07:40:00-05:00",
-  "heading": "Wednesday, Nov 18",
-  "kicker": "Kids week · micro1 contract live, waiting on the Hubstaff invite",
-  "message": "Your plan: a few things this morning, calls this afternoon. Reach Orinove before their 3:30 PM meeting, and start the call block with the five motivated sellers. micro1 is on hold until the background check and Hubstaff invite come in.",
+  "updated": "2026-11-19T07:35:00-05:00",
+  "heading": "Thursday, Nov 19",
+  "kicker": "Kids week (David has them from Fri 3 PM) · micro1 still waiting on the Hubstaff invite",
+  "message": "Your plan: Fiona's gifted meeting at 10, then two call blocks in the conference room, 11:30–1:00 and 1:30–3:30. Twenty dials earns your Fresh Market treat 🍣. Be in the car by 4:30 for sports club pickup.",
   "frog": {
-    "id": "d1118-calls",
-    "text": "Afternoon call block (Call leads card)",
-    "note": "Five motivated sellers first: Twinlab, Anellotech, Activ Technologies, Keith Black, Telestream 🐸"
+    "id": "d1119-calls",
+    "text": "Two call blocks: 11:30–1:00 and 1:30–3:30 (Call leads card)",
+    "note": "Conference room · Prime Eco and Light & Motion callbacks first, then Anellotech and Activ Technologies · 20 dials = treat 🐸"
   },
   "today": [
     {
-      "id": "d1118-morning",
-      "text": "1. Morning: a few things from the Quick list",
-      "note": "Your plan from yesterday · calls move to the afternoon"
+      "id": "d1119-fiona",
+      "text": "1. Fiona's gifted-eligibility meeting, 10 AM",
+      "note": "School psychologist · Gene Witt Elementary"
     },
     {
-      "id": "d1118-sends",
-      "text": "2. ESS Tech follow-up sent 12:56 PM ET",
-      "note": "Sent from amy@bunillc.com to dwctrustee@gmail.com in thread 1a1eed1b14b60a96 (Gmail 1a1efcd4d7bd025f). Grouped under card 1118-M13."
+      "id": "d1119-block1",
+      "text": "2. Call block 1, 11:30 AM–1:00 PM (conference room)",
+      "note": "Callbacks first: Catherine (Prime Eco), Fred (Light & Motion) · then Craig Nurick (Anellotech), Activ Technologies"
     },
     {
-      "id": "d1118-orinove",
-      "text": "3. Call Orinove before their 3:30 PM ET 341",
-      "note": "Trustee Kari Bowyer · asked about the Mercor form"
+      "id": "d1119-lunch",
+      "text": "3. Lunch, 1:00–1:30",
+      "note": "Cyber-Dive sale hearing is 1 PM ET · wait-and-see"
     },
     {
-      "id": "d1118-calls",
-      "text": "4. Call block (Call leads card)",
-      "note": "Five motivated sellers first, then Mindyra (George Roumeliotis) and the other callbacks · check-in 2:15 PM"
+      "id": "d1119-block2",
+      "text": "4. Call block 2, 1:30–3:30 PM",
+      "note": "Count dials, not conversations · 20 dials earns the Fresh Market treat · check-in 2:15"
     },
     {
-      "id": "d1118-micro1",
-      "text": "5. Watch for micro1's background check and Hubstaff invite",
-      "note": "Set up Hubstaff and Slack on the Acer only"
+      "id": "d1119-sushi",
+      "text": "5. Fresh Market: sushi for dinner (+ your treat)",
+      "note": "Before you leave for pickup"
     },
     {
-      "id": "d1118-trash",
-      "text": "6. Trash out after 5 PM",
-      "note": "2 bags max"
+      "id": "d1119-pickup",
+      "text": "6. In the car by 4:30 for Game On Sports Club pickup at 5",
+      "note": "Sports club starts 3:15"
+    },
+    {
+      "id": "d1119-trash",
+      "text": "7. Trash out after 5 PM",
+      "note": "2 bags max · tomorrow is not a trash night"
+    },
+    {
+      "id": "d1119-flow",
+      "text": "If time: Google Flow, opt in old creations",
+      "note": "They expire tomorrow, Fri 11/20"
     },
     {
       "id": "d1116-chatgpt-id",
@@ -61,9 +71,9 @@
       "tag": "TOP PRIORITY",
       "tasks": [
         {
-          "id": "d1118-calls-lane",
-          "text": "Calls this afternoon (Call leads card)",
-          "note": "Orinove before 3:30 PM · five motivated sellers first"
+          "id": "d1119-calls-lane",
+          "text": "Calls today: 11:30–1:00 and 1:30–3:30 (Call leads card)",
+          "note": "Prime Eco and Light & Motion callbacks first · first-time pre-bankruptcy calls next"
         },
         {
           "id": "d1118-new-leads-lane",
@@ -73,12 +83,12 @@
         {
           "id": "d1117-mindyra-lane",
           "text": "Mindyra Health: call trustee George Roumeliotis, 413-734-1100",
-          "note": "Jonathan Horne gave his name 11/16 · customer data was destroyed; ask if the operational data survived"
+          "note": "Mindyra's 341 is today · Jonathan Horne gave his name 11/16 · customer data was destroyed; ask if the operational data survived · healthcare: hold until the Region 6 question settles"
         },
         {
           "id": "d1117-yhangry-lane",
           "text": "Yhangry: left VM for Alfred Giuliano 12:20 PM ET; follow-up sent 12:23 PM ET",
-          "note": "341 is Fri 11/20, noon ET. He is also trustee on Big Lots, Freedom Forever, ZenniHome, EO Charging and Silverfern."
+          "note": "341 is tomorrow, Fri 11/20, noon ET. He is also trustee on Big Lots, Freedom Forever, ZenniHome, EO Charging and Silverfern."
         },
         {
           "id": "d1112-rogue-lane",
@@ -92,7 +102,7 @@
         },
         {
           "id": "d1113-cyberdive-lane",
-          "text": "Cyber-Dive: sale hearing Thu 11/19, 1 PM ET",
+          "text": "Cyber-Dive: sale hearing today, 1 PM ET",
           "note": "Wait-and-see · micro1 can take what's left after the sale"
         },
         {
@@ -142,7 +152,7 @@
       ],
       "facts": [
         "LinkedIn attorney outreach routine runs around 10:30 AM",
-        "Orinove 341 meeting today, 3:30 PM ET · trustee Kari Bowyer",
+        "Orinove: Kari Bowyer's 341 was 11/18, 3:30 PM ET · she may call back",
         "Buyer order: Mercor → micro1 → Handshake; Pewter optional/last (firm no-meeting reply)",
         "Mercor referrals in (all 5 slots used, incl. Cyber-Dive, Printing Research, INSALA, Orinove) · Mercor keeps adding slots"
       ]
@@ -303,32 +313,27 @@
       "name": "Kids & calendar",
       "tasks": [],
       "facts": [
-        "Kids week with you (since Fri 11/13)",
-        "Thu 11/19 · Fiona's gifted-eligibility meeting with the school psychologist, 10 AM, Gene Witt",
-        "Mon 11/23 · Root canal retreatment, 2 PM, Lakewood Ranch Endodontics"
+        "Kids week with you (since Fri 11/13) · David has them from Fri 11/20, 3 PM",
+        "Today · Fiona's gifted-eligibility meeting, 10 AM, Gene Witt · Game On Sports Club 3:15, pickup at 5",
+        "Fri 11/20 · Camouflage School Spirit Day",
+        "Mon 11/23 · Fall Break · Root canal retreatment, 2 PM, Lakewood Ranch Endodontics",
+        "Tue 11/24 and Thu 11/26 · Call the kids 7:15 PM (text David first)"
       ]
     }
   ],
   "week": [
     {
-      "day": "Wed",
-      "date": "11/18",
-      "items": [
-        "Calls this afternoon",
-        "Orinove 341, 3:30 PM"
-      ],
-      "trash": true,
-      "today": true
-    },
-    {
       "day": "Thu",
       "date": "11/19",
       "items": [
         "Fiona's school psychologist meeting 10 AM",
-        "Cyber-Dive sale hearing 1 PM"
+        "Calls 11:30–1:00 and 1:30–3:30",
+        "Cyber-Dive sale hearing 1 PM",
+        "Mindyra 341",
+        "Game On Sports Club 3:15 (pickup 5)"
       ],
       "trash": true,
-      "today": false
+      "today": true
     },
     {
       "day": "Fri",
@@ -336,7 +341,9 @@
       "items": [
         "Yhangry 341, noon",
         "Google Flow old creations expire",
-        "X payout expected (~11/20)"
+        "X payout expected (~11/20)",
+        "Camouflage Spirit Day",
+        "David has the kids from 3 PM"
       ],
       "today": false
     },
@@ -357,6 +364,7 @@
       "day": "Mon",
       "date": "11/23",
       "items": [
+        "Fall Break",
         "Root canal retreatment 2 PM"
       ],
       "trash": true,
@@ -366,8 +374,19 @@
       "day": "Tue",
       "date": "11/24",
       "items": [
-        "Printing Research / Areya Holder callback (schedules)"
+        "Printing Research / Areya Holder callback (schedules)",
+        "Call kids 7:15 PM (text David first)"
       ],
+      "trash": true,
+      "today": false
+    },
+    {
+      "day": "Wed",
+      "date": "11/25",
+      "items": [
+        "Caribbean Roofing 341 (may move to December)"
+      ],
+      "trash": true,
       "today": false
     },
     {
