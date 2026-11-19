@@ -1719,11 +1719,21 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
   let stateFilter = localStorage.getItem(STATE_KEY) || "all";
   const callFold = (s) => String(s || "").toLowerCase().replace(/&/g, " and ").replace(/[^a-z0-9]+/g, " ").trim();
   const callTokens = (q) => callFold(q).split(/\s+/).filter(Boolean);
-  const callParts = (c) => ({ name: callFold(c && c.name), co: callFold(c && c.company) });
+  // 11/19: also match trustee, counsel, contact email/phone, cc, and every estate on multi-estate cards.
+  const callPeople = (o) => (o && typeof o === "object") ? [o.name, o.email, o.phone, o.direct_phone] : [o];
+  const callExtra = (c) => {
+    if (!c) return "";
+    const bits = [c.role, c.email, c.phone, c.direct_phone, c.cc, c.case];
+    for (const k of ["trustee", "counsel"]) bits.push(...callPeople(c[k]));
+    if (Array.isArray(c.estates)) bits.push(...c.estates);
+    // Fold each field on its own and join with "|" so a space-stripped match can't run across two fields.
+    return bits.filter((b) => typeof b === "string" || typeof b === "number").map(callFold).filter(Boolean).join(" | ");
+  };
+  const callParts = (c) => ({ name: callFold(c && c.name), co: callFold(c && c.company), ex: callExtra(c), tn: callFold(c && c.trustee && c.trustee.name) });
   function callMatch(c, q) {
     const tokens = callTokens(q);
     if (!tokens.length || !c) return false;
-    const p = callParts(c), hay = (p.name + " " + p.co).trim(), tight = hay.replace(/ /g, "");
+    const p = callParts(c), hay = (p.name + " | " + p.co + " | " + p.ex), tight = hay.replace(/ /g, "");
     return tokens.every((t) => hay.includes(t) || tight.includes(t));
   }
   function scoreCall(c, q) {
@@ -1733,6 +1743,7 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
     else if (p.co.includes(phrase) || p.co.includes(rev) || p.name.includes(phrase) || p.name.includes(rev)) s += 60;
     if (tokens.every((t) => p.co.includes(t))) s += 40;
     if (tokens.every((t) => p.name.includes(t))) s += 30;
+    if (p.tn && (p.tn.includes(phrase) || p.tn.includes(rev) || tokens.every((t) => p.tn.includes(t)))) s += 30;
     return s;
   }
   function searchableCalls() {
@@ -1777,7 +1788,7 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
     if (!open) { box.hidden = true; box.innerHTML = ""; input.removeAttribute("aria-activedescendant"); return; }
     box.hidden = false;
     if (!hits.length) {
-      box.innerHTML = '<div class="callnone">No matching leads for “' + esc(String(callQuery).trim()) + '”. Search checks company and contact names already on this list.</div>';
+      box.innerHTML = '<div class="callnone">No matching leads for “' + esc(String(callQuery).trim()) + '”. Search checks company, contact, trustee and counsel names, emails, phones and estates already on this list.</div>';
       input.removeAttribute("aria-activedescendant");
       return;
     }
