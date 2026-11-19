@@ -40,7 +40,20 @@
     .frog { border-color:var(--copper); background:linear-gradient(0deg,var(--copper-dim),var(--copper-dim)),var(--panel); margin-top:18px; }
     .frog .kicker { color:var(--copper); }
     .task { display:flex; gap:12px; align-items:flex-start; width:100%; text-align:left; background:none; border:0; color:inherit; font:inherit; padding:9px 0; cursor:pointer; -webkit-tap-highlight-color:transparent; min-height:44px; }
-    .task + .task { border-top:1px solid var(--line); }
+    .task + .task, .trow + .trow { border-top:1px solid var(--line); }
+    .trow { display:flex; align-items:flex-start; gap:4px; }
+    .trow .task { flex:1 1 auto; min-width:0; }
+    .xdel { flex:none; background:none; border:0; color:var(--faint); font:inherit; font-size:18px; line-height:1; width:36px; height:40px; margin-top:2px; border-radius:8px; cursor:pointer; opacity:.45; -webkit-tap-highlight-color:transparent; }
+    .xdel:hover, .xdel:focus-visible { opacity:1; color:var(--copper); background:var(--copper-dim); }
+    .day li { position:relative; padding-right:22px; }
+    .day li .xdel { position:absolute; right:-6px; top:-4px; width:28px; height:26px; font-size:15px; margin:0; }
+    #deleted { margin-top:18px; font-size:13px; color:var(--muted); }
+    #deleted ul { list-style:none; margin:6px 0 0; padding:0; }
+    #deleted li { display:flex; gap:10px; align-items:center; justify-content:space-between; padding:6px 0; border-top:1px dashed var(--line); }
+    #deleted li span { color:var(--faint); text-decoration:line-through; overflow-wrap:anywhere; }
+    #deleted .linkbtn { color:var(--copper); font-size:13px; white-space:nowrap; }
+    #undotoast { position:fixed; left:50%; bottom:18px; transform:translateX(-50%); background:#2b2622; color:#fff; border-radius:999px; padding:10px 16px; font-size:14px; display:none; gap:12px; align-items:center; z-index:9999; box-shadow:0 4px 18px rgba(0,0,0,.25); max-width:92vw; }
+    #undotoast button { background:none; border:0; color:#f3b37a; font:inherit; font-weight:600; cursor:pointer; padding:4px 2px; }
     .box { flex:none; width:24px; height:24px; border-radius:7px; border:2px solid var(--faint); margin-top:1px; display:grid; place-items:center; transition:all .15s; }
     .task.done .box { background:var(--ok); border-color:var(--ok); }
     .task.done .box::after { content:""; width:6px; height:11px; border:solid #fff; border-width:0 2.5px 2.5px 0; transform:rotate(45deg) translate(-1px,-1px); }
@@ -313,7 +326,7 @@
     footer { margin-top:32px; font-size:11px; color:var(--faint); }
     @media print {
       :root { --bg:#fff; --panel:#fff; --ink:#000; --muted:#333; --faint:#555; --line:#ccc; --copper:#000; --copper-dim:transparent; }
-      .linkbtn,.stuck-sec,.sync,footer,.outs,.cnote,.cskipbox,.emlbtn,.stabs,.sp-toggle { display:none !important; }
+      .xdel,#deleted,#undotoast,.linkbtn,.stuck-sec,.sync,footer,.outs,.cnote,.cskipbox,.emlbtn,.stabs,.sp-toggle { display:none !important; }
       .wrap { padding:0; max-width:none; } .card,.day { break-inside:avoid; } .task { min-height:0; padding:5px 0; }
       .box { border-color:#000; } .grid { grid-template-columns:1fr 1fr; }
     }
@@ -370,8 +383,10 @@
   <h2>Inbox from Elodie</h2>
   <div class="card" id="elodie"></div>
 
+  <div id="deleted"></div>
   <footer id="foot"></footer>
 </div>
+<div id="undotoast" role="status"><span id="undotext">Deleted</span><button type="button" id="undobtn">Undo</button></div>
 <script type="module">
 import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./src/call-attempts.js";
 (() => {
@@ -438,40 +453,85 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
   setInterval(() => { qi++; paintQuote(); }, 1200000);
   paintQuote();
 
+  // ── Delete buttons: hides items on THIS device only (localStorage). data.json is never changed.
+  // Key = item id (or week date) + hash of its text, so a reused id with new text shows again.
+  const HIDE_KEY = "amy-day-v2-hidden";
+  let hidden = load(HIDE_KEY, {});
+  const hsh = (str) => { let h = 5381; str = String(str ?? ""); for (let i = 0; i < str.length; i++) h = ((h << 5) + h + str.charCodeAt(i)) | 0; return (h >>> 0).toString(36); };
+  const taskKey = (t) => "t:" + (t.id || "") + "|" + hsh(t.text);
+  const weekKey = (d, i) => "w:" + (d.date || d.day || "") + "|" + hsh(i);
+  const isHidden = (k) => !!hidden[k];
+  const visTasks = (arr) => (arr || []).filter((t) => t && !isHidden(taskKey(t)));
+  const delBtn = (k, text) => '<button type="button" class="xdel" data-del="' + esc(k) + '" data-deltext="' + esc(text) + '" aria-label="Delete item" title="Delete">×</button>';
   const taskHtml = (t, lane) => {
     labels[t.id] = { label: t.text, lane };
-    return '<button type="button" class="task' + (done[t.id] ? " done" : "") + '" data-id="' + esc(t.id) + '">' +
+    return '<div class="trow"><button type="button" class="task' + (done[t.id] ? " done" : "") + '" data-id="' + esc(t.id) + '">' +
       '<span class="box"></span><span><span class="label">' + esc(t.text) + '</span>' +
-      (t.note ? '<span class="note">' + esc(t.note) + '</span>' : "") + '</span></button>';
+      (t.note ? '<span class="note">' + esc(t.note) + '</span>' : "") + '</span></button>' + delBtn(taskKey(t), t.text) + '</div>';
   };
+  let showDeleted = false, undoKey = null, undoTimer = null;
+  function renderDeleted() {
+    const box = document.getElementById("deleted"); if (!box) return;
+    const ks = Object.keys(hidden);
+    if (!ks.length) { box.innerHTML = ""; showDeleted = false; return; }
+    ks.sort((a, b) => String(hidden[b].at || "").localeCompare(String(hidden[a].at || "")));
+    box.innerHTML = '<button type="button" class="linkbtn" data-deltoggle="1">🗑️ ' + ks.length + ' deleted on this device · ' + (showDeleted ? "hide" : "show / undo") + '</button>' +
+      (showDeleted ? '<ul>' + ks.map((k) => '<li><span>' + esc(hidden[k].text || k) + '</span><button type="button" class="linkbtn" data-restore="' + esc(k) + '">Restore</button></li>').join("") +
+        '</ul>' + (ks.length > 1 ? '<button type="button" class="linkbtn" data-restore="*">Restore all</button>' : "") : "");
+  }
+  function showUndo(k) {
+    const t = document.getElementById("undotoast"); if (!t) return;
+    undoKey = k; document.getElementById("undotext").textContent = "Deleted";
+    t.style.display = "flex"; clearTimeout(undoTimer);
+    undoTimer = setTimeout(() => { t.style.display = "none"; undoKey = null; }, 6000);
+  }
+  document.addEventListener("click", (e) => {
+    const x = e.target.closest && e.target.closest(".xdel[data-del]");
+    if (x) {
+      e.preventDefault(); e.stopPropagation();
+      const k = x.dataset.del, text = x.dataset.deltext || "";
+      if (!confirm("Delete this from your dashboard?\n\n" + text)) return;
+      hidden[k] = { text, at: new Date().toISOString() }; save(HIDE_KEY, hidden);
+      render(); showUndo(k); return;
+    }
+    if (e.target.closest && e.target.closest("[data-deltoggle]")) { showDeleted = !showDeleted; renderDeleted(); return; }
+    const r = e.target.closest && e.target.closest("[data-restore]");
+    if (r) { const k = r.dataset.restore; if (k === "*") hidden = {}; else delete hidden[k]; save(HIDE_KEY, hidden); render(); return; }
+    if (e.target.closest && e.target.closest("#undobtn")) {
+      if (undoKey) { delete hidden[undoKey]; save(HIDE_KEY, hidden); }
+      undoKey = null; document.getElementById("undotoast").style.display = "none"; render();
+    }
+  }, true);
 
   function render() {
     if (!data) return;
     document.getElementById("kicker").textContent = data.kicker || "";
     document.getElementById("heading").textContent = data.heading || "Amy — today";
     document.getElementById("msg").textContent = data.message || "";
-    const f = data.frog;
+    const f = data.frog && !isHidden(taskKey(data.frog)) ? data.frog : null;
     document.getElementById("frog").innerHTML = f ? '<div class="kicker">🐸 Today\'s frog · eat it first</div>' + taskHtml(f, "frog") : "";
     document.getElementById("frog").style.display = f ? "" : "none";
-    document.getElementById("today").innerHTML = (data.today || []).map((t) => taskHtml(t, "today")).join("");
+    const tv = visTasks(data.today);
+    document.getElementById("today").innerHTML = tv.length ? tv.map((t) => taskHtml(t, "today")).join("") : ((data.today || []).length ? '<div class="empty">All cleared ✨</div>' : "");
     renderCalls();
     document.getElementById("lanes").innerHTML = (data.lanes || []).map((l) => {
-      const n = l.tasks.length, d = l.tasks.filter((t) => done[t.id]).length;
+      const lt = visTasks(l.tasks), n = lt.length, d = lt.filter((t) => done[t.id]).length;
       return '<div class="card"><div class="lane-h"><b>' + esc(l.emoji + " " + l.name) + '</b>' +
         (l.tag ? '<span class="tag">' + esc(l.tag) + '</span>' : "") +
         (n ? '<span class="count">' + d + " of " + n + " done</span>" : "") + '</div>' +
-        l.tasks.map((t) => taskHtml(t, l.id)).join("") +
+        lt.map((t) => taskHtml(t, l.id)).join("") +
         (((l.waiting || []).length + (l.facts || []).length) ? '<ul class="facts">' +
           (l.waiting || []).map((w) => '<li class="wait">' + esc(w) + "</li>").join("") +
           (l.facts || []).map((w) => "<li>" + esc(w) + "</li>").join("") + "</ul>" : "") + "</div>";
     }).join("");
     document.getElementById("week").innerHTML = (data.week || []).map((d) =>
       '<div class="day' + (d.today ? " today" : "") + '"><span class="d">' + esc(d.day) + '</span><span class="dt">' + esc(d.date) + "</span>" +
-      "<ul>" + d.items.map((i) => "<li>" + esc(i) + "</li>").join("") + "</ul>" +
+      "<ul>" + (d.items || []).filter((i) => !isHidden(weekKey(d, i))).map((i) => "<li>" + esc(i) + delBtn(weekKey(d, i), (d.day ? d.day + " " + (d.date || "") + ": " : "") + i) + "</li>").join("") + "</ul>" +
       (d.trash ? '<div class="trash">🗑️ trash night, after 5</div>' : "") + "</div>").join("");
-    const el = data.elodie || [];
+    const el = visTasks(data.elodie);
     document.getElementById("elodie").innerHTML = el.length ? el.map((t) => taskHtml(t, "elodie")).join("")
-      : '<div class="empty">Nothing from Elodie yet. When she emails her task list, Riley adds the tasks here and you can tick them like the rest.</div>';
+      : (data.elodie || []).length ? '<div class="empty">All cleared ✨</div>' : '<div class="empty">Nothing from Elodie yet. When she emails her task list, Riley adds the tasks here and you can tick them like the rest.</div>';
+    renderDeleted();
     document.getElementById("foot").textContent = "Updated " + new Date(data.updated).toLocaleString([], { weekday: "short", hour: "numeric", minute: "2-digit" }) + " · ticks save on this device and sync to Riley";
   }
 
