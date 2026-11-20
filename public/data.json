@@ -1,60 +1,55 @@
 {
-  "updated": "2026-11-19T07:35:00-05:00",
-  "heading": "Thursday, Nov 19",
-  "kicker": "Kids week (David has them from Fri 3 PM) · micro1 still waiting on the Hubstaff invite",
-  "message": "Your plan: Fiona's gifted meeting at 10, then two call blocks in the conference room, 11:30–1:00 and 1:30–3:30. Twenty dials earns your Fresh Market treat 🍣. Be in the car by 4:30 for sports club pickup.",
+  "updated": "2026-11-20T07:40:00-05:00",
+  "heading": "Friday, Nov 20",
+  "kicker": "Last day of kids week (David has them from 3 PM) · Thanksgiving week next: light calls, Stackadoo release push",
+  "message": "Happy Friday! Calls start at 9 with Craig Nurick at Anellotech. Yhangry's 341 is at noon and Farmbox's is at 3. Twenty dials earns the bigger Whole Foods treat 🍰, and you can grab the vegan red velvet cupcake stuff on the same trip.",
   "frog": {
-    "id": "d1119-calls",
-    "text": "Two call blocks: 11:30–1:00 and 1:30–3:30 (Call leads card)",
-    "note": "Conference room · Prime Eco and Light & Motion callbacks first, then Anellotech and Activ Technologies · 20 dials = treat 🐸"
+    "id": "d1120-calls",
+    "text": "Call block from 9 AM (Call leads card)",
+    "note": "Anellotech (Craig Nurick) first, Cyber-Dive callback today · 20 dials = Whole Foods treat 🐸"
   },
   "today": [
     {
-      "id": "d1119-fiona",
-      "text": "1. Fiona's gifted-eligibility meeting, 10 AM",
-      "note": "School psychologist · Gene Witt Elementary"
+      "id": "d1120-camo",
+      "text": "1. Camo for School Spirit Day before drop-off",
+      "note": "Camouflage School Spirit Day · Witt Elementary"
     },
     {
-      "id": "d1119-block1",
-      "text": "2. Call block 1, 11:30 AM–1:00 PM (conference room)",
-      "note": "Callbacks first: Catherine (Prime Eco), Fred (Light & Motion) · then Craig Nurick (Anellotech), Activ Technologies"
+      "id": "d1120-block1",
+      "text": "2. Call block from 9 AM (Call leads card)",
+      "note": "Craig Nurick (Anellotech) first · Cyber-Dive callback (Paul Hilkert's office, ext. 307) · 42 Ch 7 calls + 8 follow-ups"
     },
     {
-      "id": "d1119-lunch",
-      "text": "3. Lunch, 1:00–1:30",
-      "note": "Cyber-Dive sale hearing is 1 PM ET · wait-and-see"
+      "id": "d1120-yhangry",
+      "text": "3. Yhangry 341, noon ET",
+      "note": "Trustee Alfred Giuliano · you left a VM and sent a follow-up 11/18"
     },
     {
-      "id": "d1119-block2",
-      "text": "4. Call block 2, 1:30–3:30 PM",
-      "note": "Count dials, not conversations · 20 dials earns the Fresh Market treat · check-in 2:15"
+      "id": "d1120-kids",
+      "text": "4. David has the kids from 3 PM",
+      "note": "Kids week ends · Farmbox 341 is 3 PM ET"
     },
     {
-      "id": "d1119-sushi",
-      "text": "5. Fresh Market: sushi for dinner (+ your treat)",
-      "note": "Before you leave for pickup"
+      "id": "d1120-wholefoods",
+      "text": "5. Whole Foods: 20-dial treat + vegan red velvet cupcake ingredients",
+      "note": "For Thanksgiving · skip the fragranced makeup"
     },
     {
-      "id": "d1119-pickup",
-      "text": "6. In the car by 4:30 for Game On Sports Club pickup at 5",
-      "note": "Sports club starts 3:15"
-    },
-    {
-      "id": "d1119-trash",
-      "text": "7. Trash out after 5 PM",
-      "note": "2 bags max · tomorrow is not a trash night"
+      "id": "d1120-micro1",
+      "text": "6. micro1: ask support to resend the Hubstaff and Slack invites",
+      "note": "They go to amsu0648@expert.micro1.ai · ask Riley to draft it"
     },
     {
       "id": "d1116-chatgpt-id",
       "text": "If time: ChatGPT Business Hub government ID check",
-      "note": "Then add the Stackadoo description and publish (amy@bunillc.com)"
+      "note": "You planned this for Friday · then add the Stackadoo description and publish (amy@bunillc.com)"
     }
   ],
   "quick": [
     "Check for Kolegend's replacement cover tracking email (5 min)",
     "Reply to Lea Cathey's Etsy message (10 min)",
     "Call about the $780 HOA check, Nevada's Finest (10 min)",
-    "Send Giancarlo (INSALA) the drafted micro1 follow-up if not sent (5 min)",
+    "Add Newhouse's Google Voice number to the Pharaoh Oil & Gas card (2 min)",
     "Check if the micro1 robotics gig is still open (5 min)"
   ],
   "lanes": [
@@ -65,9 +60,9 @@
       "tag": "TOP PRIORITY",
       "tasks": [
         {
-          "id": "d1119-calls-lane",
-          "text": "Calls today: 11:30–1:00 and 1:30–3:30 (Call leads card)",
-          "note": "Prime Eco and Light & Motion callbacks first · first-time pre-bankruptcy calls next"
+          "id": "d1120-calls-lane",
+          "text": "Calls today from 9 AM (Call leads card)",
+          "note": "Anellotech first · Cyber-Dive callback · 23 new leads from this morning are on the list"
         },
         {
           "id": "d1118-new-leads-lane",
@@ -75,14 +70,39 @@
           "note": "Sent to dwctrustee@gmail.com (Gmail 1a1efcd4d7bd025f). His other fitting estates are on card 1118-M13."
         },
         {
+          "id": "d1120-childrensplace-lane",
+          "text": "The Children's Place: wait for Lorie Beers (Cascadia Capital) to reply",
+          "note": "Reply-all to Pesce and Beers sent 11/19 (Sirota cc'd) · then Riley drafts the micro1 follow-up · percentage deal (7.5%) for a company this size"
+        },
+        {
+          "id": "d1120-enhance-lane",
+          "text": "Enhance Active: 341 today; wait for Randy Royal's callback",
+          "note": "You left him a voicemail 11/19"
+        },
+        {
+          "id": "d1120-farmbox-lane",
+          "text": "Farmbox 341 today, 3 PM ET",
+          "note": "From today's call list"
+        },
+        {
+          "id": "d1120-lakeview-lane",
+          "text": "Lakeview: 341 Tue 11/24, 1:30 PM ET",
+          "note": "Email to Eugene Johnson sent 11/19"
+        },
+        {
+          "id": "d1120-valleysteel-lane",
+          "text": "Valley Steel: Steidl has no 341 date yet",
+          "note": "Riley rechecks in a few days"
+        },
+        {
           "id": "d1117-mindyra-lane",
           "text": "Mindyra Health: call trustee George Roumeliotis, 413-734-1100",
-          "note": "Mindyra's 341 is today · Jonathan Horne gave his name 11/16 · customer data was destroyed; ask if the operational data survived · healthcare: hold until the Region 6 question settles"
+          "note": "Mindyra's 341 was Thu 11/19 · Jonathan Horne gave his name 11/16 · customer data was destroyed; ask if the operational data survived · healthcare: hold until the Region 6 question settles"
         },
         {
           "id": "d1117-yhangry-lane",
           "text": "Yhangry: left VM for Alfred Giuliano 12:20 PM ET; follow-up sent 12:23 PM ET",
-          "note": "341 is tomorrow, Fri 11/20, noon ET. He is also trustee on Big Lots, Freedom Forever, ZenniHome, EO Charging and Silverfern."
+          "note": "341 is today, Fri 11/20, noon ET. He is also trustee on Big Lots, Freedom Forever, ZenniHome, EO Charging and Silverfern."
         },
         {
           "id": "d1112-rogue-lane",
@@ -96,8 +116,8 @@
         },
         {
           "id": "d1113-cyberdive-lane",
-          "text": "Cyber-Dive: sale hearing today, 1 PM ET",
-          "note": "Wait-and-see · micro1 can take what's left after the sale"
+          "text": "Cyber-Dive: callback due today (after Thursday's sale hearing)",
+          "note": "Paul Hilkert's office, ext. 307 · micro1 can take what's left after the sale"
         },
         {
           "id": "d1111-vm-lane",
@@ -142,7 +162,8 @@
         "Light & Motion, Orinove and Prime Eco replies",
         "Michael Wynn (Rolls Rite) referral ask sent 11/9",
         "Aaron Conrardy (Rogue Space): bank's answer on the lien, then the micro1 intake",
-        "Cyber-Dive: wait-and-see until after the 11/19 sale hearing"
+        "Cyber-Dive: callback today, after the 11/19 sale hearing",
+        "Lorie Beers (Cascadia) reply on The Children's Place"
       ],
       "facts": [
         "LinkedIn attorney outreach routine runs around 10:30 AM",
@@ -216,7 +237,7 @@
         {
           "id": "d1118-micro1-lane",
           "text": "micro1 project: waiting on the background check and Hubstaff invite",
-          "note": "Contract signed, live since Tue 5:32 PM · Hubstaff and Slack go on the Acer only"
+          "note": "Contract signed · invites go to amsu0648@expert.micro1.ai · ask support to resend · Hubstaff and Slack go on the Acer only"
         },
         {
           "id": "d1028-mercor-interview",
@@ -307,38 +328,27 @@
       "name": "Kids & calendar",
       "tasks": [],
       "facts": [
-        "Kids week with you (since Fri 11/13) · David has them from Fri 11/20, 3 PM",
-        "Today · Fiona's gifted-eligibility meeting, 10 AM, Gene Witt · Game On Sports Club 3:15, pickup at 5",
-        "Fri 11/20 · Camouflage School Spirit Day",
+        "Fiona got into the gifted program 🎉 (11/19) · the gifted teacher should be in touch",
+        "Today · Camouflage School Spirit Day · David has the kids from 3 PM (through Fri 11/27, 8 AM)",
         "Mon 11/23 · Fall Break · Root canal retreatment, 2 PM, Lakewood Ranch Endodontics",
-        "Tue 11/24 and Thu 11/26 · Call the kids 7:15 PM (text David first)"
+        "Tue 11/24 and Thu 11/26 · Call the kids 7:15 PM (text David first)",
+        "Thu 11/26 · Thanksgiving · vegan red velvet cupcakes"
       ]
     }
   ],
   "week": [
     {
-      "day": "Thu",
-      "date": "11/19",
-      "items": [
-        "Fiona's school psychologist meeting 10 AM",
-        "Calls 11:30–1:00 and 1:30–3:30",
-        "Cyber-Dive sale hearing 1 PM",
-        "Mindyra 341",
-        "Game On Sports Club 3:15 (pickup 5)"
-      ],
-      "trash": true,
-      "today": true
-    },
-    {
       "day": "Fri",
       "date": "11/20",
       "items": [
+        "Calls from 9 AM",
         "Yhangry 341, noon",
-        "X payout expected (~11/20)",
+        "Farmbox 341, 3 PM",
         "Camouflage Spirit Day",
-        "David has the kids from 3 PM"
+        "David has the kids from 3 PM",
+        "X payout expected (~11/20)"
       ],
-      "today": false
+      "today": true
     },
     {
       "day": "Sat",
@@ -367,6 +377,7 @@
       "day": "Tue",
       "date": "11/24",
       "items": [
+        "Lakeview 341, 1:30 PM",
         "Printing Research / Areya Holder callback (schedules)",
         "Call kids 7:15 PM (text David first)"
       ],
@@ -378,6 +389,16 @@
       "date": "11/25",
       "items": [
         "Caribbean Roofing 341 (may move to December)"
+      ],
+      "trash": true,
+      "today": false
+    },
+    {
+      "day": "Thu",
+      "date": "11/26",
+      "items": [
+        "Thanksgiving",
+        "Call kids 7:15 PM (text David first)"
       ],
       "trash": true,
       "today": false
