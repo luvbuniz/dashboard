@@ -168,6 +168,13 @@
     .schip.on { background:var(--copper); border-color:var(--copper); color:#fff; font-weight:600; }
     .schip.wc.on { background:#2456c8; border-color:#2456c8; }
     .statebar select { font:inherit; font-size:13px; padding:6px 10px; min-height:34px; border-radius:999px; border:1px solid var(--line); background:var(--elev); color:var(--ink); }
+    .ltlabel { font-size:12px; font-weight:600; color:var(--muted); letter-spacing:.02em; white-space:nowrap; }
+    .ltlabel.early, .ltlabel.late { color:#9a5b00; }
+    .call-h .ltlabel { margin-left:2px; }
+    .hot .ltlabel { display:inline-block; margin-left:6px; vertical-align:middle; }
+    .schip.now.on { background:var(--ok); border-color:var(--ok); color:#fff; }
+    .hours-det { margin:16px 0; }
+    .hours-det > summary.csec { cursor:pointer; }
     .cdur { font-weight:600; margin-left:6px; }
     .tel.sm { background:none; color:var(--copper); font-size:14px; font-weight:500; padding:6px 0; min-height:0; text-decoration:underline; }
     .cmail { font-size:13px; color:var(--muted); word-break:break-all; }
@@ -819,6 +826,126 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
     if (stateFilter === "west") return WEST_COAST.has(s);
     return s === stateFilter;
   }
+
+  const CALLABLE_KEY = "amy-day-v2-callable";
+  let callableNow = (() => { const v = localStorage.getItem(CALLABLE_KEY); return v == null ? true : v === "1"; })();
+  const STATE_TZ = {
+    ME:"America/New_York", NH:"America/New_York", VT:"America/New_York", MA:"America/New_York", RI:"America/New_York",
+    CT:"America/New_York", NY:"America/New_York", NJ:"America/New_York", PA:"America/New_York", DE:"America/New_York",
+    MD:"America/New_York", DC:"America/New_York", VA:"America/New_York", NC:"America/New_York", SC:"America/New_York",
+    GA:"America/New_York", WV:"America/New_York", OH:"America/New_York", MI:"America/New_York", FL:"America/New_York",
+    IN:"America/New_York", KY:"America/New_York",
+    AL:"America/Chicago", MS:"America/Chicago", LA:"America/Chicago", AR:"America/Chicago", MO:"America/Chicago",
+    IL:"America/Chicago", WI:"America/Chicago", MN:"America/Chicago", IA:"America/Chicago", KS:"America/Chicago",
+    OK:"America/Chicago", TX:"America/Chicago", NE:"America/Chicago", SD:"America/Chicago", ND:"America/Chicago",
+    TN:"America/Chicago",
+    CO:"America/Denver", NM:"America/Denver", WY:"America/Denver", MT:"America/Denver", UT:"America/Denver", ID:"America/Denver",
+    AZ:"America/Phoenix",
+    CA:"America/Los_Angeles", NV:"America/Los_Angeles", OR:"America/Los_Angeles", WA:"America/Los_Angeles",
+    AK:"America/Anchorage", HI:"Pacific/Honolulu",
+    UK:"Europe/London", GB:"Europe/London"
+  };
+  const SPLIT_STATES = new Set(["FL","IN","KY","TN","NE","TX","ID","OR","ND","SD","KS"]);
+  // Area codes whose zone differs from the state's default. Also used when state is missing.
+  const AREA_TZ = {
+    "850":"America/Chicago",
+    "219":"America/Chicago",
+    "270":"America/Chicago", "364":"America/Chicago",
+    "423":"America/New_York", "865":"America/New_York",
+    "308":"America/Denver",
+    "915":"America/Denver"
+  };
+  const TZ_SHORT = {
+    "America/New_York":"ET", "America/Chicago":"CT", "America/Denver":"MT", "America/Phoenix":"AZ",
+    "America/Los_Angeles":"PT", "America/Anchorage":"AKT", "Pacific/Honolulu":"HT", "Europe/London":"UK"
+  };
+  const TOLL_FREE = /^(800|822|833|844|855|866|877|888|899)$/;
+  function isUkLead(c) {
+    if (!c) return false;
+    const st = String(c.state || "").trim().toUpperCase();
+    if (st === "UK" || st === "GB") return true;
+    const country = String(c.country || c.nation || "");
+    if (/\b(UK|GB|United Kingdom|Great Britain|England|Scotland|Wales)\b/i.test(country)) return true;
+    const cs = String(c.city_state || "");
+    if (/,\s*(UK|GB)\b/i.test(cs) || /\bUnited Kingdom\b/i.test(cs)) return true;
+    const phones = [c.phone, c.direct_phone, c.phone_alt, c.trustee && c.trustee.phone, c.counsel && c.counsel.phone];
+    for (const p of phones) {
+      const s = String(p || "").replace(/[\s-().]/g, "");
+      if (/^(\+|00)?44\d{7,}/.test(s)) return true;
+    }
+    return false;
+  }
+  function areaCodeOf(c) {
+    if (!c) return "";
+    const phones = [c.direct_phone, c.phone, c.phone_alt, c.trustee && c.trustee.phone, c.counsel && c.counsel.phone];
+    for (const p of phones) {
+      let d = String(p || "").replace(/\D/g, "");
+      if (!d) continue;
+      if (d.startsWith("44")) continue;
+      if (d.startsWith("1") && d.length >= 11) d = d.slice(1);
+      if (d.length >= 10) {
+        const ac = d.slice(0, 3);
+        if (TOLL_FREE.test(ac)) continue;
+        return ac;
+      }
+    }
+    return "";
+  }
+  function tzFromTimeField(t) {
+    const s = String(t || "");
+    const local = s.match(/\((?:[^)]*?)(Eastern|Central|Mountain|Pacific|Hawaii|Alaska|UK|ET|CT|MT|PT|HT|AKT|GMT|BST)\s*local\)/i);
+    const word = local ? local[1] : (s.match(/\b(Eastern|Central|Mountain|Pacific|Hawaii|Alaska|UK|GMT|BST)\b/i) || s.match(/\b(ET|CT|MT|PT|HT|AKT)\b/i) || [])[0];
+    const k = String(word || "").toUpperCase();
+    if (k === "PACIFIC" || k === "PT") return "America/Los_Angeles";
+    if (k === "MOUNTAIN" || k === "MT") return "America/Denver";
+    if (k === "CENTRAL" || k === "CT") return "America/Chicago";
+    if (k === "EASTERN" || k === "ET") return "America/New_York";
+    if (k === "HAWAII" || k === "HT" || k === "HST") return "Pacific/Honolulu";
+    if (k === "ALASKA" || k === "AKT" || k === "AKST") return "America/Anchorage";
+    if (k === "UK" || k === "GMT" || k === "BST") return "Europe/London";
+    return "";
+  }
+  function leadTz(c) {
+    if (!c) return "";
+    if (isUkLead(c)) return "Europe/London";
+    const st = leadState(c);
+    const ac = areaCodeOf(c);
+    if (st && SPLIT_STATES.has(st) && ac && AREA_TZ[ac]) return AREA_TZ[ac];
+    if (st && STATE_TZ[st]) return STATE_TZ[st];
+    if (ac && AREA_TZ[ac]) return AREA_TZ[ac];
+    const fromTime = tzFromTimeField(c.time);
+    if (fromTime) return fromTime;
+    return "";
+  }
+  function localTimeInfo(c, at) {
+    const tz = leadTz(c);
+    if (!tz) return { tz: "", status: "unknown", label: "", minutes: null };
+    const d = at || new Date();
+    let hour, minute, label;
+    try {
+      const parts = new Intl.DateTimeFormat("en-US", { timeZone: tz, hour: "numeric", minute: "2-digit", hourCycle: "h23" }).formatToParts(d);
+      hour = +parts.find((p) => p.type === "hour").value;
+      minute = +parts.find((p) => p.type === "minute").value;
+      const clock = new Intl.DateTimeFormat("en-US", { timeZone: tz, hour: "numeric", minute: "2-digit", hour12: true }).format(d).replace(" ", "\u00a0");
+      const short = TZ_SHORT[tz] || "";
+      label = clock + (short ? "\u00a0" + short : "");
+    } catch (e) {
+      return { tz: "", status: "unknown", label: "", minutes: null };
+    }
+    const minutes = hour * 60 + minute;
+    const status = minutes < 9 * 60 ? "early" : minutes > 17 * 60 ? "late" : "now";
+    return { tz, status, label, minutes };
+  }
+  function isCallableNow(c, at) {
+    const info = localTimeInfo(c, at);
+    return info.status === "now" || info.status === "unknown";
+  }
+  function localTimeHtml(c) {
+    const info = localTimeInfo(c);
+    if (!info.label) return "";
+    const tip = info.status === "early" ? "Too early to call" : info.status === "late" ? "After hours" : "Local time";
+    return '<span class="ltlabel ' + info.status + '" title="' + tip + '">' + esc(info.label) + "</span>";
+  }
   function kdBadge(c) {
 
     const k = keyDate(c); if (!k) return "";
@@ -880,9 +1007,9 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
       (co ? '<div class="who wc"><div class="wlab"><span class="k">2 · Then</span>Counsel: <b>' + esc(co.name) + '</b>' + (co.role ? ' <span class="crole">' + esc(co.role) + '</span>' : "") + '</div>' +
         (co.phone ? '<div class="hot-phone"><span class="num">' + esc(co.phone) + '</span></div><button type="button" class="tel c2" data-who="counsel">📞 Call Counsel · ' + esc(co.phone) + '</button>' : "") +
         (co.email ? '<div class="cmail">✉ ' + esc(co.email) + '</div>' : "") + '</div>' : "") : "";
-    return '<div class="call' + (urgent ? " urgent" : "") + (isDone ? " done" : "") + (isOffQueue(c) ? " archived" : "") + (c.id === spCall ? " active" : "") + '" data-call="' + esc(c.id) + '">' +
+    return '<div class="call' + (urgent ? " urgent" : "") + (isDone ? " done" : "") + (isOffQueue(c) ? " archived" : "") + (c.id === spCall ? " active" : "") + '" data-call="' + esc(c.id) + '" data-hours="' + esc(localTimeInfo(c).status) + '">' +
       '<div class="call-h">' + (c.time ? '<span class="ctime">' + esc(c.time) + '</span>' : "") +
-        '<span class="cname">' + esc(c.name || c.company || "") + '</span>' + (c.role ? '<span class="crole">' + esc(c.role) + '</span>' : "") + '</div>' +
+        '<span class="cname">' + esc(c.name || c.company || "") + '</span>' + (c.role ? '<span class="crole">' + esc(c.role) + '</span>' : "") + localTimeHtml(c) + '</div>' +
       (c.company && c.name ? '<div class="ccomp">' + esc(c.company) + '</div>' : "") +
       '<div class="badges">' + kdBadge(c) + stateBadge(c) + emailStatusBadge(c) + (urgent ? '<span class="badge urg">URGENT</span>' : "") +
         (c.chapter ? '<span class="badge ch">' + esc(c.chapter) + '</span>' : "") +
@@ -1057,6 +1184,14 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
   }
   function setTab(k) { spTab = k; try { localStorage.setItem(SP_TAB_KEY, k); } catch {} }
   document.addEventListener("click", (e) => {
+    const tog = e.target.closest && e.target.closest("#callabletog");
+    if (tog) {
+      callableNow = !callableNow;
+      try { localStorage.setItem(CALLABLE_KEY, callableNow ? "1" : "0"); } catch {}
+      focusOrder = null;
+      renderCalls();
+      return;
+    }
     const stBtn = e.target.closest && e.target.closest("[data-state]");
     if (stBtn) {
       stateFilter = stBtn.dataset.state || "all";
@@ -1108,6 +1243,7 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
     const sp = document.getElementById("spanel"); if (sp) sp.scrollTop = 0;
   });
   let extraOpen = false;
+  let hoursOpen = false;
   const LTAB_KEY = "amy-day-v2-listtab";
   let listTab = localStorage.getItem(LTAB_KEY) || "main";
   document.addEventListener("change", (e) => {
@@ -1125,6 +1261,7 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
   document.addEventListener("toggle", (e) => {
     if (e.target && e.target.id === "extra-det") extraOpen = e.target.open;
     if (e.target && e.target.id === "arch-det") archiveBrowse = e.target.open;
+    if (e.target && e.target.id === "hours-det") hoursOpen = e.target.open;
   }, true);
   // ── Call-session timer: ticks "callsession:YYYYMMDD:N:start|stop" (opaque), label = ISO time. Mirrored in localStorage.
   const SESS_KEY = "amy-day-v2-callsess";
@@ -1445,6 +1582,11 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
       const n = (calls || []).filter(stateMatchesFilter).length;
       h += '<span class="cline" style="margin:0">' + (stateFilter === "west" ? "West Coast" : esc(stateFilter)) + ': ' + n + ' lead' + (n === 1 ? "" : "s") + '</span>';
     }
+    h += '<button type="button" class="schip now' + (callableNow ? " on" : "") + '" id="callabletog" aria-pressed="' + (callableNow ? "true" : "false") + '">Callable now</button>';
+    if (callableNow) {
+      const lateN = (calls || []).filter((c) => !isCallableNow(c)).length;
+      if (lateN) h += '<span class="cline" style="margin:0">' + lateN + ' too early / after hours</span>';
+    }
     h += '</div>';
     return h;
   }
@@ -1629,7 +1771,8 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
       const stBadge = stateBadge(h);
       const tog = '<div class="hot-tog">' + (isActive && splitOn ? "▸ Details in script panel →" : (isOpen ? "▾ Hide details" : "▸ Tap for records, company type & follow-ups")) + '</div>';
       const detail = isOpen ? '<div class="hot-detail">' + hotDetailHtml(h) + '</div>' : "";
-      return '<div class="meet hot' + (isDone ? " done" : "") + (isOpen ? " open" : "") + (isActive ? " active" : "") + '" data-call="' + esc(cid) + '" data-hot="' + esc(cid) + '"><b>' + esc(h.company || "") + '</b><span class="hot-buyer ' + buyerClass(h.buyer) + '">' + esc(buyer) + '</span>' + calledBadge + stBadge + emailBadge +
+      const tzSrc = Object.assign({}, (typeof hotMatchedCall === "function" ? (hotMatchedCall(h) || {}) : {}), h);
+      return '<div class="meet hot' + (isDone ? " done" : "") + (isOpen ? " open" : "") + (isActive ? " active" : "") + '" data-call="' + esc(cid) + '" data-hot="' + esc(cid) + '" data-hours="' + esc(localTimeInfo(tzSrc).status) + '"><b>' + esc(h.company || "") + '</b><span class="hot-buyer ' + buyerClass(h.buyer) + '">' + esc(buyer) + '</span>' + calledBadge + stBadge + emailBadge + localTimeHtml(tzSrc) +
         '<div class="cline">' + esc([h.contact, h.role].filter(Boolean).join(" · ")) + '</div>' +
         phoneBlock + acts + outs + emlBox + skipBox + noteBox +
         (h.cc ? '<div class="cline">cc: ' + esc(h.cc) + '</div>' : "") +
@@ -1836,15 +1979,37 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
     for (const c of calls) { const s = c.section || "Calls"; if (!groups[s]) { groups[s] = []; order.push(s); } groups[s].push(c); }
     const main = [], extra = [];
     for (const s of order) (/^Extra/.test(s) ? extra : main).push(...groups[s]);
-    return [...ch7Sort(main), ...ch7Sort(extra)];
+    const seq = [...ch7Sort(main), ...ch7Sort(extra)];
+    if (!callableNow) return seq;
+    const now = [], late = [];
+    for (const c of seq) (isCallableNow(c) ? now : late).push(c);
+    return now.concat(late);
+  }
+  function callSectionsHtml(list, opts) {
+    opts = opts || {};
+    const order = [], groups = {};
+    for (const c of list) { const s = c.section || "Calls"; if (!groups[s]) { groups[s] = []; order.push(s); } groups[s].push(c); }
+    let h = "", ex = "", exN = 0;
+    for (const s of order) {
+      const g = groups[s], isCh7 = g.some((c) => c.chapter === "Ch 7" && c.kdates);
+      if (/^Extra/.test(s) && !opts.inlineExtra) {
+        const sub = s.includes("·") ? s.split("·").slice(1).join("·").trim() : "";
+        ex += (sub ? '<div class="csec">' + esc(sub) + "</div>" : "") + g.map(callHtml).join(""); exN += g.length; continue;
+      }
+      const title = (/^Extra/.test(s) && s.includes("·")) ? ("Extra · " + s.split("·").slice(1).join("·").trim()) : s;
+      h += '<div class="csec">' + esc(title) + "</div>" + (isCh7 ? '<div class="cline ckd">Pinned first, then court dates in the next 7 days, then newest filings first (beat other brokers to the trustee). Called on an earlier day and already-called at the bottom.</div>' : "") + (isCh7 ? ch7Div(ch7Sort(g)) : g.map(callHtml).join(""));
+    }
+    if (exN) h += '<details id="extra-det"' + (extraOpen ? " open" : "") + '><summary class="csec">Extra – only if on a roll (' + exN + ")</summary>" + ex + "</details>";
+    return h;
   }
   let archiveBrowse = false;
   function focusHtml(sd, calls) {
     // Active queue excludes 3-attempt archives. Freeze that order so an outcome tap doesn't reshuffle Next/Prev.
     const active = calls.filter((c) => !isOffQueue(c) && stateMatchesFilter(c));
     const ids = new Set(active.map((c) => c.id));
-    if (!focusOrder || focusOrderTab !== listTab + "|" + stateFilter || focusOrder.some((id) => !ids.has(id)) || active.some((c) => !focusOrder.includes(c.id))) {
-      focusOrder = focusList(active).map((c) => c.id); focusOrderTab = listTab + "|" + stateFilter;
+    const focusKey = listTab + "|" + stateFilter + "|" + (callableNow ? "now" : "all");
+    if (!focusOrder || focusOrderTab !== focusKey || focusOrder.some((id) => !ids.has(id)) || active.some((c) => !focusOrder.includes(c.id))) {
+      focusOrder = focusList(active).map((c) => c.id); focusOrderTab = focusKey;
     }
     const picked = calls.find((x) => x.id === focusId);
     const showingArchive = !!(picked && isOffQueue(picked));
@@ -2026,18 +2191,18 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
       ensureSpInFilter(selectPool);
       const matchN = calls.length + (qOn ? hotHits.filter((hc) => !calls.some((c) => c.id === hc.id)).length : 0);
       h = listSearchHtml() + (qOn ? '<div class="cline">Showing ' + matchN + ' match' + (matchN === 1 ? "" : "es") + ' for “' + esc(String(callQuery).trim()) + '”.</div>' : "") + h;
-      const order = [], groups = {};
-      for (const c of calls) { const s = c.section || "Calls"; if (!groups[s]) { groups[s] = []; order.push(s); } groups[s].push(c); }
-      let ex = "", exN = 0;
-      for (const s of order) {
-        const g = groups[s], isCh7 = g.some((c) => c.chapter === "Ch 7" && c.kdates);
-        if (/^Extra/.test(s)) {   // all "Extra …" sections go in one collapsed block, sub-headed by what follows "·"
-          const sub = s.includes("·") ? s.split("·").slice(1).join("·").trim() : "";
-          ex += (sub ? '<div class="csec">' + esc(sub) + "</div>" : "") + g.map(callHtml).join(""); exN += g.length; continue;
+      if (callableNow) {
+        const nowList = calls.filter((c) => isCallableNow(c));
+        const lateList = calls.filter((c) => !isCallableNow(c));
+        h += callSectionsHtml(nowList);
+        if (lateList.length) {
+          h += '<details class="hours-det" id="hours-det"' + (hoursOpen || !nowList.length ? " open" : "") + '><summary class="csec">Too early / after hours (' + lateList.length + ")</summary>" +
+            '<div class="cline">Local time is outside 9:00 AM–5:00 PM. Open when their workday starts. Each card shows that lead\'s local time.</div>' +
+            callSectionsHtml(lateList, { inlineExtra: true }) + "</details>";
         }
-        h += '<div class="csec">' + esc(s) + "</div>" + (isCh7 ? '<div class="cline ckd">Pinned first, then court dates in the next 7 days, then newest filings first (beat other brokers to the trustee). Called on an earlier day and already-called at the bottom.</div>' : "") + (isCh7 ? ch7Div(ch7Sort(g)) : g.map(callHtml).join(""));
+      } else {
+        h += callSectionsHtml(calls);
       }
-      if (exN) h += '<details id="extra-det"' + (extraOpen ? " open" : "") + '><summary class="csec">Extra – only if on a roll (' + exN + ")</summary>" + ex + "</details>";
       if (archivedCalls.length) h += '<details id="arch-det"' + (archiveBrowse ? " open" : "") + '><summary class="csec">Archived (' + archivedCalls.length + ')</summary><div class="cline">Off the calling queue. Notes, meetings, and outcomes stay on the card. Search still finds them.</div>' + archivedCalls.map(callHtml).join("") + "</details>";
     }
     if (lockState === "ok") h += '<button type="button" class="linkbtn" id="calllock">🔒 Lock call list on this device</button>';
@@ -2050,6 +2215,28 @@ import { attemptArchived, attemptBadgeText, attemptNote, attemptTotal } from "./
       const n = document.getElementById("callq");
       if (n) { n.focus(); if (qSel) try { n.setSelectionRange(qSel[0], qSel[1]); } catch {} }
     }
+  }
+  if (!window.__hoursWatch) {
+    window.__hoursWatch = setInterval(() => {
+      if (lockState !== "ok" || !secret) return;
+      const typing = document.querySelector("textarea:focus, input:focus");
+      const cards = document.querySelectorAll(".call[data-call], .hot[data-call]");
+      let regroup = false;
+      cards.forEach((el) => {
+        const id = el.getAttribute("data-call");
+        const c = ((secret.calls || []).find((x) => x && x.id === id)) || (hotLeadsList(secret).map((h) => hotMatchedCall(h) || hotAsCall(h)).find((x) => x && x.id === id));
+        if (!c) return;
+        const info = localTimeInfo(c);
+        const lab = el.querySelector(".ltlabel");
+        if (lab && info.label && lab.textContent !== info.label) lab.textContent = info.label;
+        if (lab) lab.className = "ltlabel " + info.status;
+        const prev = el.getAttribute("data-hours") || "";
+        const next = info.status || "unknown";
+        if (prev && prev !== next) regroup = true;
+        el.setAttribute("data-hours", next);
+      });
+      if (regroup && callableNow && !typing) renderCalls();
+    }, 60000);
   }
   document.addEventListener("submit", (e) => {
     if (e.target.id !== "unlock") return;
