@@ -1,48 +1,33 @@
 {
-  "updated": "2026-11-24T07:50:00-05:00",
-  "heading": "Tuesday, Nov 24",
-  "kicker": "Project week (David has the kids until Fri) · Thanksgiving week: today is the last full calling day, Wednesday is voicemails",
-  "message": "Morning! Today's the big calling day before the holiday, so get your toughest calls in early. Mercer Flooring's 341 is at 11 and Lakeview's is at 1:30. Then call the kids at 7:15 (text David first). Hope the jaw feels better today 💛",
+  "updated": "2026-11-25T07:45:00-05:00",
+  "heading": "Wednesday, Nov 25",
+  "kicker": "Project week (David has the kids until Fri) · Thanksgiving Eve: voicemail day, strong Ch 7s wait until Monday",
+  "message": "Morning! Easy day before the holiday. Leave voicemails, send the follow-up drafts waiting in my chat, and try the new Stackadoo build on your phone. The strong Chapter 7s are saved for Monday. Yesterday's 18 calls were a great push 💛",
   "frog": {
-    "id": "d1124-calls",
-    "text": "Call block from 9 AM (Call leads card)",
-    "note": "Last full calling day before Thanksgiving · 26 Ch 7 calls, 31 direct lines, 1 follow-up · toughest calls first 🐸"
+    "id": "d1125-calls",
+    "text": "Voicemail calls (Call leads card)",
+    "note": "Thanksgiving Eve: few people will pick up · strong Ch 7s held until Mon 11/30, Printing Research callback first 🐸"
   },
   "today": [
     {
-      "id": "d1124-block1",
-      "text": "1. Call block from 9 AM (Call leads card)",
-      "note": "26 Ch 7 calls + 31 direct lines + 1 follow-up · Synexis is on the list (emailed this morning, no phone yet; call window 10–2 ET)"
+      "id": "d1125-block1",
+      "text": "1. Voicemail calls (Call leads card)",
+      "note": "Voicemail-type leads only today · good leads wait until after Thanksgiving"
     },
     {
-      "id": "d1124-bank",
-      "text": "2. Monthly bank check: Pibank and E*Trade (you do it yourself)",
-      "note": "Reminder around 10 AM · balances, unfamiliar transfers, contact details, 2FA and recent logins, FDIC limit"
+      "id": "d1125-drafts",
+      "text": "2. Send the follow-up drafts waiting in Riley's chat",
+      "note": "12 from yesterday's voicemails and gatekeepers (incl. Hyman, Neitzel, Rufo) + a short thank-you to Jim Bastian (Haro Bicycle)"
     },
     {
-      "id": "d1124-mercer",
-      "text": "3. Mercer Flooring 341, 11 AM ET",
-      "note": "From today's call list"
+      "id": "d1125-stackadoo",
+      "text": "3. Test Stackadoo 1.0.42 on your phone (Play internal test)",
+      "note": "Check sign-in and saves · if it's good, give Cobble your go in his chat for the public release"
     },
     {
-      "id": "d1124-lakeview",
-      "text": "4. Lakeview Contracting 341, 1:30 PM ET",
-      "note": "Email to Eugene Johnson sent 11/19"
-    },
-    {
-      "id": "d1124-stripe",
-      "text": "5. Mercor tax info: click Confirm information in Stripe",
-      "note": "Nov 23 email in sullivanamy75 · check name, address, SSN/EIN and turn on e-delivery · 1099 by Jan 31"
-    },
-    {
-      "id": "d1124-stackadoo",
-      "text": "6. Stackadoo release: give Cobble the go once Cody's QA passes (if not done)",
-      "note": "Aiming to ship before Thanksgiving"
-    },
-    {
-      "id": "d1124-kids",
-      "text": "7. Call the kids, 7:15 PM",
-      "note": "Text David first"
+      "id": "d1125-stripe",
+      "text": "4. Mercor tax info: click Confirm information in Stripe (if not done)",
+      "note": "Nov 23 email in sullivanamy75 · check name, address, SSN/EIN and turn on e-delivery"
     }
   ],
   "quick": [
@@ -50,7 +35,7 @@
     "Reply to Lea Cathey's Etsy message (10 min)",
     "Call about the $780 HOA check, Nevada's Finest (10 min)",
     "Add Newhouse's Google Voice number to the Pharaoh Oil & Gas card (2 min)",
-    "Confirm Mercor tax info in Stripe (5 min)"
+    "Monthly Pibank / E*Trade check, if you didn't get to it yesterday (10 min)"
   ],
   "lanes": [
     {
@@ -60,9 +45,24 @@
       "tag": "TOP PRIORITY",
       "tasks": [
         {
-          "id": "d1124-calls-lane",
-          "text": "Calls today from 9 AM (Call leads card)",
-          "note": "Last full calling day before Thanksgiving · Wed is voicemails · Mercer Flooring 341 at 11, Lakeview 341 at 1:30"
+          "id": "d1125-calls-lane",
+          "text": "Voicemail day today (Call leads card)",
+          "note": "Yesterday: 18 calls, 2 live talks (Gifford, WeAre8; follow-ups sent) · Fisker and Keith Black archived · strong Ch 7s on Mon 11/30"
+        },
+        {
+          "id": "d1125-haro-lane",
+          "text": "Haro Bicycle: Jim Bastian passed your note to the company",
+          "note": "He replied 11/24, 11:36 AM ET; someone will reach out · thank-you draft waiting in Riley's chat"
+        },
+        {
+          "id": "d1125-kihomac-lane",
+          "text": "KIHOMAC: first email bounced (karen.paris@kihomac.com)",
+          "note": "Riley finds another contact after the holiday"
+        },
+        {
+          "id": "d1125-saitta-lane",
+          "text": "Francesca's: Christopher Saitta hasn't answered your call offer",
+          "note": "Riley nudges Mon 11/30 if still quiet"
         },
         {
           "id": "d1124-cdx-lane",
@@ -82,17 +82,12 @@
         {
           "id": "d1120-childrensplace-lane",
           "text": "The Children's Place: wait for Lorie Beers (Cascadia Capital) to reply",
-          "note": "Reply-all to Pesce and Beers sent 11/19 (Sirota cc'd) · then Riley drafts the micro1 follow-up · percentage deal (7.5%) for a company this size"
+          "note": "Reply-all to Pesce and Beers sent 11/19 (Sirota cc'd) · Riley nudges Mon 11/30 if still quiet · percentage deal (7.5%) for a company this size"
         },
         {
           "id": "d1120-enhance-lane",
           "text": "Enhance Active: wait for Randy Royal's callback",
           "note": "You left him a voicemail 11/19 · 341 was Fri 11/20"
-        },
-        {
-          "id": "d1120-lakeview-lane",
-          "text": "Lakeview: 341 today, 1:30 PM ET",
-          "note": "Email to Eugene Johnson sent 11/19"
         },
         {
           "id": "d1120-valleysteel-lane",
@@ -117,7 +112,7 @@
         {
           "id": "d1112-caribbean-lane",
           "text": "Caribbean Roofing: Emerson Noble callback Nov 30–Dec 4",
-          "note": "Follow-up with micro1 intake sent 11/11 · 341 set for 11/25, may move to December"
+          "note": "Follow-up with micro1 intake sent 11/11 · 341 set for today 11/25, may move to December"
         },
         {
           "id": "d1113-cyberdive-lane",
@@ -183,6 +178,11 @@
       "emoji": "🗂️",
       "name": "Admin",
       "tasks": [
+        {
+          "id": "d1125-mcleod-lane",
+          "text": "7458 McLeod septic: wait for Shayna's numbered invoice and the plumber update",
+          "note": "You approved the tenant credit 11/24 · Reed is watching for her reply"
+        },
         {
           "id": "d1109-unique-lane",
           "text": "Unique Accounting: e-sign the 2025 returns if not done",
@@ -332,26 +332,13 @@
       "facts": [
         "Fiona got into the gifted program 🎉 (11/19) · the gifted teacher should be in touch",
         "David has the kids through Fri 11/27 · you have them from 3 PM Fri",
-        "Today and Thu 11/26 · Call the kids 7:15 PM (text David first)",
+        "Thu 11/26 · Call the kids 7:15 PM (text David first)",
         "Thu 11/26 · Thanksgiving · vegan red velvet cupcakes",
         "Fri 11/27 · Mommy with Kids from 3 PM"
       ]
     }
   ],
   "week": [
-    {
-      "day": "Tue",
-      "date": "11/24",
-      "items": [
-        "Calls from 9 AM (last full day before Thanksgiving)",
-        "Mercer Flooring 341, 11 AM",
-        "Lakeview 341, 1:30 PM",
-        "Monthly Pibank / E*Trade check",
-        "Call kids 7:15 PM (text David first)"
-      ],
-      "trash": true,
-      "today": true
-    },
     {
       "day": "Wed",
       "date": "11/25",
@@ -360,13 +347,14 @@
         "Caribbean Roofing 341 (may move to December)"
       ],
       "trash": true,
-      "today": false
+      "today": true
     },
     {
       "day": "Thu",
       "date": "11/26",
       "items": [
         "Thanksgiving",
+        "Vegan red velvet cupcakes",
         "Call kids 7:15 PM (text David first)"
       ],
       "trash": true,
@@ -395,12 +383,33 @@
       "today": false
     },
     {
+      "day": "Mon",
+      "date": "11/30",
+      "items": [
+        "Strong Ch 7 calls (Printing Research callback first)",
+        "Caribbean Roofing: Emerson Noble callback window opens (to Dec 4)"
+      ],
+      "trash": true,
+      "today": false
+    },
+    {
+      "day": "Tue",
+      "date": "12/1",
+      "items": [
+        "Newrez La Sombra mortgage due",
+        "Math tutoring with Heidi Clouse, 4:45 PM"
+      ],
+      "trash": true,
+      "today": false
+    },
+    {
       "day": "Wed",
       "date": "12/2",
       "items": [
         "INSALA / Region 6 check-in (Giancarlo: wait and see on UST data-sale review)",
         "Neon vs Claude/Codex subscription check, ~10 AM"
       ],
+      "trash": true,
       "today": false
     }
   ],
