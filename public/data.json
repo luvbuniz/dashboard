@@ -1,38 +1,43 @@
 {
-  "updated": "2026-11-26T07:32:00-05:00",
-  "heading": "Thursday, Nov 26",
-  "kicker": "Happy Thanksgiving 🦃 · Project week (David has the kids until Fri 3 PM) · light, optional call day",
-  "message": "Happy Thanksgiving! Keep it light today. If you feel like calling, the five pre-bankruptcy leads are at the top of the Call leads card, and the strong Chapter 7s can wait for Monday. Bake the cupcakes, and text David before the 7:15 call with the kids 💛",
+  "updated": "2026-11-27T07:34:00-05:00",
+  "heading": "Friday, Nov 27",
+  "kicker": "Black Friday · last project-week day (kids with you from 3 PM) · calls wrap by 2 PM",
+  "message": "Happy Black Friday! Calls start at 9 with the five pre-bankruptcy leads, and some offices may be closed, so keep it short and wrap by 2. Pick the gifts you want from Riley's Black Friday options, then the kids are with you from 3 PM 💛",
   "frog": {
-    "id": "d1126-calls",
-    "text": "Optional light calls (Call leads card)",
-    "note": "Thanksgiving: few people will pick up · 5 pre-bankruptcy first (Ardor Delivery closes today) · skip the strong Ch 7s, they wait for Mon 11/30 🐸"
+    "id": "d1127-calls",
+    "text": "Calls 9 AM–2 PM (Call leads card)",
+    "note": "5 pre-bankruptcy first: Activ Technologies 9:00 (replaced Ardor), Pixelle 10:00, Vega Cloud + The Blade at noon, NIC Global · then ★ strong leads and new owner leads · day after Thanksgiving, some offices closed 🐸"
   },
   "today": [
     {
-      "id": "d1126-block1",
-      "text": "1. Optional: the 5 pre-bankruptcy calls (Call leads card)",
-      "note": "Ardor Delivery, The Blade, Vega Cloud, NIC Global, Pixelle · calls 9 AM–2 PM ET · Chapter 7s can wait until Monday"
+      "id": "d1127-block1",
+      "text": "1. Pre-bankruptcy calls (Call leads card)",
+      "note": "Activ Technologies 9:00 · Pixelle 10:00 · Vega Cloud + The Blade at noon · NIC Global"
     },
     {
-      "id": "d1126-cupcakes",
-      "text": "2. Vegan red velvet cupcakes",
-      "note": "Thanksgiving"
+      "id": "d1127-newowners",
+      "text": "2. New owner calls, 12–3 PM ET windows (stop by 2)",
+      "note": "QuinStar (Yon-Lin Kok) · Swift Engineering (Stephanie Tuble) · NP Photonics (Linda Schadler) · numbers in Riley's chat and the Call leads card"
     },
     {
-      "id": "d1126-drafts",
-      "text": "3. Send the follow-up drafts waiting in Riley's chat (if not sent)",
+      "id": "d1127-gifts",
+      "text": "3. Black Friday gifts: pick what to buy",
+      "note": "Mom's lounge pants £11.96 (20% off) · Mia's pottery kit · Laura and Hannah options in Riley's chat · nothing is bought until you tap Pay"
+    },
+    {
+      "id": "d1127-drafts",
+      "text": "4. Send the follow-up drafts waiting in Riley's chat (if not sent)",
       "note": "Voicemail and gatekeeper follow-ups (incl. Hyman, Neitzel, Rufo) + thank-you to Jim Bastian (Haro Bicycle)"
     },
     {
-      "id": "d1126-stripe",
-      "text": "4. Mercor tax info: click Confirm information in Stripe (if not done)",
+      "id": "d1127-stripe",
+      "text": "5. Mercor tax info: click Confirm information in Stripe (if not done)",
       "note": "Nov 23 email in sullivanamy75 · check name, address, SSN/EIN and turn on e-delivery"
     },
     {
-      "id": "d1126-kids-call",
-      "text": "5. Text David, then call the kids at 7:15 PM",
-      "note": "Thanksgiving call"
+      "id": "d1127-kids",
+      "text": "6. Kids with you from 3 PM",
+      "note": "End of project week"
     }
   ],
   "quick": [
@@ -50,9 +55,9 @@
       "tag": "TOP PRIORITY",
       "tasks": [
         {
-          "id": "d1126-calls-lane",
-          "text": "Thanksgiving: light, optional calls (Call leads card)",
-          "note": "No call ticks logged 11/25 · 5 pre-bankruptcy leads first · ★ strong leads and Ch 7s held to Mon 11/30 or later"
+          "id": "d1127-calls-lane",
+          "text": "Calls today 9 AM–2 PM (Call leads card)",
+          "note": "No call ticks logged 11/25–11/26 · 5 pre-bankruptcy first · ★ strong Ch 7s (Printing Research first) held to Mon 11/30 · Interise (Foley) can wait for Monday too"
         },
         {
           "id": "d1125-haro-lane",
@@ -336,31 +341,20 @@
       "tasks": [],
       "facts": [
         "Fiona got into the gifted program 🎉 (11/19) · the gifted teacher should be in touch",
-        "David has the kids through Fri 11/27 · you have them from 3 PM Fri",
-        "Fri 11/27 · Mommy with Kids from 3 PM"
+        "Today Fri 11/27 · kids with you from 3 PM"
       ]
     }
   ],
   "week": [
     {
-      "day": "Thu",
-      "date": "11/26",
-      "items": [
-        "Thanksgiving",
-        "Vegan red velvet cupcakes",
-        "Call kids 7:15 PM (text David first)"
-      ],
-      "trash": true,
-      "today": true
-    },
-    {
       "day": "Fri",
       "date": "11/27",
       "items": [
         "Black Friday",
+        "Calls 9 AM–2 PM",
         "Kids with you from 3 PM"
       ],
-      "today": false
+      "today": true
     },
     {
       "day": "Sat",
@@ -405,13 +399,6 @@
         "Neon vs Claude/Codex subscription check, ~10 AM",
         "341s: ARX, Printing Research"
       ],
-      "trash": true,
-      "today": false
-    },
-    {
-      "day": "Thu",
-      "date": "12/3",
-      "items": [],
       "trash": true,
       "today": false
     }
